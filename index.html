@@ -128,7 +128,7 @@
         .logo-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px; /* Increased gap for logo and text */
+            gap: 15px;
             cursor: pointer;
             z-index: 1002;
         }
@@ -348,9 +348,6 @@
         }
         .remove-discount-btn:hover { transform: scale(1.2); }
 
-        /* TNG Logo */
-        .tng-logo { height: 40px; display: block; margin: 0 auto 15px; }
-
         /* --- MODAL STYLES (TERMS) --- */
         .modal {
             display: none; 
@@ -558,7 +555,7 @@
         <section id="buynow" class="page-section">
             <div class="text-center" style="margin-bottom: 3rem;">
                 <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Finalize Your Order</h2>
-                <p style="color: var(--text-secondary);">Secure your package via TNG eWallet and finalize details via WhatsApp.</p>
+                <p style="color: var(--text-secondary);">Secure your package via TNG eWallet or FPX and finalize details via WhatsApp.</p>
             </div>
 
             <div class="checkout-grid">
@@ -573,7 +570,7 @@
                     <!-- Selected Package Display -->
                     <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 1.5rem;">
                         <h4 id="summary-pkg-name" style="color: var(--accent-primary); margin-bottom: 0.5rem;">Select a Package</h4>
-                        <p id="summary-pkg-desc" style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Please select a package from the Services page.</p>
+                        <p id="summary-pkg-desc" style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Please select a package from Services page.</p>
                         
                         <!-- Dynamic Price Area (Fixed Price Label) -->
                         <div id="dynamic-price-area"></div>
@@ -678,6 +675,23 @@
                             </div>
                         </div>
 
+                        <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 2rem 0;">
+
+                        <!-- UPDATE: Payment Method Selection -->
+                        <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
+                            <label class="form-label" style="color: var(--accent-primary); font-weight: 700;">Payment Method</label>
+                            <div class="radio-group" style="grid-template-columns: 1fr 1fr;">
+                                <div class="radio-option selected" onclick="updatePaymentMethod('tng', this)">
+                                    <input type="radio" name="pay_method" value="tng" checked> 
+                                    <span style="font-size: 1rem; color: var(--text-main); font-weight: 700;">TNG eWallet</span>
+                                </div>
+                                <div class="radio-option" onclick="updatePaymentMethod('fpx', this)">
+                                    <input type="radio" name="pay_method" value="fpx">
+                                    <span style="font-size: 1rem; color: var(--text-main); font-weight: 700;">FPX via Toyyibpay</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Terms Checkbox -->
                         <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
                             <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.9rem; line-height: 1.5;">
@@ -688,20 +702,16 @@
                             </label>
                         </div>
 
-                        <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 2rem 0;">
-
                         <!-- Payment Action -->
                         <div style="text-align: center; margin-bottom: 2rem;">
-                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Payment Method</p>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fb/Touch_%27n_Go_eWallet_logo.svg" alt="TNG eWallet" class="tng-logo">
-                            <a href="#" onclick="triggerPayment()" class="btn btn-primary" style="width: 100%; display: flex; gap: 10px; justify-content: center; margin-bottom: 1rem;">
-                                <i class="ri-wallet-3-line"></i> Pay via TNG eWallet
-                            </a>
-                            <p style="font-size: 0.8rem; color: var(--text-tertiary);">Opens payment gateway in a new tab.</p>
+                            <button type="button" class="btn btn-primary" style="width: 100%; display: flex; gap: 10px; justify-content: center; padding: 1rem 2rem;" onclick="triggerPayment()">
+                                Proceed to Payment <i class="ri-arrow-right-line" style="font-size: 1.1rem; margin-left: 5px;"></i>
+                            </button>
+                            <p style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: 10px;">Opens payment gateway in a new tab.</p>
                         </div>
 
                         <!-- Submit to WhatsApp -->
-                        <button type="button" class="btn" style="width: 100%; background: #25D366; color: white; border: none; display: flex; justify-content: center; gap: 10px;" onclick="submitWhatsApp()">
+                        <button type="button" class="btn" style="width: 100%; background: #25D366; color: white; border: none; display: flex; justify-content: center; gap: 10px; padding: 1rem 2rem;" onclick="submitWhatsApp()">
                             <i class="ri-whatsapp-line" style="font-size: 1.2rem;"></i> Send Order Details
                         </button>
                     </form>
@@ -782,7 +792,7 @@
                 <h2 style="margin-bottom: 0.5rem;">Danial Danish</h2>
                 <p style="color: var(--accent-primary); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2rem;">Founder & Lead Developer</p>
                 <p style="color: var(--text-secondary); max-width: 600px; line-height: 1.8; margin-bottom: 2rem;">
-                    "My journey started with a curiosity for code. Today, DDNetwork One is result of years of experimentation, late-night coding sessions, and a genuine passion for helping local businesses succeed in digital age. I believe in simplicity, speed, and smart design."
+                    "My journey started with a curiosity for code. Today, DDNetwork One is the result of years of experimentation, late-night coding sessions, and a genuine passion for helping local businesses succeed in the digital age. I believe in simplicity, speed, and smart design."
                 </p>
                 <div style="display: flex; gap: 1rem;">
                     <a href="#" style="width: 40px; height: 40px; background: var(--bg-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-light);"><i class="ri-linkedin-fill"></i></a>
@@ -851,7 +861,7 @@
                 <p>To avoid breach of these Terms & Conditions, clients must not:</p>
                 <ul>
                     <li>Provide false, misleading, or illegal content.</li>
-                    <li>Use the website or services for illegal or unethical purposes.</li>
+                    <li>Use website or services for illegal or unethical purposes.</li>
                     <li>Share login credentials or sensitive access with unauthorized parties.</li>
                     <li>Interfere with, disrupt, or attempt to hack DDNetwork One systems.</li>
                     <li>Delay responses or approvals in a way that unreasonably holds up project progress without notice.</li>
@@ -859,7 +869,7 @@
                 </ul>
                 
                 <h3>13. Amendments</h3>
-                <p>DDNetwork One reserves the right to update or modify these Terms & Conditions at any time. Continued use of our services constitutes acceptance of revised terms.</p>
+                <p>DDNetwork One reserves right to update or modify these Terms & Conditions at any time. Continued use of our services constitutes acceptance of revised terms.</p>
                 
                 <p style="margin-top: 2rem; font-weight: 700;">&copy; DDNetwork One. All rights reserved.</p>
                 
@@ -877,6 +887,13 @@
         // --- CONFIG ---
         const PHONE_NO = "60123456789"; // Placeholder phone number
         const PROMO_CODES = { 'DDN20': 0.20, 'LAUNCH': 0.20, 'FUTURE': 0.50 };
+        
+        // Payment Links
+        const FPX_URLS = {
+            'html': 'https://toyyibpay.com/htmlonly',
+            'frontend': 'https://toyyibpay.com/front-end-website'
+        };
+        const TNG_GENERIC = 'https://payment.tngdigital.com.my/sc/bDLob7YcpG';
 
         // --- STATE ---
         let state = {
@@ -885,9 +902,10 @@
             domainPrice: 0,
             maintenancePrice: 0,
             discountRate: 0,
-            discountCode: '', // Track the code name
+            discountCode: '', // Track code name
             domainType: 'sub',
-            domainName: ''
+            domainName: '',
+            paymentMethod: 'tng' // 'tng' or 'fpx'
         };
 
         // --- NAVIGATION ---
@@ -953,6 +971,25 @@
             
             updateUI();
             navigateTo('buynow');
+        }
+
+        function createSliderHTML(min, max) {
+            return `
+                <div style="margin-top: 10px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-secondary); margin-bottom:5px;">
+                        <span>Adjust Budget</span>
+                        <span id="slider-val-disp" style="color:var(--accent-primary); font-weight:700;">RM ${min}</span>
+                    </div>
+                    <input type="range" min="${min}" max="${max}" value="${min}" step="10" 
+                        oninput="updateSliderPrice(this.value, ${min}, ${max})">
+                </div>
+            `;
+        }
+
+        function updateSliderPrice(val, min, max) {
+            state.packagePrice = parseInt(val);
+            document.getElementById('slider-val-disp').innerText = `RM ${val}`;
+            updateTotal();
         }
 
         function updateDomain(type, element) {
@@ -1048,15 +1085,53 @@
             document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
             const subOpt = document.querySelector('input[name="domain_type"][value="sub"]').parentElement;
             const noneOpt = document.querySelector('input[name="maint"][value="none"]').parentElement;
+            const tngOpt = document.querySelector('input[name="pay_method"][value="tng"]').parentElement;
             subOpt.classList.add('selected');
             noneOpt.classList.add('selected');
+            tngOpt.classList.add('selected');
             
             updateSummaryText();
             updateTotal();
         }
 
+        // --- UPDATE: PAYMENT METHOD LOGIC ---
+
+        function updatePaymentMethod(method, element) {
+            state.paymentMethod = method;
+            
+            // Visual toggle (same as domain)
+            const options = element.parentElement.querySelectorAll('.radio-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
         function triggerPayment() {
-            window.open("https://payment.tngdigital.com.my/sc/bDLob7YcpG", '_blank');
+            if(!state.packageType) {
+                showToast("Please select a package first.", "error");
+                return;
+            }
+
+            let targetUrl = "";
+            
+            // Logic for HTML Only / Front-End / AI
+            if (state.paymentMethod === 'tng') {
+                // Use Generic TNG Link for all
+                targetUrl = TNG_GENERIC;
+            } else if (state.paymentMethod === 'fpx') {
+                // Use Specific Toyyibpay Links
+                if (state.packageType === 'html') {
+                    targetUrl = FPX_URLS.html;
+                } else if (state.packageType === 'frontend') {
+                    targetUrl = FPX_URLS.frontend;
+                } else {
+                    // Fallback for AI (custom quote)
+                    targetUrl = TNG_GENERIC;
+                }
+            } else {
+                targetUrl = TNG_GENERIC;
+            }
+
+            window.open(targetUrl, '_blank');
         }
 
         // --- MODAL LOGIC ---
@@ -1079,7 +1154,6 @@
         }
 
         function submitWhatsApp() {
-            // Check Terms Agreement
             const termsCheck = document.getElementById('terms-check');
             if(!termsCheck.checked) {
                 showToast("Please agree to Terms & Conditions.", "error");
@@ -1103,6 +1177,8 @@
             const total = document.getElementById('summary-final-total').innerText;
             const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
             const maint = document.getElementById('summary-maintenance').innerText;
+            const promo = state.discountCode ? `(Promo: ${state.discountCode})` : '';
+            const payment = state.paymentMethod === 'fpx' ? 'FPX via Toyyibpay' : 'TNG eWallet';
 
             let msg = `*NEW ORDER - DDNETWORK ONE*%0a%0a`;
             msg += `*Name:* ${name}%0a`;
@@ -1110,9 +1186,10 @@
             msg += `*Package:* ${pkgName}%0a`;
             msg += `*Domain:* ${domain}%0a`;
             msg += `*Maintenance:* ${maint}%0a`;
+            msg += `*Payment Method:* ${payment}%0a`;
             if(state.discountCode) msg += `*Promo:* ${state.discountCode}%0a`;
             msg += `*Total Est:* ${total}%0a%0a`;
-            msg += `I have made TNG payment and agree to Terms & Conditions.`;
+            msg += `I have made payment and agree to Terms & Conditions.`;
 
             window.open(`https://wa.me/${PHONE_NO}?text=${msg}`, '_blank');
         }

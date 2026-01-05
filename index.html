@@ -128,7 +128,7 @@
         .logo-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 15px; /* Increased gap for logo and text */
             cursor: pointer;
             z-index: 1002;
         }
@@ -218,7 +218,7 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1;
-            opacity: 0.4; /* More subtle */
+            opacity: 0.8; /* UPDATE: Increased brightness */
             pointer-events: none;
         }
 
@@ -512,7 +512,8 @@
                         </div>
                         <h3 style="margin-bottom: 0.5rem;">Front-End Website</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Interactive multi-page websites for businesses.</p>
-                        <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 2rem;">RM 399</div>
+                        <!-- UPDATE: Price to RM 599 -->
+                        <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 2rem;">RM 599</div>
                         <ul style="text-align: left; margin-bottom: 2rem; color: var(--text-secondary); line-height: 1.8;">
                             <li>• Up to 5 Pages</li>
                             <li>• Animations & Interactions</li>
@@ -670,7 +671,7 @@
                         <div class="form-group" style="margin-top: 2rem;">
                             <label class="form-label">Promo Code (Optional)</label>
                             <div style="display: flex; gap: 10px;">
-                                <input type="text" id="promo-input" class="form-input" placeholder="e.g. DDN20" style="text-transform: uppercase;">
+                                <input type="text" id="promo-input" class="form-input" placeholder="e.g. promo10%" style="text-transform: uppercase;">
                                 <button type="button" class="btn" onclick="applyPromo()" style="padding: 0 1.5rem; min-width: 80px;">Apply</button>
                             </div>
                         </div>
@@ -735,7 +736,8 @@
                     <div style="padding: 1.5rem;">
                         <h4 style="margin-bottom: 0.5rem;">Klinik Pergigian Azam</h4>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Dental clinic with appointment booking and services showcase.</p>
-                        <button class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</button>
+                        <!-- UPDATE: New Link -->
+                        <a href="https://ddnetwork-ent.github.io/clinic-azam-dental/" target="_blank" class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</a>
                     </div>
                 </div>
 
@@ -747,7 +749,8 @@
                     <div style="padding: 1.5rem;">
                         <h4 style="margin-bottom: 0.5rem;">Mory Matcha</h4>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Brand landing page for a premium matcha drink outlet in Ipoh.</p>
-                        <button class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</button>
+                        <!-- UPDATE: New Link -->
+                        <a href="https://mory.ddnetwork.uk" target="_blank" class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</a>
                     </div>
                 </div>
             </div>
@@ -792,7 +795,7 @@
                 <h2 style="margin-bottom: 0.5rem;">Danial Danish</h2>
                 <p style="color: var(--accent-primary); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2rem;">Founder & Lead Developer</p>
                 <p style="color: var(--text-secondary); max-width: 600px; line-height: 1.8; margin-bottom: 2rem;">
-                    "My journey started with a curiosity for code. Today, DDNetwork One is the result of years of experimentation, late-night coding sessions, and a genuine passion for helping local businesses succeed in the digital age. I believe in simplicity, speed, and smart design."
+                    "My journey started with a curiosity for code. Today, DDNetwork One is result of years of experimentation, late-night coding sessions, and a genuine passion for helping local businesses succeed in digital age. I believe in simplicity, speed, and smart design."
                 </p>
                 <div style="display: flex; gap: 1rem;">
                     <a href="#" style="width: 40px; height: 40px; background: var(--bg-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-light);"><i class="ri-linkedin-fill"></i></a>
@@ -801,11 +804,11 @@
             </div>
         </section>
 
-        <!-- Footer -->
+        <!-- UPDATE: Footer with specific text from user -->
         <footer style="margin-top: auto; padding: 4rem 0 2rem; border-top: 1px solid var(--border-light); text-align: center;">
             <div class="container">
                 <p class="company-name" style="justify-content: center; margin-bottom: 1rem;">DDNetwork<span style="color:var(--text-tertiary)">One</span></p>
-                <p style="color: var(--text-tertiary); font-size: 0.9rem;">&copy; 2026 DDNetwork One. All Rights Reserved.</p>
+                <p style="color: var(--text-tertiary); font-size: 0.9rem;">&copy; 2025-2026 DDNetwork One. PG0572133-K All rights reserved.</p>
             </div>
         </footer>
 
@@ -885,13 +888,13 @@
     <!-- JAVASCRIPT -->
     <script>
         // --- CONFIG ---
-        const PHONE_NO = "60123456789"; // Placeholder phone number
-        const PROMO_CODES = { 'DDN20': 0.20, 'LAUNCH': 0.20, 'FUTURE': 0.50 };
+        const PHONE_NO = "60122600969"; // Placeholder phone number
+        const PROMO_CODES = { 'DDN20': 0.20, 'MORY60': 0.60, 'FUTURE': 0.50 };
         
-        // Payment Links
+        // Payment Links (Frontend price 599 & new FPX link)
         const FPX_URLS = {
             'html': 'https://toyyibpay.com/htmlonly',
-            'frontend': 'https://toyyibpay.com/front-end-website'
+            'frontend': 'https://toyyibpay.com/front-end-599' // Updated Link
         };
         const TNG_GENERIC = 'https://payment.tngdigital.com.my/sc/bDLob7YcpG';
 
@@ -944,17 +947,17 @@
             const priceArea = document.getElementById('dynamic-price-area');
             priceArea.innerHTML = ''; 
 
-            // Set Fixed Prices directly (No Slider)
+            // UPDATE: Set Fixed Prices directly (Frontend = 599)
             if(type === 'html') {
                 state.packagePrice = 199; 
                 document.getElementById('summary-pkg-desc').innerText = "Static Website (1-2 pages)";
                 // Display static price text instead of slider
                 priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM 199</div>`;
             } else if (type === 'frontend') {
-                state.packagePrice = 399; 
+                state.packagePrice = 599; // UPDATE: New Price RM 599
                 document.getElementById('summary-pkg-desc').innerText = "Interactive Website (Up to 5 pages)";
                 // Display static price text instead of slider
-                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM 399</div>`;
+                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM 599</div>`;
             } else if (type === 'ai') {
                 state.packagePrice = 0;
                 document.getElementById('summary-pkg-desc').innerText = "AI Integration & Chatbot";
@@ -1103,6 +1106,9 @@
             const options = element.parentElement.querySelectorAll('.radio-option');
             options.forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
+
+            const input = element.querySelector('input');
+            if(input) input.checked = true;
         }
 
         function triggerPayment() {
@@ -1122,7 +1128,7 @@
                 if (state.packageType === 'html') {
                     targetUrl = FPX_URLS.html;
                 } else if (state.packageType === 'frontend') {
-                    targetUrl = FPX_URLS.frontend;
+                    targetUrl = FPX_URLS.frontend; // Uses updated link
                 } else {
                     // Fallback for AI (custom quote)
                     targetUrl = TNG_GENERIC;
@@ -1245,7 +1251,8 @@
                 if(scale > 0) {
                     ctx.beginPath();
                     ctx.arc(x, y, 1.5 * scale, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255,255,255,${(rotZ + GLOBE_RADIUS)/(2*GLOBE_RADIUS) * 0.5})`;
+                    // UPDATE: Increased brightness multiplier from 0.5 to 0.8
+                    ctx.fillStyle = `rgba(255,255,255,${(rotZ + GLOBE_RADIUS)/(2*GLOBE_RADIUS) * 0.8})`;
                     ctx.fill();
                 }
             });

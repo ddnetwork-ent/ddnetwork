@@ -943,7 +943,8 @@
                             <li>• Mobile Responsive</li>
                             <li>• Basic SEO Tags</li>
                         </ul>
-                        <button class="btn btn-primary" style="width: 100%;" onclick="selectPackage('HTML Only', 'html')">Select</button>
+                        <!-- UPDATED BUTTON -->
+                        <button class="btn btn-primary" style="width: 100%;" onclick="attemptSelectPackage('HTML Only', 'html')">Select</button>
                     </div>
 
                     <!-- Package 2 -->
@@ -964,7 +965,8 @@
                             <li>• WhatsApp Integration</li>
                         </ul>
 
-                        <button class="btn btn-primary" style="width: 100%; background: var(--accent-primary); color: white; border-color: var(--accent-primary);" onclick="selectPackage('Front-End Website', 'frontend')">Select Front-End</button>
+                        <!-- UPDATED BUTTON -->
+                        <button class="btn btn-primary" style="width: 100%; background: var(--accent-primary); color: white; border-color: var(--accent-primary);" onclick="attemptSelectPackage('Front-End Website', 'frontend')">Select Front-End</button>
                     </div>
 
                     <!-- Package 3 -->
@@ -984,7 +986,8 @@
                             <li>• Smart Analytics</li>
                         </ul>
 
-                        <button class="btn" style="width: 100%; background: white; color: black;" onclick="selectPackage('AI Powered Website', 'ai')">Request Quote</button>
+                        <!-- UPDATED BUTTON -->
+                        <button class="btn" style="width: 100%; background: white; color: black;" onclick="attemptSelectPackage('AI Powered Website', 'ai')">Request Quote</button>
                     </div>
 
                 </div>
@@ -1695,6 +1698,8 @@
 
         function handleLogout() {
             if(auth) {
+                // BUG FIX: Clear voucher immediately on logout
+                currentUserPersonalVoucher = null;
                 auth.signOut().then(() => {
                     showToast("Logged out", "success");
                     navigateTo('home');
@@ -1721,7 +1726,7 @@
                 // If Admin, prepend Admin Portal button
                 if (isAdmin) {
                     userControls = `
-                        <a href="admin.html" target="_blank" class="admin-link" title="Admin Portal"><i class="ri-shield-user-line"></i></a>
+                        <a href="https://ddnetwork-ent.github.io/admin.html/" target="_blank" class="admin-link" title="Admin Portal"><i class="ri-shield-user-line"></i></a>
                         <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
                         ${userControls}
                     `;
@@ -1889,6 +1894,29 @@
             } else {
                 icon.classList.add('ri-menu-4-line');
                 icon.classList.remove('ri-close-line');
+            }
+        }
+
+        // ==========================================
+        // AUTH GATE FOR PACKAGES
+        // ==========================================
+        function attemptSelectPackage(name, type) {
+            // 1. Check if Auth is initialized
+            if (typeof auth === 'undefined' || auth === null) {
+                showToast("Authentication system initializing. Please wait...", "error");
+                return;
+            }
+
+            // 2. Check if user is logged in
+            if (auth.currentUser) {
+                // User is logged in, proceed to select package
+                selectPackage(name, type);
+            } else {
+                // User is NOT logged in
+                showToast("Please login or sign up to make a purchase.", "error");
+                setTimeout(() => {
+                    navigateTo('login'); // Redirect to Login page (which has a signup link)
+                }, 1500);
             }
         }
 

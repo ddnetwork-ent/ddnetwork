@@ -17,7 +17,6 @@
     <!-- Firebase SDKs (Compat Version for Vanilla JS) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <!-- Firebase Auth SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
     <style>
@@ -26,17 +25,18 @@
             --bg-deep: #050505;
             --bg-surface: #0a0a0a;
             --bg-card: #111111;
-            --bg-glass: rgba(10, 10, 10, 0.7);
+            --bg-glass: rgba(5, 5, 5, 0.8);
             --border-light: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.25);
+            --border-hover: rgba(255, 255, 255, 0.2);
             --text-main: #ffffff;
             --text-secondary: #a1a1aa;
             --text-tertiary: #52525b;
             --accent-primary: #3b82f6; /* Blue */
-            --accent-glow: rgba(59, 130, 246, 0.4);
+            --accent-glow: rgba(59, 130, 246, 0.5);
             --accent-warn: #f59e0b;
             --font-display: 'Inter', sans-serif; 
-            --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* Smooth Apple-like easing */
+            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             
             /* Spacing */
             --header-height: 80px;
@@ -51,24 +51,40 @@
             background-color: var(--bg-deep);
             color: var(--text-main);
             font-family: var(--font-display);
-            font-weight: 500;
-            overflow-x: hidden; /* Prevents horizontal scroll */
-            line-height: 1.6;
+            font-weight: 400;
+            overflow-x: hidden;
+            line-height:1.6;
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        a { text-decoration: none; color: inherit; cursor: pointer; transition: 0.2s; }
+        a { text-decoration: none; color: inherit; cursor: pointer; transition: 0.3s color; }
         ul { list-style: none; }
         button, input, select, textarea { font-family: inherit; border: none; outline: none; }
+
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-deep); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease;
+        }
+        .loader-content {
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
 
         /* --- GRAIN OVERLAY --- */
         .grain {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9999; opacity: 0.04;
+            pointer-events: none; z-index: 9999; opacity: 0.03;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* --- UTILITIES --- */
+        /* --- UTILITIES & ANIMATIONS --- */
         .container { width: 92%; max-width: 1240px; margin: 0 auto; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .text-center { text-align: center; }
@@ -82,11 +98,22 @@
             color: white;
         }
 
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--ease-out);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* --- BUTTONS --- */
         .btn {
             position: relative;
             display: inline-flex; align-items: center; justify-content: center;
-            padding: 0.9rem 2rem; /* Desktop Default */
+            padding: 0.9rem 2rem;
             background: var(--bg-surface);
             color: var(--text-main);
             font-weight: 700; 
@@ -100,29 +127,41 @@
             overflow: hidden;
             z-index: 1;
         }
-        .btn:hover { 
-            transform: translateY(-3px); 
-            border-color: white; 
-            background: rgba(255,255,255,0.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        .btn::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
         }
+        .btn:hover::after { left: 100%; }
+        .btn:hover { transform: translateY(-2px); border-color: white; background: rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .btn:active { transform: translateY(0); }
         .btn-primary { background: white; color: black; border: 1px solid white; }
         .btn-primary:hover { background: transparent; color: white; }
-        .btn-secondary { background: transparent; border: 1px solid var(--border-light); font-size: 0.8rem; padding: 0.8rem 1.5rem; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border-light); }
         .btn-secondary:hover { border-color: white; }
-        .btn-success { background: #25D366; color: white; border: 1px solid #25D366; } /* Green for Place Order */
+        .btn-success { background: #25D366; color: white; border: 1px solid #25D366; }
         .btn-success:hover { background: #128C7E; border-color: #128C7E; }
 
-        /* --- HEADER (Modernized Glass) --- */
+        /* --- 3D TILT EFFECT --- */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            transition: transform 0.1s ease-out;
+        }
+        @media (hover: none) {
+            .tilt-card { transform: none !important; }
+        }
+
+        /* --- HEADER --- */
         header {
             position: fixed; top: 20px; left: 50%; 
             transform: translateX(-50%);
             width: calc(100% - 40px);
             max-width: 1200px;
-            z-index: 2100; /* Highest Z-Index */
-            background: rgba(10, 10, 10, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            z-index: 2100; /* Fixed Header Z-Index */
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
             border-radius: 100px;
             padding: 0 2rem; 
@@ -130,443 +169,374 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            transition: all 0.4s var(--ease-out);
         }
+        .logo-wrapper { display: flex; align-items: center; gap: 15px; cursor: pointer; z-index: 2101; }
+        .logo-img { height: 50px; width: auto; display: block; object-fit: contain; }
+        .company-name { font-size: 1.25rem; font-weight: 800; color: white; letter-spacing: -0.5px; line-height: 1; }
 
-        /* Logo Wrapper */
-        .logo-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 15px; 
-            cursor: pointer;
-            z-index: 2101;
-        }
-        
-        /* Logo Img - Updated for external image */
-        .logo-img {
-            height: 50px; 
-            width: auto;
-            display: block;
-            object-fit: contain;
-        }
-        
-        .company-name {
-            font-size: 1.25rem; 
-            font-weight: 800; 
-            color: white; 
-            letter-spacing: -0.5px;
-            line-height: 1;
-        }
+        .nav-desktop { display: none; gap: 2rem; }
+        .nav-desktop a { font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); position: relative; }
+        .nav-desktop a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: white; transition: width 0.3s ease; }
+        .nav-desktop a:hover { color: white; }
+        .nav-desktop a:hover::after { width: 100%; }
 
-        /* Nav Desktop */
-        .nav-desktop {
-            display: none; gap: 2rem;
-        }
-        .nav-desktop a { 
-            font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); 
-        }
-        .nav-desktop a:hover, .nav-desktop a.active { color: white; }
-
-        /* Auth Buttons in Header */
         .auth-buttons { display: flex; gap: 10px; align-items: center; }
-        .auth-greeting { font-size: 0.9rem; font-weight: 700; color: var(--accent-primary); margin-right: 10px; }
-        .logout-btn { font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; border-bottom: 1px solid transparent; }
-        .logout-btn:hover { color: white; border-bottom: 1px solid white; }
+        .logout-btn { font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; transition: 0.2s; }
+        .logout-btn:hover { color: white; }
         .profile-link { font-size: 1.2rem; color: var(--text-main); background: rgba(255,255,255,0.1); padding: 8px; border-radius: 50%; transition: 0.2s; }
-        .profile-link:hover { background: var(--accent-primary); }
+        .profile-link:hover { background: var(--accent-primary); transform: rotate(10deg); }
 
-        /* Mobile Toggle */
-        .mobile-toggle { display: block; font-size: 1.5rem; cursor: pointer; color: white; z-index: 2101; transition: transform 0.3s; }
+        .mobile-toggle { display: block; font-size: 1.5rem; cursor: pointer; color: white; z-index: 2101; transition: transform 0.4s var(--ease-spring); }
         .mobile-toggle.open { transform: rotate(90deg); }
 
-        /* Mobile Drawer Overlay */
         .mobile-drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); /* Dim background */
-            z-index: 1999; /* Between Header (2100) and Drawer (2000) */
+            background: rgba(0,0,0,0.8);
+            z-index: 1999;
             opacity: 0;
-            pointer-events: none; /* Doesn't block clicks when hidden */
-            transition: opacity 0.3s ease;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(5px);
         }
-        .mobile-drawer-overlay.active {
-            opacity: 1;
-            pointer-events: all; /* Blocks clicks to body when active */
-        }
+        .mobile-drawer-overlay.active { opacity: 1; pointer-events: all; }
 
-        /* Mobile Drawer */
         .mobile-drawer {
             position: fixed; top: 0; right: 0; width: 100%; height: 100vh;
-            background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(20px);
-            z-index: 2000; /* Below Header, Above Overlay */
+            background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(25px);
+            z-index: 2000;
             display: flex; flex-direction: column; justify-content: center;
-            transform: translateX(100%); transition: transform 0.5s var(--ease-out);
+            transform: translateX(100%); 
+            transition: transform 0.6s var(--ease-out);
         }
         .mobile-drawer.open { transform: translateX(0); }
         .mobile-drawer ul { text-align: center; display: flex; flex-direction: column; gap: 2rem; }
-        .mobile-drawer a { font-size: 2rem; font-weight: 800; color: var(--text-secondary); opacity: 0; transition: 0.4s; transform: translateY(20px); }
+        .mobile-drawer a { font-size: 2rem; font-weight: 800; color: var(--text-secondary); opacity: 0; transform: translateY(40px); transition: 0.5s var(--ease-out); }
         .mobile-drawer.open a { opacity: 1; transform: translateY(0); }
-        
-        /* Delays for mobile links */
         .mobile-drawer.open li:nth-child(1) a { transition-delay: 0.1s; }
         .mobile-drawer.open li:nth-child(2) a { transition-delay: 0.2s; }
         .mobile-drawer.open li:nth-child(3) a { transition-delay: 0.3s; }
         .mobile-drawer.open li:nth-child(4) a { transition-delay: 0.4s; }
         .mobile-drawer.open li:nth-child(5) a { transition-delay: 0.5s; }
         .mobile-drawer.open li:nth-child(6) a { transition-delay: 0.6s; }
-        .mobile-drawer.open li:nth-child(7) a { transition-delay: 0.7s; }
 
-        /* Responsive Breakpoints */
         @media(min-width: 992px) {
             .nav-desktop { display: flex; }
             .mobile-toggle { display: none; }
         }
 
-        /* --- PAGE ROUTING --- */
-        .page-section {
-            display: none;
-            opacity: 0;
-            min-height: 100vh;
-            padding-top: 100px; /* Desktop Space */
-        }
-        .page-section.active { display: block; animation: fadePageUp 0.6s var(--ease-out) forwards; }
-        @keyframes fadePageUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- HERO SECTION --- */
-        .hero {
+        /* --- MAIN CONTENT AREA --- */
+        main {
+            flex: 1; 
+            width: 100%;
             position: relative;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding-top: 0; /* Override section padding */
-            overflow: hidden;
+            overflow-x: hidden; /* Prevent horizontal scroll during slide animations */
         }
 
-        /* 3D Globe Canvas */
-        #globe-canvas {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-            opacity: 1; /* UPDATE: Full Opacity for Big Globe */
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative; z-index: 10; width: 100%; max-width: 900px;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        .hero h1 { 
-            font-size: clamp(3rem, 7vw, 6rem); 
-            margin-bottom: 1.5rem; 
-            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        /* --- PAGE ROUTING WITH SMOOTH TRANSITIONS --- */
+        .page-section { 
+            display: none; 
+            min-height: calc(100vh - 100px); 
+            padding-top: 100px; 
+            padding-bottom: 60px; 
+            opacity: 0; 
+            /* Initial state: invisible and pushed down */
+            transform: translateY(30px);
+            /* Transition for both opacity and slide */
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out; 
+            will-change: opacity, transform;
         }
         
-        .hero p { 
-            font-size: 1.1rem; color: var(--text-secondary); 
-            margin-bottom: 2.5rem; max-width: 600px; line-height: 1.7;
+        .page-section.active { 
+            display: block; 
+            opacity: 1; 
+            transform: translateY(0); /* Final state: visible and in place */
         }
 
-        /* --- AUTH PAGES (Login/Signup/Profile) --- */
-        .auth-container {
-            width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
-            padding-top: 60px;
-            padding-bottom: 40px; /* Extra padding for mobile scroll */
+        .page-section.leaving {
+            opacity: 0;
+            transform: translateY(-20px); /* Exit animation: fade out and slide up */
         }
-        .auth-card {
-            background: var(--bg-card);
-            padding: 2.5rem; /* Desktop Padding */
-            border-radius: 24px;
-            border: 1px solid var(--border-light);
-            text-align: center;
-        }
+
+        /* --- HERO --- */
+        .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 0; overflow: hidden; margin-top: -100px; }
+        #globe-canvas { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; pointer-events: none; }
+        .hero-glow { position: absolute; top: 50%; left: 50%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
+        .hero-content { position: relative; z-index: 10; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; }
+        .hero h1 { font-size: clamp(3rem, 7vw, 6rem); margin-bottom: 1.5rem; background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3)); }
+        .hero p { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2.5rem; max-width: 600px; line-height: 1.7; }
+
+        /* --- AUTH PAGES --- */
+        .auth-container { width: 100%; max-width: 450px; margin: 0 auto; padding-top: 60px; padding-bottom: 40px; }
+        .auth-card { background: var(--bg-card); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border-light); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
         .auth-card h2 { margin-bottom: 0.5rem; }
         .auth-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
         .auth-link { color: var(--accent-primary); cursor: pointer; font-weight: 700; text-decoration: underline; }
-
-        /* Profile Grid for Mobile Responsive Stacking */
-        .profile-details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Side by side on desktop */
-            gap: 1rem;
-        }
-        @media(max-width: 600px) {
-            .profile-details-grid {
-                grid-template-columns: 1fr; /* Stack on mobile */
-            }
-        }
+        .profile-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media(max-width: 600px) { .profile-details-grid { grid-template-columns: 1fr; } }
 
         /* --- TRUST MARQUEE --- */
         .trust-section { margin-top: 4rem; width: 100%; }
-        .trust-label {
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--text-tertiary);
-            margin-bottom: 1.5rem;
-        }
-        .trust-track {
-            width: 100%; overflow: hidden; white-space: nowrap;
-            mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
-        }
+        .trust-label { text-align: center; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-tertiary); margin-bottom: 1.5rem; }
+        .trust-track { width: 100%; overflow: hidden; white-space: nowrap; mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent); }
         .trust-track-content { display: inline-block; animation: scroll 40s linear infinite; }
         .trust-item { display: inline-flex; align-items: center; gap: 10px; margin: 0 40px; color: var(--text-tertiary); font-weight: 700; font-size: 1.2rem; }
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* --- CHECKOUT (Enhanced Layout) --- */
-        .checkout-grid {
-            display: grid; grid-template-columns: 1fr; gap: 3rem; margin-top: 2rem;
-        }
-        @media(min-width: 992px) {
-            .checkout-grid { grid-template-columns: 1fr 1.5fr; }
-        }
+        /* --- CHECKOUT --- */
+        .checkout-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; margin-top: 2rem; }
+        @media(min-width: 992px) { .checkout-grid { grid-template-columns: 1fr 1.5fr; } }
 
-        .checkout-card {
-            background: var(--bg-card); 
-            padding: 2.5rem; /* Desktop Padding */
-            border: 1px solid var(--border-light); 
-            border-radius: 24px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
+        .checkout-card { background: var(--bg-card); padding: 2.5rem; border: 1px solid var(--border-light); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transition: transform 0.3s; }
 
         /* Form Elements */
-        .form-group { margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
         .form-label { display: block; margin-bottom: 0.6rem; font-size: 0.85rem; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         .form-input, .form-select, textarea {
-            width: 100%; padding: 1rem; /* Desktop Padding */
+            width: 100%; padding: 1rem;
             background: rgba(255,255,255,0.03); border: 1px solid var(--border-light);
             color: white; border-radius: 12px; font-size: 1rem; 
-            min-height: 48px; /* Touch friendly target */
-            transition: 0.2s;
+            min-height: 48px; transition: 0.3s;
         }
-        .form-input:focus, .form-select:focus { 
-            border-color: var(--accent-primary); background: rgba(59, 130, 246, 0.05); 
-        }
-        
-        /* Read-only inputs styling */
-        .form-input:read-only {
-            background: rgba(0,0,0,0.2);
-            color: var(--text-tertiary);
-            cursor: not-allowed;
-            border-color: transparent;
-        }
-
-        /* Radio Options */
+        .form-input:focus, .form-select:focus { border-color: var(--accent-primary); background: rgba(59, 130, 246, 0.05); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .form-input:read-only { background: rgba(0,0,0,0.2); color: var(--text-tertiary); cursor: not-allowed; border-color: transparent; }
         .radio-group { display: grid; gap: 1rem; }
-        .radio-option {
-            border: 1px solid var(--border-light); padding: 1rem;
-            border-radius: 12px; display: flex; align-items: center; gap: 12px;
-            cursor: pointer; transition: 0.2s; background: var(--bg-surface);
-            min-height: 48px; /* Touch target */
-        }
+        .radio-option { border: 1px solid var(--border-light); padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; background: var(--bg-surface); min-height: 48px; }
         .radio-option:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.02); }
         .radio-option.selected { border-color: var(--accent-primary); background: rgba(59, 130, 246, 0.1); }
 
-        /* Checkbox Item */
-        .checkbox-item {
-            display: flex; align-items: flex-start; gap: 12px;
-            padding: 12px; background: var(--bg-surface); border-radius: 8px;
-            margin-bottom: 10px; cursor: pointer; border: 1px solid transparent;
-        }
-        .checkbox-item:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.05); }
-        .checkbox-item input { margin-top: 4px; accent-color: var(--accent-primary); width: 18px; height: 18px; }
-
-        /* Terms Link */
-        .terms-link {
-            color: var(--accent-primary);
-            text-decoration: underline;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Toast Notification */
+        /* Toast */
         .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
-        .toast {
-            background: var(--bg-card); color: white; padding: 16px 24px;
-            border-radius: 12px; border: 1px solid var(--border-light);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: flex; align-items: center; gap: 12px;
-            transform: translateY(100px); opacity: 0; transition: 0.4s var(--ease-out);
-        }
+        .toast { background: var(--bg-card); color: white; padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border-light); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 12px; transform: translateY(100px); opacity: 0; transition: 0.4s var(--ease-out); }
         .toast.show { transform: translateY(0); opacity: 1; }
         .toast.success i { color: #10b981; }
         .toast.error i { color: #ef4444; }
 
-        /* Payment & Summary Styles */
+        /* Summary */
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; }
-        .summary-total { 
-            border-top: 1px solid var(--border-light); margin-top: 20px; padding-top: 20px;
-            display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 800; color: white;
-        }
+        .summary-total { border-top: 1px solid var(--border-light); margin-top: 20px; padding-top: 20px; display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 800; color: white; }
         .change-package { color: var(--accent-primary); font-size: 0.85rem; text-decoration: underline; cursor: pointer; margin-bottom: 1rem; display: inline-block; }
-        
-        .remove-discount-btn {
-            margin-left: 8px;
-            cursor: pointer;
-            color: #ef4444; /* Red for delete action */
-            font-size: 1.1rem;
-            vertical-align: middle;
-            transition: transform 0.2s;
-        }
+        .remove-discount-btn { margin-left: 8px; cursor: pointer; color: #ef4444; font-size: 1.1rem; vertical-align: middle; transition: 0.2s; }
         .remove-discount-btn:hover { transform: scale(1.2); }
 
-        /* --- MODAL STYLES (TERMS) --- */
-        .modal {
+        /* --- MODAL --- */
+        .modal { 
             display: none; 
             position: fixed; 
-            z-index: 2000; 
-            left: 0; top: 0; 
-            width: 100%; height: 100%; 
+            z-index: 9999; /* Higher than Header (2100) to prevent disturbance */
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
             background-color: rgba(0,0,0,0.9); 
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px); 
+            opacity: 0; 
+            transition: opacity 0.3s; 
         }
-        .modal-content {
-            background-color: var(--bg-card);
-            margin: 5% auto; 
-            padding: 40px;
-            border: 1px solid var(--border-light);
+        .modal.open { display: block; opacity: 1; }
+        .modal-content { 
+            background-color: var(--bg-card); 
+            margin: 8% auto; /* Increased top margin for better spacing */
+            padding: 40px; 
+            border: 1px solid var(--border-light); 
             width: 90%; 
-            max-width: 800px;
-            border-radius: 24px;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-width: 800px; 
+            border-radius: 24px; 
+            max-height: 85vh; /* Adjusted to fit better with spacing */
+            overflow-y: auto; 
+            transform: scale(0.9); 
+            transition: transform 0.3s var(--ease-spring); 
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.1); 
             position: relative;
-            box-shadow: 0 0 50px rgba(59, 130, 246, 0.1);
+            z-index: 10000;
         }
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            color: #aaa;
-            font-size: 35px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10;
+        .modal.open .modal-content { transform: scale(1); }
+        .close-modal { 
+            position: absolute; 
+            top: 20px; 
+            right: 25px; 
+            color: #aaa; 
+            font-size: 35px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            z-index: 10001; 
+            transition: 0.2s; 
         }
-        .close-modal:hover { color: white; }
+        .close-modal:hover { color: white; transform: rotate(90deg); }
         .modal h2 { margin-bottom: 2rem; text-align: center; color: white; }
         .modal-text p { margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.7; }
         .modal-text h3 { color: var(--accent-primary); margin-top: 2rem; margin-bottom: 0.5rem; font-size: 1.2rem; text-transform: none; letter-spacing: normal;}
         .modal-text ul { list-style: disc; margin-left: 20px; margin-bottom: 1rem; color: var(--text-secondary); }
-        .modal-text ul li { margin-bottom: 0.5rem; }
+        .terms-link { color: var(--accent-primary); text-decoration: underline; font-weight: 600; cursor: pointer; }
 
-        /* Scrollbar for modal */
-        .modal-content::-webkit-scrollbar { width: 8px; }
-        .modal-content::-webkit-scrollbar-track { background: var(--bg-surface); }
-        .modal-content::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+        /* --- NEW FOOTER DESIGN --- */
+        footer {
+            background-color: #020202;
+            border-top: 1px solid var(--border-light);
+            padding: 5rem 0 2rem;
+            margin-top: auto;
+            position: relative;
+            z-index: 5;
+        }
 
-        /* --- MOBILE OPTIMIZATION (Big Globe + Spacing) --- */
+        /* Updated to 3 Columns */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr; /* Wider brand, then Support, then Contact */
+            gap: 3rem; /* Increased gap for breathing room */
+            margin-bottom: 3rem;
+        }
+
+        .footer-col h4 {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-brand .company-name {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            max-width: 300px;
+            line-height: 1.6;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-primary);
+            padding-left: 5px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .footer-contact-item i { color: var(--accent-primary); }
+
+        /* Footer Bottom Bar */
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .copyright {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Mac Dock (Footer Version) */
+        .mac-dock {
+            display: flex; 
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 0.8rem 1.5rem;
+            border-radius: 24px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px); 
+        }
+        .dock-icon { 
+            width: 40px; 
+            height: 40px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 50%; 
+            background: rgba(30, 30, 30, 0.8); 
+            color: white; 
+            font-size: 1.2rem; 
+            transition: all 0.3s var(--ease-spring); 
+        }
+        .dock-icon:hover { transform: scale(1.2) translateY(-8px); background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); z-index: 10; color: white; }
+
+        /* --- MOBILE OPTIMIZATION --- */
         @media(max-width: 991px) {
-            
-            /* 1. COMPACT TYPOGRAPHY */
-            h1 { font-size: 2rem !important; } 
+            h1 { font-size: 2.2rem !important; } 
             h2 { font-size: 1.5rem !important; } 
-            h3 { font-size: 1.2rem !important; } 
-            h4 { font-size: 1rem !important; }
             body { font-size: 0.95rem !important; } 
             .hero p { font-size: 1rem !important; margin-bottom: 1.5rem !important; }
-            .modal-text p { font-size: 0.9rem !important; }
-
-            /* 2. BIG GLOBE FIX (Keep Scale but allow Large Canvas) */
-            #globe-canvas {
-                transform: translate(-50%, -50%) scale(0.5); 
-                opacity: 1;
-            }
-
-            /* 3. BETTER SPACING */
-            .page-section { padding-top: 140px !important; }
-            .checkout-grid { gap: 1.5rem !important; margin-top: 2rem !important; }
-            .hero-content { justify-content: center; margin-top: 0px; }
-            .trust-section { margin-top: 3rem !important; }
-
-            /* 4. COMPACT CARDS */
-            .checkout-card, .auth-card { padding: 1.75rem !important; }
-            .checkout-card h3 { margin-bottom: 0.75rem !important; }
-            .checkout-card h4 { margin-bottom: 0.5rem !important; }
-            .checkout-card p { margin-bottom: 1rem !important; }
-            .checkout-card ul { margin-bottom: 1rem !important; }
-            
-            /* Services Icons */
-            .checkout-card div[style*="background:"][style*="border-radius: 50%"] {
-                width: 40px; height: 40px; margin: 0 auto 1rem !important;
-            }
-            
-            /* Prices */
-            .checkout-card div[style*="font-size: 2.5rem"] {
-                font-size: 1.8rem !important; margin-bottom: 1.2rem !important;
-            }
-
-            /* 5. LARGER TOUCH TARGETS & SPACING */
-            .btn { padding: 0.8rem 1.5rem !important; font-size: 0.8rem !important; min-height: 48px; } /* Better Touch Targets */
-
-            /* 6. COMPACT FORM ELEMENTS */
-            .form-group { margin-bottom: 1.25rem !important; }
-            .form-input, .form-select, textarea { padding: 0.9rem !important; } /* Slightly larger for touch */
-            .form-label { font-size: 0.8rem !important; margin-bottom: 0.5rem !important; }
-
-            /* 7. BETTER SPACING FOR RADIO OPTIONS */
-            .radio-group { gap: 1.25rem !important; }
-            .radio-option { padding: 0.9rem !important; gap: 10px !important; }
-            .radio-option span { font-size: 0.95rem !important; }
-
-            /* 8. SUMMARY TOTAL */
-            .summary-total { font-size: 1.2rem !important; margin-top: 1rem !important; padding-top: 1rem !important; }
-            
-            /* Mobile Drawer Links */
+            #globe-canvas { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
+            .hero-glow { width: 300px; height: 300px; }
+            .page-section { padding-top: 120px !important; padding-bottom: 40px !important; }
+            .checkout-grid { gap: 1.5rem !important; }
+            .checkout-card, .auth-card { padding: 1.5rem !important; }
+            .btn { padding: 0.8rem 1.5rem !important; font-size: 0.8rem !important; min-height: 48px; }
+            .form-group { margin-bottom: 1.2rem !important; }
+            .form-input, .form-select, textarea { padding: 0.9rem !important; }
             .mobile-drawer a { font-size: 1.5rem; }
+            
+            /* Mobile Footer - Stacks to 1 column */
+            footer { padding: 3rem 0 1.5rem; }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                text-align: center;
+            }
+            .footer-brand { align-items: center; display: flex; flex-direction: column; }
+            .footer-contact-item { justify-content: center; }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .mac-dock { display: none; } /* Hide dock on mobile to keep clean */
         }
 
-        /* --- FOOTER ICONS STYLING (macOS Dock) --- */
-        .mac-dock {
-            display: flex; justify-content: center; gap: 1.5rem; margin-top: 2rem;
-            /* macOS Dock Styling */
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem 1.5rem;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        .dock-icon {
-            width: 50px; height: 50px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%;
-            background: rgba(30, 30, 30, 0.8);
-            color: white;
-            font-size: 1.5rem;
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); /* macOS smooth ease */
-            position: relative;
-            text-decoration: none;
-        }
-        .dock-icon:hover {
-            transform: scale(1.2) translateY(-10px); /* Magnification & Lift */
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-            z-index: 10;
-            color: white;
-        }
-        /* Mobile Responsive Adjustments */
+        /* --- MOBILE TERMS MODAL OPTIMIZATION --- */
         @media(max-width: 600px) {
-            .mac-dock { gap: 1rem; padding: 1rem; }
-            .dock-icon { width: 40px; height: 40px; font-size: 1.2rem; }
-            .dock-icon:hover { transform: scale(1.1) translateY(-5px); }
+            .modal-content {
+                margin: 2rem auto; /* Safe margin on mobile */
+                padding: 24px; /* Reduced padding for space */
+                width: 95%;
+                max-height: 85vh;
+            }
+            .modal h2 { 
+                font-size: 1.5rem; 
+                margin-bottom: 1.5rem; 
+                text-align: left;
+            }
+            .close-modal { top: 15px; right: 20px; font-size: 30px; }
+            .modal-text p, .modal-text ul {
+                font-size: 0.95rem; 
+            }
+            .modal-text h3 {
+                font-size: 1.1rem;
+                margin-top: 1.5rem;
+            }
         }
-
     </style>
 </head>
 <body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-content">
+            <img src="https://raw.githubusercontent.com/ddnetwork-ent/DDN-One/refs/heads/main/DD-LOGO.JPEG?raw=true" alt="Logo" style="height: 60px; margin-bottom: 1rem; border-radius: 50%;">
+            <h2 style="font-size: 0.8rem; letter-spacing: 2px;">LOADING</h2>
+        </div>
+    </div>
 
     <!-- Grain Texture -->
     <div class="grain"></div>
@@ -575,12 +545,11 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Mobile Drawer Overlay -->
-    <div id="mobileDrawerOverlay" class="mobile-drawer-overlay"></div>
+    <div id="mobileDrawerOverlay" class="mobile-drawer-overlay" onclick="toggleDrawer()"></div>
 
-    <!-- Header (Improved Glassmorphism) -->
+    <!-- Header -->
     <header id="mainHeader">
         <a href="#" onclick="navigateTo('home')" class="logo-wrapper">
-            <!-- Logo Image and Text -->
             <img src="https://raw.githubusercontent.com/ddnetwork-ent/DDN-One/refs/heads/main/DD-LOGO.JPEG?raw=true" alt="DDNetwork Logo" class="logo-img">
             <span class="company-name">DDNetworkOne</span>
         </a>
@@ -593,7 +562,6 @@
             <a href="#" onclick="navigateTo('contact')">Contact</a>
             <a href="#" onclick="openTermsModal()">Terms</a>
             
-            <!-- Dynamic Auth Links (Desktop) -->
             <div id="desktopAuthLinks">
                 <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
                 <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
@@ -618,7 +586,6 @@
             <li><a href="#" onclick="openTermsModal(); toggleDrawer()">Terms</a></li>
             <li><a href="#" onclick="navigateTo('buynow'); toggleDrawer()" style="color: var(--accent-primary);">Start Project</a></li>
             
-            <!-- Mobile Auth Links -->
             <li id="mobileAuthLinks">
                 <a href="#" onclick="navigateTo('login'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Login</a>
                 <a href="#" onclick="navigateTo('signup'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Sign Up</a>
@@ -632,9 +599,10 @@
         <!-- === PAGE: HOME === -->
         <section id="home" class="page-section active">
             <div class="hero">
+                <div class="hero-glow"></div>
                 <canvas id="globe-canvas" width="1200" height="1200"></canvas>
                 
-                <div class="hero-content">
+                <div class="hero-content reveal active">
                     <div style="display:inline-block; padding: 6px 16px; background: rgba(255,255,255,0.05); border-radius: 30px; border: 1px solid var(--border-light); margin-bottom: 1.5rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: var(--accent-primary); text-transform: uppercase;">
                         Malaysia 🇲🇾 #1 Web Solutions
                     </div>
@@ -655,7 +623,6 @@
                                 <span class="trust-item"><img src="https://play-lh.googleusercontent.com/xEdE68Y9RSYWaC5ckUnSgr0A1UyvTuEKuhUF0kak0jRgu6twGT3YagCTlMiyqQOHoj8=w480-h960-rw" style="width: 40px; height: 40px; vertical-align: middle; margin-right: 10px;" alt="Toyyibpay"></span>
                                 <span class="trust-item"><i class="ri-github-fill"></i> GitHub</span>
                                 <span class="trust-item"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/cloudflare-icon.png" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 10px;" alt="Cloudflare"> Cloudflare</span>
-                                <span class="trust-item"><img src="https://www.toyyibpay.com/wp-content/uploads/2022/07/logo-tp.png" style="width: 130px; height: 24px; vertical-align: middle; margin-right: 10px;" alt="Toyyibpay"></span>
                             </div>
                         </div>
                     </div>
@@ -665,27 +632,25 @@
 
         <!-- === PAGE: PROFILE === -->
         <section id="profile" class="page-section">
-            <div class="auth-container">
-                <div class="auth-card">
+            <div class="auth-container reveal">
+                <div class="auth-card tilt-card">
                     <i class="ri-user-settings-line" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
                     <h2>My Profile</h2>
                     <p>View and update your personal details.</p>
                     
                     <form onsubmit="handleProfileUpdate(event)">
-                        <!-- Grid Layout for Mobile Friendliness -->
                         <div class="profile-details-grid">
-                            <div class="form-group" style="text-align: left;">
+                            <div class="form-group">
                                 <label class="form-label">Full Name</label>
-                                <input type="text" id="prof-name" class="form-input" placeholder="John Doe" required>
+                                <input type="text" id="prof-name" class="form-input" placeholder="Loading..." required>
                             </div>
-                            <div class="form-group" style="text-align: left;">
+                            <div class="form-group">
                                 <label class="form-label">Email Address</label>
-                                <!-- Email is read-only as it requires re-auth to change -->
-                                <input type="email" id="prof-email" class="form-input" placeholder="email@example.com" readonly style="background: rgba(0,0,0,0.2); color: var(--text-tertiary); cursor: not-allowed;">
+                                <input type="email" id="prof-email" class="form-input" placeholder="Loading..." readonly>
                             </div>
-                            <div class="form-group" style="text-align: left;">
+                            <div class="form-group">
                                 <label class="form-label">Phone Number</label>
-                                <input type="tel" id="prof-phone" class="form-input" placeholder="0123456789" required>
+                                <input type="tel" id="prof-phone" class="form-input" placeholder="Loading..." required>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Update Profile</button>
@@ -702,21 +667,20 @@
 
         <!-- === PAGE: LOGIN === -->
         <section id="login" class="page-section">
-            <div class="auth-container">
-                <div class="auth-card">
+            <div class="auth-container reveal">
+                <div class="auth-card tilt-card">
                     <i class="ri-user-3-line" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
                     <h2>Welcome Back</h2>
                     <p>Login to manage your orders.</p>
                     
                     <form onsubmit="handleLogin(event)">
-                        <div class="form-group" style="text-align: left;">
+                        <div class="form-group">
                             <label class="form-label">Email</label>
                             <input type="email" id="login-email" class="form-input" placeholder="hello@example.com" required>
                         </div>
-                        <div class="form-group" style="text-align: left;">
+                        <div class="form-group">
                             <label class="form-label">Password</label>
-                            <input type="password" id="login-password" class="form-input" placeholder="•••••" required>
-                            <!-- ADDED LINK HERE -->
+                            <input type="password" id="login-password" class="form-input" placeholder="••••" required>
                             <div style="text-align: right; margin-top: 5px;">
                                 <span class="auth-link" style="font-size: 0.8rem;" onclick="navigateTo('forgot-password')">Forgot Password?</span>
                             </div>
@@ -733,14 +697,14 @@
 
         <!-- === PAGE: FORGOT PASSWORD === -->
         <section id="forgot-password" class="page-section">
-            <div class="auth-container">
-                <div class="auth-card">
+            <div class="auth-container reveal">
+                <div class="auth-card tilt-card">
                     <i class="ri-lock-password-line" style="font-size: 3rem; color: var(--accent-warn); margin-bottom: 1rem;"></i>
                     <h2>Reset Password</h2>
                     <p>Enter your email to receive a reset link.</p>
                     
                     <form onsubmit="handleForgotPassword(event)">
-                        <div class="form-group" style="text-align: left;">
+                        <div class="form-group">
                             <label class="form-label">Email Address</label>
                             <input type="email" id="reset-email" class="form-input" placeholder="hello@example.com" required>
                         </div>
@@ -756,25 +720,25 @@
 
         <!-- === PAGE: SIGNUP === -->
         <section id="signup" class="page-section">
-            <div class="auth-container">
-                <div class="auth-card">
+            <div class="auth-container reveal">
+                <div class="auth-card tilt-card">
                     <h2>Create Account</h2>
                     <p>Join us to track your projects.</p>
                     
                     <form onsubmit="handleSignup(event)">
-                        <div class="form-group" style="text-align: left;">
+                        <div class="form-group">
                             <label class="form-label">Full Name</label>
                             <input type="text" id="signup-name" class="form-input" placeholder="John Doe" required>
                         </div>
-                        <div class="form-group" style="text-align: left;">
+                        <div class="form-group">
                             <label class="form-label">Phone Number</label>
                             <input type="tel" id="signup-phone" class="form-input" placeholder="0123456789" required>
                         </div>
-                        <div class="form-group" style="text-align: left;">
+                        <div class="form-group">
                             <label class="form-label">Email</label>
                             <input type="email" id="signup-email" class="form-input" placeholder="hello@example.com" required>
                         </div>
-                        <div class="form-group" style="text-align: left;">
+                        <div class="form-group">
                             <label class="form-label">Password</label>
                             <input type="password" id="signup-password" class="form-input" placeholder="Min 6 chars" required minlength="6">
                         </div>
@@ -791,39 +755,39 @@
         <!-- === PAGE: SERVICES === -->
         <section id="services" class="page-section">
             <div style="padding-bottom: 4rem;">
-                <div class="text-center" style="margin-bottom: 3rem;">
+                <div class="text-center reveal" style="margin-bottom: 3rem;">
                     <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Select Your Package</h2>
                     <p style="color: var(--text-secondary); font-size: 0.9rem;">Transparent pricing. No hidden fees. Choose what fits your needs.</p>
                 </div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                     
-                    <!-- Package 1: HTML -->
-                    <div class="checkout-card" style="text-align: center; border: 1px solid var(--border-light);">
+                    <!-- Package 1 -->
+                    <div class="checkout-card reveal tilt-card" style="text-align: center; border: 1px solid var(--border-light);">
                         <div style="background: rgba(255,255,255,0.05); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                             <i class="ri-file-list-2-line" style="font-size: 1.2rem; color: var(--text-secondary);"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">HTML Only</h3>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Perfect for simple landing pages and personal profiles.</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Perfect for simple landing pages.</p>
                         <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;">RM 199</div>
-                        <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem;">
+                        <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• 1-2 Static Pages</li>
                             <li>• Mobile Responsive</li>
                             <li>• Basic SEO Tags</li>
                         </ul>
-                        <button class="btn btn-primary" style="width: 100%;" onclick="selectPackage('HTML Only', 'html')">Select HTML Only</button>
+                        <button class="btn btn-primary" style="width: 100%;" onclick="selectPackage('HTML Only', 'html')">Select</button>
                     </div>
 
-                    <!-- Package 2: Front-End (Popular) -->
-                    <div class="checkout-card" style="text-align: center; border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); position: relative;">
+                    <!-- Package 2 -->
+                    <div class="checkout-card reveal tilt-card" style="text-align: center; border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); position: relative;">
                         <div style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: white; padding: 2px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: 700;">MOST POPULAR</div>
                         <div style="background: var(--accent-primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 0 15px var(--accent-glow);">
                             <i class="ri-layout-masonry-line" style="font-size: 1.2rem; color: white;"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">Front-End Website</h3>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Interactive multi-page websites for businesses.</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Interactive multi-page websites.</p>
                         <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;">RM 599</div>
-                        <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem;">
+                        <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• Up to 5 Pages</li>
                             <li>• Animations & Interactions</li>
                             <li>• Contact Forms</li>
@@ -832,15 +796,15 @@
                         <button class="btn btn-primary" style="width: 100%; background: var(--accent-primary); color: white; border-color: var(--accent-primary);" onclick="selectPackage('Front-End Website', 'frontend')">Select Front-End</button>
                     </div>
 
-                    <!-- Package 3: AI Powered -->
-                    <div class="checkout-card" style="text-align: center; border: 1px solid var(--border-light);">
+                    <!-- Package 3 -->
+                    <div class="checkout-card reveal tilt-card" style="text-align: center; border: 1px solid var(--border-light);">
                         <div style="background: linear-gradient(135deg, #6366f1, #a855f7); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                             <i class="ri-brain-line" style="font-size: 1.2rem; color: white;"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">AI Powered</h3>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Next-gen websites with AI automation & chatbots.</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Next-gen automation & chatbots.</p>
                         <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;">Custom</div>
-                        <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem;">
+                        <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• All Front-End Features</li>
                             <li>• AI Chatbot Integration</li>
                             <li>• Lead Auto-Response</li>
@@ -850,43 +814,31 @@
                     </div>
 
                 </div>
-
-                <!-- Disclaimer -->
-                <div style="margin-top: 3rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); padding: 1.5rem; border-radius: 16px; text-align: left;">
-                    <h4 style="color: var(--accent-warn); margin-bottom: 0.75rem; font-size: 0.9rem;"><i class="ri-error-warning-line"></i> Important Note</h4>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5;">
-                        Our services focus on design, code, and structure. While we optimize for SEO and performance, business results (traffic/sales) depend on your marketing efforts. Pricing is an estimate; final quotes may vary based on specific content or complexity.
-                    </p>
-                </div>
             </div>
         </section>
 
-        <!-- === PAGE: CHECKOUT / BUY NOW === -->
+        <!-- === PAGE: CHECKOUT === -->
         <section id="buynow" class="page-section">
-            <div class="text-center" style="margin-bottom: 2rem;">
+            <div class="text-center reveal" style="margin-bottom: 2rem;">
                 <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Finalize Your Order</h2>
-                <p style="color: var(--text-secondary);">Secure your package via TNG eWallet or FPX and finalize details via WhatsApp.</p>
+                <p style="color: var(--text-secondary);">Secure your package and finalize details.</p>
             </div>
 
             <div class="checkout-grid">
                 
-                <!-- LEFT COLUMN: Order Summary -->
-                <div class="checkout-card">
+                <!-- LEFT COLUMN -->
+                <div class="checkout-card reveal">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-light);">
                         <h3 style="font-size: 1rem; color: white;">Order Summary</h3>
                         <span class="change-package" onclick="navigateTo('services')">Change Package</span>
                     </div>
 
-                    <!-- Selected Package Display -->
                     <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 1.5rem;">
                         <h4 id="summary-pkg-name" style="color: var(--accent-primary); margin-bottom: 0.5rem;">Select a Package</h4>
                         <p id="summary-pkg-desc" style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Please select a package from Services page.</p>
-                        
-                        <!-- Dynamic Price Area (Fixed Price Label) -->
                         <div id="dynamic-price-area"></div>
                     </div>
 
-                    <!-- Addons Summary -->
                     <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem;">
                         <div class="summary-row">
                             <span style="color: var(--text-secondary);">Domain:</span>
@@ -896,39 +848,32 @@
                             <span style="color: var(--text-secondary);">Maintenance:</span>
                             <span id="summary-maintenance" style="color: white; font-weight: 600;">None</span>
                         </div>
-                        
-                        <!-- Discount Row with Remove (x) Icon -->
                         <div class="summary-row" id="row-discount" style="display: none; color: #10b981;">
                             <span style="display: flex; align-items: center;">
-                                Discount Applied: <strong id="summary-promo-code" style="margin: 0 5px;"></strong>
-                                <i class="ri-close-circle-line remove-discount-btn" onclick="removePromo()" title="Remove Discount"></i>
+                                Discount: <strong id="summary-promo-code" style="margin: 0 5px;"></strong>
+                                <i class="ri-close-circle-line remove-discount-btn" onclick="removePromo()"></i>
                             </span>
                             <span id="summary-discount-val">-0%</span>
                         </div>
-
                     </div>
 
-                    <!-- Total -->
                     <div class="summary-total">
                         <span>Total</span>
                         <span id="summary-final-total" style="color: var(--accent-primary);">RM 0</span>
                     </div>
-                    
                     <div id="deposit-note" style="text-align: right; font-size: 0.8rem; color: var(--accent-warn); margin-top: 10px; font-weight: 600;">
                         Deposit Required (50%): RM 0
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN: Form -->
-                <div class="checkout-card">
+                <!-- RIGHT COLUMN -->
+                <div class="checkout-card reveal">
                     <h3 style="margin-bottom: 2rem; color: white;">Configuration</h3>
                     
                     <form id="checkoutForm" onsubmit="return false;">
-                        
                         <!-- Contact Info -->
                         <div class="form-group">
-                            <label class="form-label">Personal Details <span id="auto-fill-label" style="font-size: 0.7rem; color: var(--accent-primary); display: none;">(Auto-filled from Profile)</span></label>
-                            <!-- Grid Layout for Mobile Friendliness -->
+                            <label class="form-label">Personal Details <span id="auto-fill-label" style="font-size: 0.7rem; color: var(--accent-primary); display: none;">(Auto-filled)</span></label>
                             <div class="profile-details-grid">
                                 <input type="text" id="co-name" class="form-input" placeholder="Full Name" required>
                                 <input type="tel" id="co-phone" class="form-input" placeholder="Phone Number" required>
@@ -950,13 +895,11 @@
                                 </div>
                             </div>
                             
-                            <!-- Subdomain Input -->
                             <div id="input-subdomain" style="margin-top: 10px;">
                                 <input type="text" id="subdomain-text" class="form-input" placeholder="yourname" oninput="updateSummaryText()">
                                 <span style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: 5px; display: block;">URL: <span id="url-preview" style="color: var(--accent-primary); font-weight: 700;">.ddn.one</span></span>
                             </div>
                             
-                            <!-- Custom Input -->
                             <div id="input-custom" style="display: none; margin-top: 10px;">
                                 <input type="text" id="custom-domain-text" class="form-input" placeholder="www.example.com" oninput="updateSummaryText()">
                             </div>
@@ -1000,11 +943,9 @@
                             </label>
                         </div>
 
-                        <!-- UPDATED: Payment Method & Action Buttons at Bottom -->
+                        <!-- Payment & Action Buttons -->
                         <div style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
                             <label class="form-label" style="color: var(--accent-primary); font-weight: 700;">Payment Method</label>
-                            
-                            <!-- Payment Method Selection -->
                             <div class="radio-group" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.5rem;">
                                 <div class="radio-option selected" onclick="updatePaymentMethod('tng', this)">
                                     <input type="radio" name="pay_method" value="tng" checked> 
@@ -1015,21 +956,8 @@
                                     <span style="font-size: 1rem; color: var(--text-main); font-weight: 700;">FPX via Toyyibpay</span>
                                 </div>
                             </div>
-
-                            <!-- Step 1: Proceed to Payment -->
-                            <button type="button" class="btn" style="width: 100%; margin-bottom: 1rem;" onclick="triggerPayment()">
-                                <span style="margin-right: 8px;">Step 1</span> Proceed to Payment
-                            </button>
-
-                            <!-- Step 2: Place Order -->
-                            <button type="button" class="btn btn-success" style="width: 100%;" onclick="submitOrder()">
-                                <i class="ri-shopping-bag-line" style="margin-right: 8px;"></i> Place Order
-                            </button>
-
-                            <!-- Removed WhatsApp Button -->
-                            <p style="font-size: 0.75rem; color: var(--text-tertiary); text-align: center; margin-top: 5px;">
-                                *Order will be saved to database and Admin notified.
-                            </p>
+                            <button type="button" class="btn" style="width: 100%; margin-bottom: 1rem;" onclick="triggerPayment()"><span style="margin-right: 8px;">Step 1</span> Proceed to Payment</button>
+                            <button type="button" class="btn btn-success" style="width: 100%;" onclick="submitOrder()"><i class="ri-shopping-bag-line" style="margin-right: 8px;"></i> Place Order</button>
                         </div>
                     </form>
                 </div>
@@ -1038,32 +966,30 @@
 
         <!-- === PAGE: CLIENTS === -->
         <section id="clients" class="page-section">
-            <div class="text-center" style="margin-bottom: 3rem;">
+            <div class="text-center reveal" style="margin-bottom: 3rem;">
                 <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Portfolio</h2>
                 <p style="color: var(--text-secondary);">Trusted by forward-thinking businesses.</p>
             </div>
-
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                 <!-- Client 1 -->
-                <div class="checkout-card" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
+                <div class="checkout-card reveal tilt-card" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
                     <div style="height: 200px; overflow: hidden;">
                         <img src="https://raw.githubusercontent.com/ddnetwork-ent/clinic-azam-dental/refs/heads/main/IMG_2260.JPG" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                     </div>
                     <div style="padding: 1.5rem;">
                         <h4 style="margin-bottom: 0.5rem;">Klinik Pergigian Azam</h4>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Dental clinic with appointment booking and services showcase.</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Dental clinic with appointment booking.</p>
                         <a href="https://ddnetwork-ent.github.io/clinic-azam-dental/" target="_blank" class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</a>
                     </div>
                 </div>
-
                 <!-- Client 2 -->
-                <div class="checkout-card" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
+                <div class="checkout-card reveal tilt-card" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
                     <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #e2e8f0;">
                          <img src="https://raw.githubusercontent.com/ddnetwork-ent/mory-matcha/refs/heads/main/MORY%20ICON-green.png" style="height: 80%;">
                     </div>
                     <div style="padding: 1.5rem;">
                         <h4 style="margin-bottom: 0.5rem;">Mory Matcha</h4>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Brand landing page for a premium matcha drink outlet in Ipoh.</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Premium matcha drink brand landing page.</p>
                         <a href="https://mory.ddnetwork.uk" target="_blank" class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</a>
                     </div>
                 </div>
@@ -1073,7 +999,7 @@
         <!-- === PAGE: CONTACT === -->
         <section id="contact" class="page-section">
             <div class="container" style="max-width: 800px;">
-                <div class="checkout-card" style="text-align: center;">
+                <div class="checkout-card reveal text-center">
                     <i class="ri-mail-send-line" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
                     <h2 style="margin-bottom: 1rem;">Get In Touch</h2>
                     <p style="color: var(--text-secondary); margin-bottom: 2rem;">Have a custom project in mind? Send us a direct message.</p>
@@ -1093,7 +1019,6 @@
                         </div>
                         <button class="btn btn-primary" style="width: 100%;">Send Message</button>
                     </form>
-                    
                     <div style="margin-top: 3rem; border-top: 1px solid var(--border-light); padding-top: 2rem;">
                         <p style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Email Us</p>
                         <a href="mailto:sales@ddn.one" style="color: var(--accent-primary); font-size: 1.2rem;">sales@ddn.one</a>
@@ -1118,34 +1043,71 @@
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer style="margin-top: auto; padding: 3rem 0 2rem; border-top: 1px solid var(--border-light); text-align: center;">
-            <div class="container">
-                <div style="margin-bottom: 1rem;">
-                    <p class="company-name" style="justify-content: center; margin-bottom: 1rem;">DDNetwork<span style="color:var(--text-tertiary)">One</span></p>
-                </div>
-                
-                <!-- macOS Dock Style Social Icons -->
-                <div class="mac-dock">
-                    <a href="https://linkedin.com" target="_blank" class="dock-icon">
-                        <i class="ri-linkedin-fill"></i>
-                    </a>
-                    <a href="https://instagram.com" target="_blank" class="dock-icon">
-                        <i class="ri-instagram-line"></i>
-                    </a>
-                    <a href="https://tiktok.com" target="_blank" class="dock-icon">
-                        <i class="ri-tiktok-fill"></i>
-                    </a>
-                    <a href="https://x.com" target="_blank" class="dock-icon">
-                        <i class="ri-twitter-x-fill"></i> <!-- Using RemixIcon Close line as X placeholder -->
-                    </a>
-                </div>
-
-                <p style="color: var(--text-tertiary); font-size: 0.9rem;">&copy; 2025-2026 DDNetwork One. PG0572133-K All rights reserved.</p>
-            </div>
-        </footer>
-
     </main>
+
+    <!-- BETTER FOOTER (UPDATED LAYOUT) -->
+    <footer>
+        <div class="container">
+            <!-- Footer Grid Layout (Updated to 3 Columns) -->
+            <div class="footer-grid">
+                
+                <!-- Column 1: Brand (Left Aligned) -->
+                <div class="footer-col footer-brand">
+                    <a href="#" onclick="navigateTo('home')" style="cursor: pointer;">
+                        <span class="company-name">DDNetwork<span style="color:var(--text-tertiary)">One</span></span>
+                    </a>
+                    <p>
+                        Empowering Malaysian businesses with high-performance websites, cutting-edge AI solutions, and digital strategies that scale.
+                    </p>
+                </div>
+
+                <!-- Column 2: Support -->
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="navigateTo('contact')">Contact Support</a></li>
+                        <li><a href="#" onclick="openTermsModal()">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Contact -->
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <div class="footer-contact-item">
+                        <i class="ri-mail-send-line"></i>
+                        <span>sales@ddn.one</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <i class="ri-whatsapp-line"></i>
+                        <span>+60 12-260 0969</span>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="https://linkedin.com" target="_blank" class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem; width: 100%; margin-bottom: 0.5rem;">
+                            <i class="ri-linkedin-fill" style="margin-right: 5px;"></i> LinkedIn
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem; width: 100%;">
+                            <i class="ri-instagram-line" style="margin-right: 5px;"></i> Instagram
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Bottom Bar -->
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2025-2026 DDNetwork One. PG0572133-K All rights reserved.</p>
+                
+                <!-- Mac Dock Style Socials (Desktop Only) -->
+                <div class="mac-dock">
+                    <a href="https://linkedin.com" target="_blank" class="dock-icon"><i class="ri-linkedin-fill"></i></a>
+                    <a href="https://instagram.com" target="_blank" class="dock-icon"><i class="ri-instagram-line"></i></a>
+                    <a href="https://tiktok.com" target="_blank" class="dock-icon"><i class="ri-tiktok-fill"></i></a>
+                    <a href="https://x.com" target="_blank" class="dock-icon"><i class="ri-twitter-x-fill"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- TERMS MODAL -->
     <div id="termsModal" class="modal">
@@ -1166,9 +1128,15 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        // ==========================================
-        // --- FIREBASE CONFIG (YOUR KEYS ADDED) ---
-        // ==========================================
+        // Preloader Removal
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(() => {
+                preloader.style.display = 'none';
+            }, 600);
+        });
+
         const firebaseConfig = {
             apiKey: "AIzaSyAwf31b-wpYQwPbd-3DxnqGVRw8g3xq938",
             authDomain: "ddnetwork-database.firebaseapp.com",
@@ -1178,7 +1146,6 @@
             appId: "1:699127560990:web:50cfd61ff620bc85fb670f"
         };
 
-        // Initialize Firebase
         let db, auth;
         try {
             if(firebaseConfig.apiKey === "YOUR_API_KEY_HERE") {
@@ -1193,10 +1160,21 @@
             console.error("Firebase initialization error:", e);
         }
 
-        // --- CONFIG ---
-        const PHONE_NO = "60122600969"; // Placeholder phone number
-        const ADMIN_PHONE_NO = "60122600969"; // Admin number for "Place Order"
-        const PROMO_CODES = { 'DDN20': 0.20, 'MORY60': 0.60, 'FUTURE': 0.50 };
+        // DYNAMIC PROMO CODES (New Feature)
+        let PROMO_CODES = {}; // Start empty
+        
+        // Listen for promo codes from Firestore
+        db.collection("promo_codes").onSnapshot((snapshot) => {
+            PROMO_CODES = {}; // Reset
+            snapshot.forEach(doc => {
+                PROMO_CODES[doc.id] = doc.data().discount;
+            });
+            console.log("Promo Codes Updated:", PROMO_CODES);
+        });
+
+
+        const PHONE_NO = "60122600969"; 
+        const ADMIN_PHONE_NO = "60122600969"; 
         
         const FPX_URLS = {
             'html': 'https://toyyibpay.com/htmlplan-50-depo',
@@ -1204,7 +1182,6 @@
         };
         const TNG_GENERIC = 'https://payment.tngdigital.com.my/sc/bDLob7YcpG';
 
-        // --- STATE ---
         let state = {
             packageType: null,
             packagePrice: 0,
@@ -1217,19 +1194,94 @@
             paymentMethod: 'tng'
         };
 
-        // --- AUTH LOGIC ---
-        
-        // Listen for Auth Changes
+        // ==========================================
+        // FIREBASE AUTH & USER DATA MANAGEMENT
+        // ==========================================
+
         if(auth) {
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     updateHeaderForUser(user);
-                    // If we are on checkout or profile page, try to load details
-                    loadUserProfileToCheckout(user.uid);
-                    loadProfileData(user.uid);
+                    // Initial fetch to populate checkout if needed immediately
+                    fetchAndSyncUserData(user.uid);
                 } else {
                     updateHeaderForGuest();
+                    clearUserData();
                 }
+            });
+        }
+
+        /**
+         * Explicit function to load Profile Page Data.
+         * Called whenever user navigates to Profile page.
+         */
+        function loadProfilePageData() {
+            if(!auth || !auth.currentUser) {
+                showToast("Please login to view profile.", "error");
+                navigateTo('login');
+                return;
+            }
+
+            // Show loading placeholders
+            document.getElementById('prof-name').value = "Loading...";
+            document.getElementById('prof-email').value = "Loading...";
+            document.getElementById('prof-phone').value = "Loading...";
+
+            db.collection("users").doc(auth.currentUser.uid).get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const profName = document.getElementById('prof-name');
+                    const profPhone = document.getElementById('prof-phone');
+                    const profEmail = document.getElementById('prof-email');
+                    
+                    if(profName) profName.value = data.name || '';
+                    if(profPhone) profPhone.value = data.phone || '';
+                    if(profEmail) profEmail.value = data.email || auth.currentUser.email || '';
+                } else {
+                    console.warn("No profile document found for this user.");
+                    showToast("Profile data not found. Please complete your signup details.", "error");
+                    document.getElementById('prof-name').value = "";
+                    document.getElementById('prof-email').value = auth.currentUser.email || "";
+                    document.getElementById('prof-phone').value = "";
+                }
+            }).catch((error) => {
+                console.error("Error loading profile data:", error);
+                showToast("Error loading profile data. Please try again.", "error");
+            });
+        }
+
+        /**
+         * Fetches user data from Firestore and synchronizes it with Checkout page.
+         */
+        function fetchAndSyncUserData(uid) {
+            if(!db) return;
+            
+            db.collection("users").doc(uid).get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+
+                    // Sync Checkout Page Inputs (Auto-fill)
+                    const coName = document.getElementById('co-name');
+                    const coPhone = document.getElementById('co-phone');
+                    const coEmail = document.getElementById('co-email');
+                    const autoFillLabel = document.getElementById('auto-fill-label');
+
+                    if(data.name && coName) coName.value = data.name;
+                    if(data.phone && coPhone) coPhone.value = data.phone;
+                    if(data.email && coEmail) coEmail.value = data.email;
+
+                    // Show Auto-fill badge only if data is actually present
+                    if(data.name && data.phone && data.email && autoFillLabel) {
+                        autoFillLabel.style.display = 'inline';
+                    } else if (autoFillLabel) {
+                        autoFillLabel.style.display = 'none';
+                    }
+
+                } else {
+                    console.log("No user profile document found yet.");
+                }
+            }).catch((error) => {
+                console.error("Error fetching user data:", error);
             });
         }
 
@@ -1245,60 +1297,7 @@
                     showToast("Login Successful!", "success");
                     navigateTo('home');
                 })
-                .catch((error) => {
-                    showToast(error.message, "error");
-                });
-        }
-
-        function handleProfileUpdate(e) {
-            e.preventDefault();
-            if(!auth || !auth.currentUser) return;
-
-            const name = document.getElementById('prof-name').value;
-            const phone = document.getElementById('prof-phone').value;
-            
-            // Update Firestore
-            db.collection("users").doc(auth.currentUser.uid).update({
-                name: name,
-                phone: phone
-            })
-            .then(() => {
-                showToast("Profile Updated Successfully!", "success");
-                // Update local state immediately
-                loadProfileData(auth.currentUser.uid);
-            })
-            .catch((error) => {
-                showToast(error.message, "error");
-            });
-        }
-
-        function loadProfileData(uid) {
-            if(!db) return;
-            db.collection("users").doc(uid).get().then((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    const nameInput = document.getElementById('prof-name');
-                    const phoneInput = document.getElementById('prof-phone');
-                    const emailInput = document.getElementById('prof-email'); // Get email input reference
-                    
-                    if(nameInput) nameInput.value = data.name || '';
-                    if(phoneInput) phoneInput.value = data.phone || '';
-                    // Email is critical. If it's null, empty string is safer
-                    if(emailInput) emailInput.value = data.email || '';
-                }
-            }).catch((error) => {
-                console.log("Error getting document:", error);
-            });
-        }
-
-        function handleProfileReset() {
-            if(!auth || !auth.currentUser) return;
-            const email = auth.currentUser.email;
-            
-            // Pre-fill reset email input and navigate
-            document.getElementById('reset-email').value = email;
-            navigateTo('forgot-password');
-            showToast("Email pre-filled. Please check your spam/junk folder.", "success");
+                .catch((error) => showToast(error.message, "error"));
         }
 
         function handleSignup(e) {
@@ -1312,14 +1311,12 @@
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Signed in 
                     const user = userCredential.user;
-                    
-                    // Save extra details to Firestore 'users' collection
+                    // Create Firestore Document with Profile Data
                     return db.collection("users").doc(user.uid).set({
                         name: name,
                         phone: phone,
-                        email: email, // Ensure Email is saved
+                        email: email,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
@@ -1327,9 +1324,40 @@
                     showToast("Account Created!", "success");
                     navigateTo('home');
                 })
-                .catch((error) => {
-                    showToast(error.message, "error");
-                });
+                .catch((error) => showToast(error.message, "error"));
+        }
+
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            if(!auth || !auth.currentUser) return;
+            
+            const name = document.getElementById('prof-name').value;
+            const phone = document.getElementById('prof-phone').value;
+            const email = document.getElementById('prof-email').value; // Read-only usually, but passed for consistency
+
+            // Update Firestore
+            db.collection("users").doc(auth.currentUser.uid).update({ 
+                name: name, 
+                phone: phone,
+                email: email 
+            })
+            .then(() => {
+                showToast("Profile Updated Successfully!", "success");
+                // Re-sync data to ensure checkout form is updated immediately
+                fetchAndSyncUserData(auth.currentUser.uid);
+            })
+            .catch((error) => showToast(error.message, "error"));
+        }
+
+        function clearUserData() {
+            // Helper to clear forms on logout
+            const inputs = ['prof-name', 'prof-phone', 'prof-email', 'co-name', 'co-phone', 'co-email'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = '';
+            });
+            const label = document.getElementById('auto-fill-label');
+            if(label) label.style.display = 'none';
         }
 
         function handleLogout() {
@@ -1341,35 +1369,51 @@
             }
         }
 
+        // ==========================================
+        // ADMIN DETECTION (New Feature)
+        // ==========================================
         function updateHeaderForUser(user) {
-            // Desktop Header
-            const deskAuth = document.getElementById('desktopAuthLinks');
-            if(deskAuth) {
-                // Use Icon instead of text
-                deskAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
-                    <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
-                    <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile')">
-                        <i class="ri-user-settings-line"></i>
+            const isAdmin = user.email === "ddnetwork.one@outlook.com";
+
+            let userControls = `
+                <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
+                <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
+                <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile')"><i class="ri-user-settings-line"></i></a>
+                <span class="logout-btn" onclick="handleLogout()">Logout</span>
+            `;
+
+            // If Admin, prepend the Admin Portal button
+            if (isAdmin) {
+                userControls = `
+                    <a href="admin.html" target="_blank" style="color: #000; background: var(--accent-warn); font-weight: 700; padding: 0.5rem 1rem; border-radius: 100px; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                        <i class="ri-shield-user-line"></i> Admin Portal
                     </a>
-                    <span class="logout-btn" onclick="handleLogout()">Logout</span>
+                    <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
+                    ${userControls}
                 `;
             }
 
-            // Mobile Drawer
+            const deskAuth = document.getElementById('desktopAuthLinks');
+            if(deskAuth) {
+                deskAuth.innerHTML = userControls;
+            }
+
+            // Mobile Menu Update
             const mobAuth = document.getElementById('mobileAuthLinks');
             if(mobAuth) {
                 mobAuth.innerHTML = `
-                    <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom: 1rem;">
-                        <i class="ri-user-line"></i>
-                    </a>
+                    ${isAdmin ? `
+                        <a href="admin.html" target="_blank" style="font-size: 1.5rem; color: var(--accent-warn); display: block; margin-bottom: 1rem;">
+                            <i class="ri-shield-user-line"></i> Admin Portal
+                        </a>
+                    ` : ''}
+                    <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom: 1rem;"><i class="ri-user-line"></i></a>
                     <a href="#" onclick="handleLogout(); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Logout</a>
                 `;
             }
         }
 
         function updateHeaderForGuest() {
-            // Desktop Header
             const deskAuth = document.getElementById('desktopAuthLinks');
             if(deskAuth) {
                 deskAuth.innerHTML = `
@@ -1379,8 +1423,6 @@
                     <a href="#" onclick="navigateTo('signup')">Sign Up</a>
                 `;
             }
-
-            // Mobile Drawer
             const mobAuth = document.getElementById('mobileAuthLinks');
             if(mobAuth) {
                 mobAuth.innerHTML = `
@@ -1390,36 +1432,77 @@
             }
         }
 
-        function loadUserProfileToCheckout(uid) {
-            if(!db) return;
-            db.collection("users").doc(uid).get().then((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    const nameInput = document.getElementById('co-name');
-                    const phoneInput = document.getElementById('co-phone');
-                    const emailInput = document.getElementById('co-email'); // New Email Input
-                    const label = document.getElementById('auto-fill-label');
+        function handleProfileReset() {
+            if(!auth || !auth.currentUser) return;
+            const email = auth.currentUser.email;
+            document.getElementById('reset-email').value = email;
+            navigateTo('forgot-password');
+            showToast("Email pre-filled. Please check spam folder.", "success");
+        }
 
-                    if(nameInput) nameInput.value = data.name || '';
-                    if(phoneInput) phoneInput.value = data.phone || '';
-                    if(emailInput) emailInput.value = data.email || ''; // Load Email
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('reset-email').value;
+            if(!auth) return showToast("Firebase not configured", "error");
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showToast("Reset email sent. Please check your spam folder.", "success");
+                    setTimeout(() => navigateTo('login'), 3000);
+                })
+                .catch((error) => showToast(error.message, "error"));
+        }
+
+        // --- SMOOTH PAGE TRANSITION LOGIC ---
+        function navigateTo(pageId) {
+            const currentSection = document.querySelector('.page-section.active');
+            const targetSection = document.getElementById(pageId);
+
+            if (currentSection === targetSection) return; // Prevent reload if same page
+            if (currentSection && currentSection.classList.contains('leaving')) return; // Prevent double clicks
+
+            // 1. Exit Animation: Fade out and slide up current page
+            if (currentSection) {
+                currentSection.classList.remove('active');
+                currentSection.classList.add('leaving');
+                
+                // Start scrolling while fading out (smoother feel)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                // No current page (initial load), just scroll immediately
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // 2. Switch Content & Enter Animation (Wait for exit to finish)
+            setTimeout(() => {
+                // Hide all sections cleanly
+                document.querySelectorAll('.page-section').forEach(sec => {
+                    sec.classList.remove('active', 'leaving');
+                    sec.style.display = 'none';
+                });
+
+                if (targetSection) {
+                    targetSection.style.display = 'block'; // Show new page (invisible initially due to CSS)
                     
-                    if(data.name && data.phone && data.email) {
-                        label.style.display = 'inline';
+                    // Force Reflow: This ensures the browser calculates the new layout 
+                    // and resets the transition state so the entrance animation plays fresh.
+                    void targetSection.offsetWidth; 
+
+                    // Trigger Entrance: Add .active (fade in and slide up)
+                    targetSection.classList.add('active');
+                    
+                    // SPECIFIC FIX: If navigating to profile, load data explicitly
+                    if(pageId === 'profile') {
+                        loadProfilePageData();
+                    }
+
+                    // If navigating to checkout and user is logged in, ensure data is fresh
+                    if(pageId === 'buynow' && auth && auth.currentUser) {
+                        fetchAndSyncUserData(auth.currentUser.uid);
                     }
                 }
-            }).catch((error) => {
-                console.log("Error getting document:", error);
-            });
+            }, 400); // 400ms delay allows the exit to finish partially, creating a seamless handover
         }
 
-        // --- NAVIGATION ---
-        function navigateTo(pageId) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
-            const target = document.getElementById(pageId);
-            if(target) setTimeout(() => target.classList.add('active'), 100);
-        }
 
         function toggleDrawer() {
             const drawer = document.getElementById('mobileDrawer');
@@ -1440,7 +1523,6 @@
             }
         }
 
-        // --- CHECKOUT LOGIC ---
         function selectPackage(name, type) {
             state.packageType = type;
             state.packagePrice = 0; 
@@ -1461,7 +1543,7 @@
             } else if (type === 'ai') {
                 state.packagePrice = 0;
                 document.getElementById('summary-pkg-desc').innerText = "AI Integration & Chatbot";
-                priceArea.innerHTML = `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:#a1a1aa; text-align:center;">Custom Quote required. Sales will contact you.</div>`;
+                priceArea.innerHTML = `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:#a1a1aa; text-align:center;">Custom Quote required.</div>`;
             }
 
             document.getElementById('checkoutForm').reset();
@@ -1472,9 +1554,9 @@
             state.discountCode = '';
             document.getElementById('terms-check').checked = false;
             
-            // Reload user details if logged in, otherwise clear
+            // Trigger sync again when package is selected to ensure latest user data is in checkout
             if(auth && auth.currentUser) {
-                loadUserProfileToCheckout(auth.currentUser.uid);
+                fetchAndSyncUserData(auth.currentUser.uid);
             } else {
                 document.getElementById('auto-fill-label').style.display = 'none';
             }
@@ -1484,28 +1566,8 @@
             navigateTo('buynow');
         }
 
-        function createSliderHTML(min, max) {
-            return `
-                <div style="margin-top: 10px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-secondary); margin-bottom:5px;">
-                        <span>Adjust Budget</span>
-                        <span id="slider-val-disp" style="color:var(--accent-primary); font-weight:700;">RM ${min}</span>
-                    </div>
-                    <input type="range" min="${min}" max="${max}" value="${min}" step="10" 
-                        oninput="updateSliderPrice(this.value, ${min}, ${max})">
-                </div>
-            `;
-        }
-
-        function updateSliderPrice(val, min, max) {
-            state.packagePrice = parseInt(val);
-            document.getElementById('slider-val-disp').innerText = `RM ${val}`;
-            updateTotal();
-        }
-
         function updateDomain(type, element) {
             state.domainType = type;
-            
             const options = element.parentElement.querySelectorAll('.radio-option');
             options.forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
@@ -1538,19 +1600,16 @@
         }
 
         function applyPromo() {
-            // NEW CHECK: Must be logged in to use promo
             if(!auth || !auth.currentUser) {
                 showToast("Please login to use Promo Codes.", "error");
                 return;
             }
-
             const input = document.getElementById('promo-input');
             const code = input.value.trim().toUpperCase();
             
             if(PROMO_CODES.hasOwnProperty(code)) {
                 state.discountRate = PROMO_CODES[code];
                 state.discountCode = code;
-                
                 showToast(`Promo Applied: ${code}`, 'success');
                 
                 document.getElementById('row-discount').style.display = 'flex';
@@ -1567,9 +1626,7 @@
             state.discountRate = 0;
             state.discountCode = '';
             document.getElementById('promo-input').value = '';
-            
             document.getElementById('row-discount').style.display = 'none';
-            
             showToast('Discount removed', 'success');
             updateTotal();
         }
@@ -1609,7 +1666,6 @@
             updateTotal();
         }
 
-        // --- PAYMENT METHOD LOGIC ---
         function updatePaymentMethod(method, element) {
             state.paymentMethod = method;
             const options = element.parentElement.querySelectorAll('.radio-option');
@@ -1624,9 +1680,7 @@
                 showToast("Please select a package first.", "error");
                 return;
             }
-
             let targetUrl = "";
-            
             if (state.paymentMethod === 'tng') {
                 targetUrl = TNG_GENERIC;
             } else if (state.paymentMethod === 'fpx') {
@@ -1640,18 +1694,16 @@
             } else {
                 targetUrl = TNG_GENERIC;
             }
-
             window.open(targetUrl, '_blank');
         }
 
-        // --- MODAL LOGIC ---
         function openTermsModal() {
-            document.getElementById('termsModal').style.display = "block";
+            document.getElementById('termsModal').classList.add("open");
             document.body.style.overflow = "hidden";
         }
 
         function closeTermsModal() {
-            document.getElementById('termsModal').style.display = "none";
+            document.getElementById('termsModal').classList.remove("open");
             document.body.style.overflow = "auto";
         }
 
@@ -1662,61 +1714,33 @@
             }
         }
 
-        // --- FORGOT PASSWORD LOGIC (UPDATED MESSAGE) ---
-        function handleForgotPassword(e) {
-            e.preventDefault();
-            const email = document.getElementById('reset-email').value;
-
-            if(!auth) return showToast("Firebase not configured", "error");
-
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    // UPDATED MESSAGE
-                    showToast("Reset email sent. Please check your junk/spam email. Thank you.", "success");
-                    setTimeout(() => {
-                        navigateTo('login');
-                    }, 3000);
-                })
-                .catch((error) => {
-                    showToast(error.message, "error");
-                });
-        }
-
-        // --- NEW ORDER SUBMIT LOGIC (Admin Notification) ---
-        // --- NEW ORDER SUBMIT LOGIC (Updated Admin Notification) ---
         function submitOrder() {
             const termsCheck = document.getElementById('terms-check');
             if(!termsCheck.checked) {
                 showToast("Please agree to Terms & Conditions.", "error");
                 return;
             }
-
             if(!state.packageType) {
                 showToast("Please select a package first.", "error");
                 return;
             }
 
-            // Get values from checkout inputs
             const name = document.getElementById('co-name').value;
             const phone = document.getElementById('co-phone').value;
             const email = document.getElementById('co-email').value;
 
             if(!name || !phone || !email) {
-                showToast("Please enter your Name, Phone, and Email.", "error");
+                showToast("Please enter Name, Phone, and Email.", "error");
                 return;
             }
 
-            // Show "Processing..." toast immediately
             showToast("Processing Order...", "success");
 
             const pkgName = document.getElementById('summary-pkg-name').innerText;
             const total = document.getElementById('summary-final-total').innerText;
             const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
             const maint = document.getElementById('summary-maintenance').innerText;
-            const promo = state.discountCode ? `(Promo: ${state.discountCode})` : '';
-            
-            // Format Payment Label for WhatsApp
-            let paymentLabel = state.paymentMethod === 'fpx' ? 'FPX via Toyyibpay' : 'TNG eWallet';
+            const paymentLabel = state.paymentMethod === 'fpx' ? 'FPX via Toyyibpay' : 'TNG eWallet';
 
             const orderData = {
                 customerName: name,
@@ -1727,51 +1751,30 @@
                 maintenance: maint,
                 total: total,
                 promo: state.discountCode,
-                paymentMethod: paymentLabel, // Save readable label to DB
+                paymentMethod: paymentLabel,
                 status: "Pending",
                 userId: auth.currentUser ? auth.currentUser.uid : null,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             if(db) {
-                // Add to Firestore
                 db.collection("orders").add(orderData)
                 .then((docRef) => {
-                    console.log("Document written with ID: ", docRef.id);
-                    
-                    // Show Success Message in Toast
                     showToast("Order Placed Successfully!", "success");
-                    
-                    // Pop-up Modal with New Message (Simulated via Toast for simplicity)
                     setTimeout(() => {
-                        showToast("Thank you, your order will be reviewed within in 24 Hours", "success");
-                        
-                        // NEW WhatsApp MESSAGE FORMAT
-                        // Using \n for new lines and %0a for URL encoding
-                        let notifyMsg = `Hi Admin,`;
-                        notifyMsg += `\n*New Order Received.*`;
-                        notifyMsg += `\n\n*Name:* ${name}`;
-                        notifyMsg += `\n*Phone:* ${phone}`;
-                        notifyMsg += `\n*Email:* ${email}`;
-                        notifyMsg += `\n*Payment Type:* ${paymentLabel}`;
-                        
-                        // Open WhatsApp link automatically with formatted message
-                        // encodeURIComponent handles the special characters and newlines automatically
+                        showToast("Thank you! Order will be reviewed within 24 hours.", "success");
+                        let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}\n*Package:* ${pkgName}\n*Total:* ${total}\n*Payment:* ${paymentLabel}`;
                         window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                     }, 1500);
                 })
                 .catch((error) => {
-                    console.error("Error adding document: ", error);
                     showToast("Cloud Save Failed. Sending via WhatsApp anyway.", "error");
-                    // Fallback to admin notify if DB fails
                     let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}`;
                     window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                 });
             } else {
-                // Fallback if DB fails
                 showToast("Order Placed Successfully!", "success");
                 setTimeout(() => {
-                    showToast("Thank you, your order will be reviewed within in 24 Hours", "success");
                     let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}`;
                     window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                 }, 1500);
@@ -1792,13 +1795,46 @@
             }, 3000);
         }
 
-        // --- GLOBE ANIMATION ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        const cards = document.querySelectorAll('.tilt-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -5; 
+                const rotateY = ((x - centerX) / centerX) * 5;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
         const canvas = document.getElementById('globe-canvas');
         const ctx = canvas.getContext('2d');
         let dots = [];
-        const DOT_COUNT = 1000; 
-        const GLOBE_RADIUS = 320; 
+        const DOT_COUNT = 850; 
+        const GLOBE_RADIUS = 380; 
         let rotation = 0;
+        let animationId;
 
         function initDots() {
             dots = [];
@@ -1814,26 +1850,38 @@
         }
 
         function animate() {
+            const homeSection = document.getElementById('home');
+            if(!homeSection || !homeSection.classList.contains('active')) {
+                return; 
+            }
             ctx.clearRect(0,0, 1200, 1200); 
-            rotation += 0.003;
-            
+            rotation += 0.002;
             dots.forEach(dot => {
                 const rotX = dot.x * Math.cos(rotation) - dot.z * Math.sin(rotation);
                 const rotZ = dot.z * Math.cos(rotation) + dot.x * Math.sin(rotation);
-                const scale = 600 / (600 + rotZ); 
-                
-                const x = 600 + rotX * scale; 
-                const y = 600 + dot.y * scale;
-                
-                if(scale > 0) {
+                const alpha = (rotZ + GLOBE_RADIUS) / (2 * GLOBE_RADIUS);
+                if(alpha > 0) {
+                    const scale = 800 / (800 + rotZ); 
+                    const x = 600 + rotX * scale; 
+                    const y = 600 + dot.y * scale;
                     ctx.beginPath();
                     ctx.arc(x, y, 1.5 * scale, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255,255,255,${(rotZ + GLOBE_RADIUS)/(2*GLOBE_RADIUS) * 1})`;
+                    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
                     ctx.fill();
                 }
             });
-            requestAnimationFrame(animate);
+            animationId = requestAnimationFrame(animate);
         }
+
+        const originalNavigateTo = navigateTo;
+        navigateTo = function(pageId) {
+            originalNavigateTo(pageId);
+            if (pageId === 'home') {
+                animate();
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        };
 
         initDots();
         animate();
@@ -1842,10 +1890,12 @@
             const header = document.getElementById('mainHeader');
             if(window.scrollY > 50) {
                 header.style.top = '10px';
-                header.style.background = 'rgba(5, 5, 5, 0.9)';
+                header.style.padding = '0 1.5rem';
+                header.style.background = 'rgba(0, 0, 0, 0.95)';
             } else {
                 header.style.top = '20px';
-                header.style.background = 'rgba(10, 10, 10, 0.75)';
+                header.style.padding = '0 2rem';
+                header.style.background = 'rgba(5, 5, 5, 0.8)';
             }
         });
 

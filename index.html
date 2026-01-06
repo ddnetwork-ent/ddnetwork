@@ -36,7 +36,6 @@
             --accent-warn: #f59e0b;
             --font-display: 'Inter', sans-serif; 
             --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* Smooth Apple-like easing */
-            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             
             /* Spacing */
             --header-height: 80px;
@@ -76,6 +75,39 @@
             animation: pulse 2s infinite;
         }
         @keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+
+        /* --- MAINTENANCE BANNER --- */
+        #maintenance-banner {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--danger);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            z-index: 3000; /* Higher than header */
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        #maintenance-banner.active { display: block; }
+        #maintenance-banner h2 { margin: 0; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        #maintenance-banner p { margin: 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; }
+        #close-maintenance-btn {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.3);
+            border: 1px solid white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
 
         /* --- GRAIN OVERLAY --- */
         .grain {
@@ -127,12 +159,6 @@
             overflow: hidden;
             z-index: 1;
         }
-        .btn::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: 0.5s;
-        }
-        .btn:hover::after { left: 100%; }
         .btn:hover { transform: translateY(-2px); border-color: white; background: rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .btn:active { transform: translateY(0); }
         .btn-primary { background: white; color: black; border: 1px solid white; }
@@ -141,16 +167,8 @@
         .btn-secondary:hover { border-color: white; }
         .btn-success { background: #25D366; color: white; border: 1px solid #25D366; }
         .btn-success:hover { background: #128C7E; border-color: #128C7E; }
-
-        /* --- 3D TILT EFFECT --- */
-        .tilt-card {
-            transform-style: preserve-3d;
-            transform: perspective(1000px);
-            transition: transform 0.1s ease-out;
-        }
-        @media (hover: none) {
-            .tilt-card { transform: none !important; }
-        }
+        .btn-danger { background: var(--accent-warn); color: black; border: 1px solid var(--accent-warn); }
+        .btn-danger:hover { background: #d97706; border-color: #d97706; color: white; }
 
         /* --- HEADER --- */
         header {
@@ -231,7 +249,7 @@
             flex: 1; 
             width: 100%;
             position: relative;
-            overflow-x: hidden; /* Prevent horizontal scroll during slide animations */
+            overflow-x: hidden;
         }
 
         /* --- PAGE ROUTING WITH SMOOTH TRANSITIONS --- */
@@ -241,9 +259,7 @@
             padding-top: 100px; 
             padding-bottom: 60px; 
             opacity: 0; 
-            /* Initial state: invisible and pushed down */
             transform: translateY(30px);
-            /* Transition for both opacity and slide */
             transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out; 
             will-change: opacity, transform;
         }
@@ -251,12 +267,7 @@
         .page-section.active { 
             display: block; 
             opacity: 1; 
-            transform: translateY(0); /* Final state: visible and in place */
-        }
-
-        .page-section.leaving {
-            opacity: 0;
-            transform: translateY(-20px); /* Exit animation: fade out and slide up */
+            transform: translateY(0); 
         }
 
         /* --- HERO --- */
@@ -268,7 +279,7 @@
         .hero p { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2.5rem; max-width: 600px; line-height: 1.7; }
 
         /* --- AUTH PAGES --- */
-        .auth-container { width: 100%; max-width: 450px; margin: 0 auto; padding-top: 60px; padding-bottom: 40px; }
+        .auth-container { width: 100%; max-width: 600px; margin: 0 auto; padding-top: 60px; padding-bottom: 40px; }
         .auth-card { background: var(--bg-card); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border-light); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
         .auth-card h2 { margin-bottom: 0.5rem; }
         .auth-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
@@ -305,6 +316,21 @@
         .radio-option { border: 1px solid var(--border-light); padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; background: var(--bg-surface); min-height: 48px; }
         .radio-option:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.02); }
         .radio-option.selected { border-color: var(--accent-primary); background: rgba(59, 130, 246, 0.1); }
+
+        /* Voucher Card Styles */
+        .voucher-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .voucher-info { text-align: left; }
+        .voucher-info h4 { color: white; font-size: 1rem; margin-bottom: 0.2rem; }
+        .voucher-info p { color: var(--accent-primary); font-size: 0.9rem; font-weight: 700; }
 
         /* Toast */
         .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
@@ -538,6 +564,13 @@
         </div>
     </div>
 
+    <!-- Maintenance Banner -->
+    <div id="maintenance-banner">
+        <button class="close-maintenance-btn" onclick="closeBanner()">✕</button>
+        <h2>Maintenance Mode Active</h2>
+        <p id="maintenance-message-text">Site is currently under maintenance. Please try again later.</p>
+    </div>
+
     <!-- Grain Texture -->
     <div class="grain"></div>
 
@@ -556,6 +589,7 @@
         
         <nav class="nav-desktop">
             <a href="#" onclick="navigateTo('home')">Home</a>
+            <a href="#" onclick="navigateTo('helpdesk')">Helpdesk</a>
             <a href="#" onclick="navigateTo('services')">Services</a>
             <a href="#" onclick="navigateTo('clients')">Clients</a>
             <a href="#" onclick="navigateTo('founder')">Founder</a>
@@ -579,6 +613,7 @@
     <div class="mobile-drawer" id="mobileDrawer">
         <ul>
             <li><a href="#" onclick="navigateTo('home'); toggleDrawer()">Home</a></li>
+            <li><a href="#" onclick="navigateTo('helpdesk'); toggleDrawer()">Helpdesk</a></li>
             <li><a href="#" onclick="navigateTo('services'); toggleDrawer()">Services</a></li>
             <li><a href="#" onclick="navigateTo('clients'); toggleDrawer()">Clients</a></li>
             <li><a href="#" onclick="navigateTo('founder'); toggleDrawer()">Founder</a></li>
@@ -633,7 +668,7 @@
         <!-- === PAGE: PROFILE === -->
         <section id="profile" class="page-section">
             <div class="auth-container reveal">
-                <div class="auth-card tilt-card">
+                <div class="auth-card">
                     <i class="ri-user-settings-line" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
                     <h2>My Profile</h2>
                     <p>View and update your personal details.</p>
@@ -656,6 +691,17 @@
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Update Profile</button>
                     </form>
                     
+                    <!-- VOUCHER SECTION -->
+                    <div id="profile-voucher-section" style="display: none; margin-top: 2rem; border-top: 1px solid var(--border-light); padding-top: 2rem;">
+                        <div class="voucher-card">
+                            <div class="voucher-info">
+                                <h4>You have a Gift Voucher!</h4>
+                                <p id="profile-voucher-text">Code: -</p>
+                            </div>
+                            <button type="button" class="btn btn-danger" style="width: auto; padding: 0.6rem 1.2rem;" onclick="deletePersonalVoucher()">Delete</button>
+                        </div>
+                    </div>
+
                     <div style="margin-top: 2rem; border-top: 1px solid var(--border-light); padding-top: 1.5rem;">
                          <button type="button" class="btn btn-secondary" style="width: 100%;" onclick="handleProfileReset()">
                              <i class="ri-lock-password-line" style="margin-right: 8px;"></i> Reset Password
@@ -668,7 +714,7 @@
         <!-- === PAGE: LOGIN === -->
         <section id="login" class="page-section">
             <div class="auth-container reveal">
-                <div class="auth-card tilt-card">
+                <div class="auth-card">
                     <i class="ri-user-3-line" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
                     <h2>Welcome Back</h2>
                     <p>Login to manage your orders.</p>
@@ -680,7 +726,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Password</label>
-                            <input type="password" id="login-password" class="form-input" placeholder="••••" required>
+                            <input type="password" id="login-password" class="form-input" placeholder="•••" required>
                             <div style="text-align: right; margin-top: 5px;">
                                 <span class="auth-link" style="font-size: 0.8rem;" onclick="navigateTo('forgot-password')">Forgot Password?</span>
                             </div>
@@ -698,7 +744,7 @@
         <!-- === PAGE: FORGOT PASSWORD === -->
         <section id="forgot-password" class="page-section">
             <div class="auth-container reveal">
-                <div class="auth-card tilt-card">
+                <div class="auth-card">
                     <i class="ri-lock-password-line" style="font-size: 3rem; color: var(--accent-warn); margin-bottom: 1rem;"></i>
                     <h2>Reset Password</h2>
                     <p>Enter your email to receive a reset link.</p>
@@ -721,14 +767,14 @@
         <!-- === PAGE: SIGNUP === -->
         <section id="signup" class="page-section">
             <div class="auth-container reveal">
-                <div class="auth-card tilt-card">
+                <div class="auth-card">
                     <h2>Create Account</h2>
                     <p>Join us to track your projects.</p>
                     
                     <form onsubmit="handleSignup(event)">
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
-                            <input type="text" id="signup-name" class="form-input" placeholder="John Doe" required>
+                            <input type="text" id="signup-name" class="form-input" placeholder="Danial Danish" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Phone Number</label>
@@ -752,6 +798,52 @@
             </div>
         </section>
 
+        <!-- === PAGE: HELPDESK === -->
+        <section id="helpdesk" class="page-section">
+            <div class="auth-container reveal">
+                <div class="auth-card">
+                    <i class="ri-customer-service-2-line" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
+                    <h2>Helpdesk</h2>
+                    <p>Submit a support ticket. We'll get back to you ASAP.</p>
+                    
+                    <form onsubmit="handleTicketSubmit(event)">
+                        <div class="profile-details-grid">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" id="ticket-name" class="form-input" placeholder="Danial Danish" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" id="ticket-email" class="form-input" placeholder="hello@example.com" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Issue Type</label>
+                            <select id="ticket-type" class="form-select" required>
+                                <option value="" disabled selected>Select an issue</option>
+                                <option value="Cannot login">Cannot login</option>
+                                <option value="Cannot change password">Cannot change password</option>
+                                <option value="Forgot password">Forgot password</option>
+                                <option value="Payment issue">Payment issue</option>
+                                <option value="Website not loading">Website not loading</option>
+                                <option value="Form not submitting">Form not submitting</option>
+                                <option value="Update price / content">Update price / content</option>
+                                <option value="Other issue">Other issue</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Message / Description</label>
+                            <textarea id="ticket-message" class="form-input" placeholder="Describe your issue in detail..." required rows="5"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Ticket</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
         <!-- === PAGE: SERVICES === -->
         <section id="services" class="page-section">
             <div style="padding-bottom: 4rem;">
@@ -763,13 +855,13 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                     
                     <!-- Package 1 -->
-                    <div class="checkout-card reveal tilt-card" style="text-align: center; border: 1px solid var(--border-light);">
+                    <div class="checkout-card reveal" style="text-align: center; border: 1px solid var(--border-light);">
                         <div style="background: rgba(255,255,255,0.05); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                             <i class="ri-file-list-2-line" style="font-size: 1.2rem; color: var(--text-secondary);"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">HTML Only</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Perfect for simple landing pages.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;">RM 199</div>
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-html">RM 199</div> <!-- ID ADDED FOR DYNAMIC PRICING -->
                         <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• 1-2 Static Pages</li>
                             <li>• Mobile Responsive</li>
@@ -779,37 +871,43 @@
                     </div>
 
                     <!-- Package 2 -->
-                    <div class="checkout-card reveal tilt-card" style="text-align: center; border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); position: relative;">
+                    <div class="checkout-card reveal" style="text-align: center; border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); position: relative;">
                         <div style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: white; padding: 2px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: 700;">MOST POPULAR</div>
                         <div style="background: var(--accent-primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 0 15px var(--accent-glow);">
                             <i class="ri-layout-masonry-line" style="font-size: 1.2rem; color: white;"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">Front-End Website</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Interactive multi-page websites.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;">RM 599</div>
-                        <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-frontend">RM 599</div> <!-- ID ADDED FOR DYNAMIC PRICING -->
+                        
+                        <!-- DYNAMIC LIST ADDED -->
+                        <ul id="list-frontend" style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• Up to 5 Pages</li>
                             <li>• Animations & Interactions</li>
                             <li>• Contact Forms</li>
                             <li>• WhatsApp Integration</li>
                         </ul>
+
                         <button class="btn btn-primary" style="width: 100%; background: var(--accent-primary); color: white; border-color: var(--accent-primary);" onclick="selectPackage('Front-End Website', 'frontend')">Select Front-End</button>
                     </div>
 
                     <!-- Package 3 -->
-                    <div class="checkout-card reveal tilt-card" style="text-align: center; border: 1px solid var(--border-light);">
+                    <div class="checkout-card reveal" style="text-align: center; border: 1px solid var(--border-light);">
                         <div style="background: linear-gradient(135deg, #6366f1, #a855f7); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                             <i class="ri-brain-line" style="font-size: 1.2rem; color: white;"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">AI Powered</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Next-gen automation & chatbots.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;">Custom</div>
-                        <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-ai">Custom</div> <!-- ID ADDED FOR DYNAMIC PRICING -->
+                        
+                        <!-- DYNAMIC LIST ADDED -->
+                        <ul id="list-ai" style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• All Front-End Features</li>
                             <li>• AI Chatbot Integration</li>
                             <li>• Lead Auto-Response</li>
                             <li>• Smart Analytics</li>
                         </ul>
+
                         <button class="btn" style="width: 100%; background: white; color: black;" onclick="selectPackage('AI Powered Website', 'ai')">Request Quote</button>
                     </div>
 
@@ -851,9 +949,9 @@
                         <div class="summary-row" id="row-discount" style="display: none; color: #10b981;">
                             <span style="display: flex; align-items: center;">
                                 Discount: <strong id="summary-promo-code" style="margin: 0 5px;"></strong>
-                                <i class="ri-close-circle-line remove-discount-btn" onclick="removePromo()"></i>
+                                <i class="ri-close-circle-line remove-discount-btn" onclick="removeVoucher()"></i>
                             </span>
-                            <span id="summary-discount-val">-0%</span>
+                            <span id="summary-discount-val">-RM 0</span>
                         </div>
                     </div>
 
@@ -878,6 +976,17 @@
                                 <input type="text" id="co-name" class="form-input" placeholder="Full Name" required>
                                 <input type="tel" id="co-phone" class="form-input" placeholder="Phone Number" required>
                                 <input type="email" id="co-email" class="form-input" placeholder="Email" required>
+                            </div>
+                        </div>
+
+                        <!-- VOUCHER IMPORT SECTION -->
+                        <div id="checkout-voucher-section" style="display: none; margin-bottom: 2rem;">
+                            <div class="voucher-card">
+                                <div class="voucher-info">
+                                    <h4>Gift Voucher Available</h4>
+                                    <p id="checkout-voucher-text">-</p>
+                                </div>
+                                <button type="button" class="btn btn-primary" style="width: auto; padding: 0.6rem 1.5rem;" onclick="applyPersonalVoucher()">Apply</button>
                             </div>
                         </div>
 
@@ -972,7 +1081,7 @@
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                 <!-- Client 1 -->
-                <div class="checkout-card reveal tilt-card" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
+                <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
                     <div style="height: 200px; overflow: hidden;">
                         <img src="https://raw.githubusercontent.com/ddnetwork-ent/clinic-azam-dental/refs/heads/main/IMG_2260.JPG" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                     </div>
@@ -983,7 +1092,7 @@
                     </div>
                 </div>
                 <!-- Client 2 -->
-                <div class="checkout-card reveal tilt-card" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
+                <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
                     <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #e2e8f0;">
                          <img src="https://raw.githubusercontent.com/ddnetwork-ent/mory-matcha/refs/heads/main/MORY%20ICON-green.png" style="height: 80%;">
                     </div>
@@ -1048,10 +1157,10 @@
     <!-- BETTER FOOTER (UPDATED LAYOUT) -->
     <footer>
         <div class="container">
-            <!-- Footer Grid Layout (Updated to 3 Columns) -->
+            <!-- Footer Grid Layout -->
             <div class="footer-grid">
                 
-                <!-- Column 1: Brand (Left Aligned) -->
+                <!-- Column 1: Brand -->
                 <div class="footer-col footer-brand">
                     <a href="#" onclick="navigateTo('home')" style="cursor: pointer;">
                         <span class="company-name">DDNetwork<span style="color:var(--text-tertiary)">One</span></span>
@@ -1065,7 +1174,7 @@
                 <div class="footer-col">
                     <h4>Support</h4>
                     <ul class="footer-links">
-                        <li><a href="#" onclick="navigateTo('contact')">Contact Support</a></li>
+                        <li><a href="#" onclick="navigateTo('helpdesk')">Contact Support</a></li>
                         <li><a href="#" onclick="openTermsModal()">Terms & Conditions</a></li>
                         <li><a href="#">Privacy Policy</a></li>
                     </ul>
@@ -1082,14 +1191,6 @@
                         <i class="ri-whatsapp-line"></i>
                         <span>+60 12-260 0969</span>
                     </div>
-                    <div style="margin-top: 1.5rem;">
-                        <a href="https://linkedin.com" target="_blank" class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem; width: 100%; margin-bottom: 0.5rem;">
-                            <i class="ri-linkedin-fill" style="margin-right: 5px;"></i> LinkedIn
-                        </a>
-                        <a href="https://instagram.com" target="_blank" class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem; width: 100%;">
-                            <i class="ri-instagram-line" style="margin-right: 5px;"></i> Instagram
-                        </a>
-                    </div>
                 </div>
 
             </div>
@@ -1098,7 +1199,7 @@
             <div class="footer-bottom">
                 <p class="copyright">&copy; 2025-2026 DDNetwork One. PG0572133-K All rights reserved.</p>
                 
-                <!-- Mac Dock Style Socials (Desktop Only) -->
+                <!-- Mac Dock Style Socials -->
                 <div class="mac-dock">
                     <a href="https://linkedin.com" target="_blank" class="dock-icon"><i class="ri-linkedin-fill"></i></a>
                     <a href="https://instagram.com" target="_blank" class="dock-icon"><i class="ri-instagram-line"></i></a>
@@ -1124,7 +1225,6 @@
                 <p style="margin-top: 2rem; font-weight: 700;">&copy; DDNetwork One. All rights reserved.</p>
             </div>
         </div>
-    </div>
 
     <!-- JAVASCRIPT -->
     <script>
@@ -1147,6 +1247,27 @@
         };
 
         let db, auth;
+        let ADMIN_EMAIL = "ddnetwork.one@outlook.com";
+        let allUsers = [];
+        let currentUserPersonalVoucher = null;
+        let siteConfig = { maintenance_active: false, message: '', prices: { html: 199, frontend: 599 }, packageDetails: {} };
+        
+        // Default Details (Fallback)
+        const DEFAULT_DETAILS = {
+            frontend: [
+                "Up to 5 Pages",
+                "Animations & Interactions",
+                "Contact Forms",
+                "WhatsApp Integration"
+            ],
+            ai: [
+                "All Front-End Features",
+                "AI Chatbot Integration",
+                "Lead Auto-Response",
+                "Smart Analytics"
+            ]
+        };
+
         try {
             if(firebaseConfig.apiKey === "YOUR_API_KEY_HERE") {
                 console.warn("Firebase not configured.");
@@ -1160,12 +1281,82 @@
             console.error("Firebase initialization error:", e);
         }
 
-        // DYNAMIC PROMO CODES (New Feature)
-        let PROMO_CODES = {}; // Start empty
+        // DYNAMIC CONTENT LOGIC
+        function renderDynamicContent() {
+            // Helper to build list HTML
+            function buildListHTML(items) {
+                if(!items || items.length === 0) return '';
+                return items.map(item => `<li>• ${item}</li>`).join('');
+            }
+
+            const frontendDetails = siteConfig.packageDetails?.frontend || DEFAULT_DETAILS.frontend;
+            const aiDetails = siteConfig.packageDetails?.ai || DEFAULT_DETAILS.ai;
+
+            // Update Service Cards
+            const listFrontend = document.getElementById('list-frontend');
+            const listAi = document.getElementById('list-ai');
+
+            if(listFrontend) listFrontend.innerHTML = buildListHTML(frontendDetails);
+            if(listAi) listAi.innerHTML = buildListHTML(aiDetails);
+
+            // Update Checkout Summary Description dynamically
+            updateCheckoutSummary(frontendDetails, aiDetails);
+
+            // Update Pricing Labels dynamically
+            refreshCardPrices();
+        }
+
+        function updateCheckoutSummary(frontendList, aiList) {
+            if(frontendList) {
+                document.getElementById('summary-pkg-desc').innerText = frontendList.join(", ");
+            }
+            if(aiList) {
+                document.getElementById('summary-pkg-desc').innerText = aiList.join(", ");
+            }
+        }
+
+        function refreshCardPrices() {
+            if(siteConfig && siteConfig.prices) {
+                const htmlPriceEl = document.getElementById('price-card-html');
+                const frontendPriceEl = document.getElementById('price-card-frontend');
+                
+                if(htmlPriceEl) htmlPriceEl.innerText = `RM ${siteConfig.prices.html}`;
+                if(frontendPriceEl) frontendPriceEl.innerText = `RM ${siteConfig.prices.frontend}`;
+                // AI is always custom text
+            }
+        }
+
+        // Listen for Config Changes (CONTENT & PRICING)
+        db.collection("config").doc("site_settings").onSnapshot((doc) => {
+            if(doc.exists) {
+                siteConfig = doc.data();
+                
+                // Re-render content lists
+                renderDynamicContent();
+
+                // Logic for maintenance banner
+                if(siteConfig.maintenance_active) {
+                    document.getElementById('maintenance-banner').classList.add('active');
+                    document.getElementById('maintenance-message-text').innerText = siteConfig.message || "Site is currently under maintenance.";
+                } else {
+                    document.getElementById('maintenance-banner').classList.remove('active');
+                }
+            }
+        });
+
+        // Listen for Price Changes
+        db.collection("config").doc("site_settings").onSnapshot((doc) => {
+            if(doc.exists && doc.data().prices) {
+                siteConfig.prices = doc.data().prices;
+                refreshCardPrices();
+            }
+        });
+
+        // DYNAMIC PROMO CODES
+        let PROMO_CODES = {}; 
         
-        // Listen for promo codes from Firestore
         db.collection("promo_codes").onSnapshot((snapshot) => {
-            PROMO_CODES = {}; // Reset
+            PROMO_CODES = {};
             snapshot.forEach(doc => {
                 PROMO_CODES[doc.id] = doc.data().discount;
             });
@@ -1188,6 +1379,8 @@
             domainPrice: 0,
             maintenancePrice: 0,
             discountRate: 0,
+            discountFixed: 0,
+            discountType: 'percent',
             discountCode: '',
             domainType: 'sub',
             domainName: '',
@@ -1202,19 +1395,29 @@
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     updateHeaderForUser(user);
-                    // Initial fetch to populate checkout if needed immediately
                     fetchAndSyncUserData(user.uid);
+                    checkPersonalVoucher(user.uid);
                 } else {
                     updateHeaderForGuest();
                     clearUserData();
+                    hideVoucherCard();
                 }
             });
         }
 
-        /**
-         * Explicit function to load Profile Page Data.
-         * Called whenever user navigates to Profile page.
-         */
+        function checkPersonalVoucher(uid) {
+            if(!db) return;
+            db.collection("users").doc(uid).get().then((doc) => {
+                if(doc.exists && doc.data().personalVoucher) {
+                    currentUserPersonalVoucher = doc.data().personalVoucher;
+                    showVoucherCard(currentUserPersonalVoucher);
+                } else {
+                    currentUserPersonalVoucher = null;
+                    hideVoucherCard();
+                }
+            });
+        }
+
         function loadProfilePageData() {
             if(!auth || !auth.currentUser) {
                 showToast("Please login to view profile.", "error");
@@ -1222,7 +1425,6 @@
                 return;
             }
 
-            // Show loading placeholders
             document.getElementById('prof-name').value = "Loading...";
             document.getElementById('prof-email').value = "Loading...";
             document.getElementById('prof-phone').value = "Loading...";
@@ -1237,12 +1439,19 @@
                     if(profName) profName.value = data.name || '';
                     if(profPhone) profPhone.value = data.phone || '';
                     if(profEmail) profEmail.value = data.email || auth.currentUser.email || '';
+                    
+                    if(data.personalVoucher) {
+                        showVoucherCard(data.personalVoucher);
+                    } else {
+                        hideVoucherCard();
+                    }
                 } else {
                     console.warn("No profile document found for this user.");
                     showToast("Profile data not found. Please complete your signup details.", "error");
                     document.getElementById('prof-name').value = "";
                     document.getElementById('prof-email').value = auth.currentUser.email || "";
                     document.getElementById('prof-phone').value = "";
+                    hideVoucherCard();
                 }
             }).catch((error) => {
                 console.error("Error loading profile data:", error);
@@ -1250,9 +1459,6 @@
             });
         }
 
-        /**
-         * Fetches user data from Firestore and synchronizes it with Checkout page.
-         */
         function fetchAndSyncUserData(uid) {
             if(!db) return;
             
@@ -1260,7 +1466,6 @@
                 if (doc.exists) {
                     const data = doc.data();
 
-                    // Sync Checkout Page Inputs (Auto-fill)
                     const coName = document.getElementById('co-name');
                     const coPhone = document.getElementById('co-phone');
                     const coEmail = document.getElementById('co-email');
@@ -1270,11 +1475,18 @@
                     if(data.phone && coPhone) coPhone.value = data.phone;
                     if(data.email && coEmail) coEmail.value = data.email;
 
-                    // Show Auto-fill badge only if data is actually present
                     if(data.name && data.phone && data.email && autoFillLabel) {
                         autoFillLabel.style.display = 'inline';
                     } else if (autoFillLabel) {
                         autoFillLabel.style.display = 'none';
+                    }
+
+                    // Handle Voucher in Checkout
+                    if(data.personalVoucher) {
+                        currentUserPersonalVoucher = data.personalVoucher;
+                        showCheckoutVoucher(data.personalVoucher);
+                    } else {
+                        hideCheckoutVoucher();
                     }
 
                 } else {
@@ -1283,6 +1495,46 @@
             }).catch((error) => {
                 console.error("Error fetching user data:", error);
             });
+        }
+
+        function showVoucherCard(voucher) {
+            const section = document.getElementById('profile-voucher-section');
+            const text = document.getElementById('profile-voucher-text');
+            section.style.display = 'block';
+            
+            const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
+            text.innerText = `Code: ${voucher.code} | Value: ${displayVal}`;
+        }
+
+        function showCheckoutVoucher(voucher) {
+            const section = document.getElementById('checkout-voucher-section');
+            const text = document.getElementById('checkout-voucher-text');
+            
+            const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
+            
+            text.innerText = `${voucher.code} (-${displayVal})`;
+            section.style.display = 'block';
+            
+            // Auto apply for better UX? No, let user click "Apply".
+        }
+
+        function hideVoucherCard() {
+            document.getElementById('profile-voucher-section').style.display = 'none';
+            document.getElementById('checkout-voucher-section').style.display = 'none';
+        }
+
+        function deletePersonalVoucher() {
+            if(!auth || !auth.currentUser) return;
+            if(!confirm("Are you sure you want to remove this voucher?")) {
+                db.collection("users").doc(auth.currentUser.uid).update({
+                    personalVoucher: firebase.firestore.FieldValue.delete()
+                }).then(() => {
+                    currentUserPersonalVoucher = null;
+                    loadProfilePageData();
+                    fetchAndSyncUserData(auth.currentUser.uid);
+                    showToast("Voucher removed from account.", "success");
+                });
+            }
         }
 
         function handleLogin(e) {
@@ -1312,7 +1564,6 @@
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    // Create Firestore Document with Profile Data
                     return db.collection("users").doc(user.uid).set({
                         name: name,
                         phone: phone,
@@ -1333,9 +1584,8 @@
             
             const name = document.getElementById('prof-name').value;
             const phone = document.getElementById('prof-phone').value;
-            const email = document.getElementById('prof-email').value; // Read-only usually, but passed for consistency
+            const email = document.getElementById('prof-email').value; 
 
-            // Update Firestore
             db.collection("users").doc(auth.currentUser.uid).update({ 
                 name: name, 
                 phone: phone,
@@ -1343,14 +1593,12 @@
             })
             .then(() => {
                 showToast("Profile Updated Successfully!", "success");
-                // Re-sync data to ensure checkout form is updated immediately
                 fetchAndSyncUserData(auth.currentUser.uid);
             })
             .catch((error) => showToast(error.message, "error"));
         }
 
         function clearUserData() {
-            // Helper to clear forms on logout
             const inputs = ['prof-name', 'prof-phone', 'prof-email', 'co-name', 'co-phone', 'co-email'];
             inputs.forEach(id => {
                 const el = document.getElementById(id);
@@ -1366,69 +1614,6 @@
                     showToast("Logged out", "success");
                     navigateTo('home');
                 });
-            }
-        }
-
-        // ==========================================
-        // ADMIN DETECTION (New Feature)
-        // ==========================================
-        function updateHeaderForUser(user) {
-            const isAdmin = user.email === "ddnetwork.one@outlook.com";
-
-            let userControls = `
-                <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
-                <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
-                <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile')"><i class="ri-user-settings-line"></i></a>
-                <span class="logout-btn" onclick="handleLogout()">Logout</span>
-            `;
-
-            // If Admin, prepend the Admin Portal button
-            if (isAdmin) {
-                userControls = `
-                    <a href="https://ddnetwork-ent.github.io/admin.html/" target="_blank" style="color: #000; background: var(--accent-warn); font-weight: 700; padding: 0.5rem 1rem; border-radius: 100px; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                        <i class="ri-shield-user-line"></i> Admin Portal
-                    </a>
-                    <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
-                    ${userControls}
-                `;
-            }
-
-            const deskAuth = document.getElementById('desktopAuthLinks');
-            if(deskAuth) {
-                deskAuth.innerHTML = userControls;
-            }
-
-            // Mobile Menu Update
-            const mobAuth = document.getElementById('mobileAuthLinks');
-            if(mobAuth) {
-                mobAuth.innerHTML = `
-                    ${isAdmin ? `
-                        <a href="https://ddnetwork-ent.github.io/admin.html/" target="_blank" style="font-size: 1.5rem; color: var(--accent-warn); display: block; margin-bottom: 1rem;">
-                            <i class="ri-shield-user-line"></i> Admin Portal
-                        </a>
-                    ` : ''}
-                    <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom: 1rem;"><i class="ri-user-line"></i></a>
-                    <a href="#" onclick="handleLogout(); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Logout</a>
-                `;
-            }
-        }
-
-        function updateHeaderForGuest() {
-            const deskAuth = document.getElementById('desktopAuthLinks');
-            if(deskAuth) {
-                deskAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
-                    <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
-                    <a href="#" onclick="navigateTo('login')">Login</a>
-                    <a href="#" onclick="navigateTo('signup')">Sign Up</a>
-                `;
-            }
-            const mobAuth = document.getElementById('mobileAuthLinks');
-            if(mobAuth) {
-                mobAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('login'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Login</a>
-                    <a href="#" onclick="navigateTo('signup'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Sign Up</a>
-                `;
             }
         }
 
@@ -1452,6 +1637,49 @@
                 .catch((error) => showToast(error.message, "error"));
         }
 
+        // --- TICKET SUBMISSION (NEW) ---
+        function handleTicketSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('ticket-name').value;
+            const email = document.getElementById('ticket-email').value;
+            const type = document.getElementById('ticket-type').value;
+            const message = document.getElementById('ticket-message').value;
+
+            if(!name || !email || !type || !message) {
+                showToast("Please fill in all fields.", "error");
+                return;
+            }
+
+            showToast("Submitting Ticket...", "success");
+
+            const ticketData = {
+                name: name,
+                email: email,
+                type: type,
+                message: message,
+                status: "Open",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                userId: auth.currentUser ? auth.currentUser.uid : null
+            };
+
+            if(db) {
+                db.collection("tickets").add(ticketData)
+                .then(() => {
+                    showToast("Ticket Submitted Successfully!", "success");
+                    setTimeout(() => {
+                        showToast("We will review your ticket within 24 hours.", "success");
+                        let notifyMsg = `Hi Admin,\n*New Ticket Received.*\n\n*Name:* ${name}\n*Type:* ${type}`;
+                        window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
+                    }, 2000);
+                })
+                .catch((error) => {
+                    showToast("Cloud Save Failed. Try again.", "error");
+                });
+            } else {
+                showToast("Ticket Submitted!", "success");
+            }
+        }
+
         // --- SMOOTH PAGE TRANSITION LOGIC ---
         function navigateTo(pageId) {
             const currentSection = document.querySelector('.page-section.active');
@@ -1460,12 +1688,10 @@
             if (currentSection === targetSection) return; // Prevent reload if same page
             if (currentSection && currentSection.classList.contains('leaving')) return; // Prevent double clicks
 
-            // 1. Exit Animation: Fade out and slide up current page
+            // 1. Exit Animation
             if (currentSection) {
                 currentSection.classList.remove('active');
                 currentSection.classList.add('leaving');
-                
-                // Start scrolling while fading out (smoother feel)
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 // No current page (initial load), just scroll immediately
@@ -1481,26 +1707,32 @@
                 });
 
                 if (targetSection) {
-                    targetSection.style.display = 'block'; // Show new page (invisible initially due to CSS)
-                    
-                    // Force Reflow: This ensures the browser calculates the new layout 
-                    // and resets the transition state so the entrance animation plays fresh.
+                    targetSection.style.display = 'block';
                     void targetSection.offsetWidth; 
 
                     // Trigger Entrance: Add .active (fade in and slide up)
                     targetSection.classList.add('active');
                     
-                    // SPECIFIC FIX: If navigating to profile, load data explicitly
-                    if(pageId === 'profile') {
-                        loadProfilePageData();
-                    }
+                    // SPECIFIC FIX: If Profile, load data explicitly
+                    if(pageId === 'profile') loadProfilePageData();
 
-                    // If navigating to checkout and user is logged in, ensure data is fresh
+                    // If Checkout and logged in, fetch data
                     if(pageId === 'buynow' && auth && auth.currentUser) {
                         fetchAndSyncUserData(auth.currentUser.uid);
+                        // Check Maintenance Mode
+                        if(siteConfig.maintenance_active) {
+                            document.getElementById('maintenance-banner').classList.add('active');
+                        } else {
+                            document.getElementById('maintenance-banner').classList.remove('active');
+                        }
                     }
                 }
-            }, 400); // 400ms delay allows the exit to finish partially, creating a seamless handover
+            }, 400);
+        }
+
+        // --- MAINTENANCE BANNER ---
+        function closeBanner() {
+            document.getElementById('maintenance-banner').classList.remove('active');
         }
 
 
@@ -1533,13 +1765,16 @@
             priceArea.innerHTML = ''; 
 
             if(type === 'html') {
-                state.packagePrice = 199; 
+                // Check if siteConfig exists and has price, otherwise fallback
+                const price = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
+                state.packagePrice = price; 
                 document.getElementById('summary-pkg-desc').innerText = "Static Website (1-2 pages)";
-                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM 199</div>`;
+                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM ${price}</div>`;
             } else if (type === 'frontend') {
-                state.packagePrice = 599; 
+                const price = (siteConfig && siteConfig.prices && siteConfig.prices.frontend) ? siteConfig.prices.frontend : 599;
+                state.packagePrice = price; 
                 document.getElementById('summary-pkg-desc').innerText = "Interactive Website (Up to 5 pages)";
-                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM 599</div>`;
+                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM ${price}</div>`;
             } else if (type === 'ai') {
                 state.packagePrice = 0;
                 document.getElementById('summary-pkg-desc').innerText = "AI Integration & Chatbot";
@@ -1551,14 +1786,15 @@
             state.domainPrice = 55;
             state.maintenancePrice = 0;
             state.discountRate = 0;
+            state.discountFixed = 0;
             state.discountCode = '';
             document.getElementById('terms-check').checked = false;
             
-            // Trigger sync again when package is selected to ensure latest user data is in checkout
             if(auth && auth.currentUser) {
                 fetchAndSyncUserData(auth.currentUser.uid);
             } else {
                 document.getElementById('auto-fill-label').style.display = 'none';
+                hideCheckoutVoucher();
             }
 
             updateSummaryText();
@@ -1608,6 +1844,7 @@
             const code = input.value.trim().toUpperCase();
             
             if(PROMO_CODES.hasOwnProperty(code)) {
+                state.discountType = 'percent';
                 state.discountRate = PROMO_CODES[code];
                 state.discountCode = code;
                 showToast(`Promo Applied: ${code}`, 'success');
@@ -1622,12 +1859,39 @@
             }
         }
 
-        function removePromo() {
-            state.discountRate = 0;
+        function applyPersonalVoucher() {
+            if(!currentUserPersonalVoucher) return; 
+            
+            state.discountType = currentUserPersonalVoucher.type;
+            state.discountCode = currentUserPersonalVoucher.code;
+            
+            if(state.discountType === 'fixed') {
+                state.discountFixed = currentUserPersonalVoucher.value;
+                state.discountRate = 0;
+            } else {
+                state.discountRate = currentUserPersonalVoucher.value;
+                state.discountFixed = 0;
+            }
+
+            showToast(`Voucher ${state.discountCode} Applied!`, 'success');
+            
+            document.getElementById('row-discount').style.display = 'flex';
+            document.getElementById('summary-promo-code').innerText = state.discountCode;
+            
+            const displayVal = state.discountType === 'fixed' ? `RM ${state.discountFixed}` : `${state.discountRate * 100}%`;
+            document.getElementById('summary-discount-val').innerText = `-${displayVal}`;
+            
+            updateTotal();
+        }
+
+        function removeVoucher() {
+            // Remove from local state (session only)
             state.discountCode = '';
-            document.getElementById('promo-input').value = '';
+            state.discountRate = 0;
+            state.discountFixed = 0;
+            
             document.getElementById('row-discount').style.display = 'none';
-            showToast('Discount removed', 'success');
+            showToast("Voucher removed", "success");
             updateTotal();
         }
 
@@ -1645,9 +1909,18 @@
         }
 
         function updateTotal() {
-            let subtotal = state.packagePrice + (state.domainType === 'sub' ? 55 : 0);
-            const discountAmt = subtotal * state.discountRate;
-            const finalTotal = Math.round(subtotal - discountAmt);
+            let subtotal = state.packagePrice + (state.domainType === 'sub' ?55 : 0);
+            let discountAmt = 0;
+
+            if(state.discountType === 'fixed') {
+                // RM 50 discount
+                discountAmt = state.discountFixed;
+            } else {
+                // Percentage discount
+                discountAmt = subtotal * state.discountRate;
+            }
+
+            const finalTotal = Math.max(0, Math.round(subtotal - discountAmt));
 
             document.getElementById('summary-final-total').innerText = `RM ${finalTotal}`;
             document.getElementById('deposit-note').innerText = `Deposit Required (50%): RM ${Math.round(finalTotal / 2)}`;
@@ -1682,17 +1955,17 @@
             }
             let targetUrl = "";
             if (state.paymentMethod === 'tng') {
-                targetUrl = TNG_GENERIC;
+                targetUrl = "https://payment.tngdigital.com.my/sc/bDLob7YcpG";
             } else if (state.paymentMethod === 'fpx') {
                 if (state.packageType === 'html') {
-                    targetUrl = FPX_URLS.html; 
+                    targetUrl = "https://toyyibpay.com/htmlplan-50-depo"; 
                 } else if (state.packageType === 'frontend') {
-                    targetUrl = FPX_URLS.frontend; 
+                    targetUrl = "https://toyyibpay.com/frontend-depo-50"; 
                 } else {
-                    targetUrl = TNG_GENERIC;
+                    targetUrl = "https://payment.tngdigital.com.my/sc/bDLob7YcpG";
                 }
             } else {
-                targetUrl = TNG_GENERIC;
+                targetUrl = "https://payment.tngdigital.com.my/sc/bDLob7YcpG";
             }
             window.open(targetUrl, '_blank');
         }
@@ -1810,23 +2083,6 @@
         }, observerOptions);
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-        const cards = document.querySelectorAll('.tilt-card');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -5; 
-                const rotateY = ((x - centerX) / centerX) * 5;
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-            });
-        });
 
         const canvas = document.getElementById('globe-canvas');
         const ctx = canvas.getContext('2d');

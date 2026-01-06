@@ -63,6 +63,95 @@
         ul { list-style: none; }
         button, input, select, textarea { font-family: inherit; border: none; outline: none; }
 
+        /* --- MAINTENANCE OVERLAY (FULL SCREEN) --- */
+        #maintenance-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-deep); /* Matches body bg */
+            z-index: 99999; /* IMPORTANT: Must be higher than Header (2100) */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #maintenance-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .maintenance-content {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        .maintenance-content i {
+            font-size: 5rem;
+            color: var(--accent-warn);
+            margin-bottom: 2rem;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        .maintenance-content h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .maintenance-content p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .maintenance-details {
+            margin-top: 3rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .detail-item i {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-item span {
+            display: block;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-item strong {
+            color: white;
+            font-size: 1.1rem;
+        }
+
         /* --- PRELOADER --- */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -75,39 +164,6 @@
             animation: pulse 2s infinite;
         }
         @keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
-
-        /* --- MAINTENANCE BANNER --- */
-        #maintenance-banner {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: var(--danger);
-            color: white;
-            text-align: center;
-            padding: 1rem;
-            z-index: 3000; /* Higher than header */
-            font-weight: 600;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-        }
-        #maintenance-banner.active { display: block; }
-        #maintenance-banner h2 { margin: 0; font-size: 1.1rem; margin-bottom: 0.5rem; }
-        #maintenance-banner p { margin: 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; }
-        #close-maintenance-btn {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            background: rgba(0,0,0,0.3);
-            border: 1px solid white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.2s;
-        }
 
         /* --- GRAIN OVERLAY --- */
         .grain {
@@ -205,6 +261,8 @@
         .logout-btn:hover { color: white; }
         .profile-link { font-size: 1.2rem; color: var(--text-main); background: rgba(255,255,255,0.1); padding: 8px; border-radius: 50%; transition: 0.2s; }
         .profile-link:hover { background: var(--accent-primary); transform: rotate(10deg); }
+        .admin-link { font-size: 1.2rem; color: var(--accent-warn); background: rgba(245, 158, 11, 0.1); padding: 8px; border-radius: 50%; transition: 0.2s; }
+        .admin-link:hover { background: #d97706; transform: rotate(10deg); }
 
         .mobile-toggle { display: block; font-size: 1.5rem; cursor: pointer; color: white; z-index: 2101; transition: transform 0.4s var(--ease-spring); }
         .mobile-toggle.open { transform: rotate(90deg); }
@@ -410,7 +468,7 @@
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr; /* Wider brand, then Support, then Contact */
-            gap: 3rem; /* Increased gap for breathing room */
+            gap: 3rem; 
             margin-bottom: 3rem;
         }
 
@@ -556,19 +614,37 @@
 </head>
 <body>
 
+    <!-- FULL SCREEN MAINTENANCE OVERLAY -->
+    <div id="maintenance-overlay">
+        <div class="maintenance-content">
+            <i class="ri-tools-line"></i>
+            <h1>Site is currently under maintenance.</h1>
+            <p>We're making improvements to serve you better.</p>
+            <p>Please check back again shortly.</p>
+            
+            <!-- Optional Details -->
+            <div class="maintenance-details">
+                <div class="detail-item" id="detail-time-container">
+                    <i class="ri-time-line"></i>
+                    <span>Estimated Time</span>
+                    <!-- Dynamic Text Here -->
+                    <strong id="maint-time-display">--:--</strong>
+                </div>
+                <div class="detail-item">
+                    <i class="ri-mail-line"></i>
+                    <span>Contact Email</span>
+                    <strong>sales@ddn.one</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Preloader -->
     <div id="preloader">
         <div class="loader-content">
             <img src="https://raw.githubusercontent.com/ddnetwork-ent/DDN-One/refs/heads/main/DD-LOGO.JPEG?raw=true" alt="Logo" style="height: 60px; margin-bottom: 1rem; border-radius: 50%;">
             <h2 style="font-size: 0.8rem; letter-spacing: 2px;">LOADING</h2>
         </div>
-    </div>
-
-    <!-- Maintenance Banner -->
-    <div id="maintenance-banner">
-        <button class="close-maintenance-btn" onclick="closeBanner()">✕</button>
-        <h2>Maintenance Mode Active</h2>
-        <p id="maintenance-message-text">Site is currently under maintenance. Please try again later.</p>
     </div>
 
     <!-- Grain Texture -->
@@ -774,7 +850,7 @@
                     <form onsubmit="handleSignup(event)">
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
-                            <input type="text" id="signup-name" class="form-input" placeholder="Danial Danish" required>
+                            <input type="text" id="signup-name" class="form-input" placeholder="John Doe" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Phone Number</label>
@@ -810,7 +886,7 @@
                         <div class="profile-details-grid">
                             <div class="form-group">
                                 <label class="form-label">Full Name</label>
-                                <input type="text" id="ticket-name" class="form-input" placeholder="Danial Danish" required>
+                                <input type="text" id="ticket-name" class="form-input" placeholder="John Doe" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Email Address</label>
@@ -861,7 +937,7 @@
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">HTML Only</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Perfect for simple landing pages.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-html">RM 199</div> <!-- ID ADDED FOR DYNAMIC PRICING -->
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-html">RM 199</div>
                         <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• 1-2 Static Pages</li>
                             <li>• Mobile Responsive</li>
@@ -878,9 +954,9 @@
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">Front-End Website</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Interactive multi-page websites.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-frontend">RM 599</div> <!-- ID ADDED FOR DYNAMIC PRICING -->
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-frontend">RM 599</div>
                         
-                        <!-- DYNAMIC LIST ADDED -->
+                        <!-- DYNAMIC LIST -->
                         <ul id="list-frontend" style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• Up to 5 Pages</li>
                             <li>• Animations & Interactions</li>
@@ -898,9 +974,9 @@
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">AI Powered</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Next-gen automation & chatbots.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-ai">Custom</div> <!-- ID ADDED FOR DYNAMIC PRICING -->
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-ai">Custom</div>
                         
-                        <!-- DYNAMIC LIST ADDED -->
+                        <!-- DYNAMIC LIST -->
                         <ul id="list-ai" style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• All Front-End Features</li>
                             <li>• AI Chatbot Integration</li>
@@ -981,7 +1057,7 @@
 
                         <!-- VOUCHER IMPORT SECTION -->
                         <div id="checkout-voucher-section" style="display: none; margin-bottom: 2rem;">
-                            <div class="voucher-card">
+                            <div class="voucher-card" style="margin-bottom: 0;">
                                 <div class="voucher-info">
                                     <h4>Gift Voucher Available</h4>
                                     <p id="checkout-voucher-text">-</p>
@@ -1160,7 +1236,7 @@
             <!-- Footer Grid Layout -->
             <div class="footer-grid">
                 
-                <!-- Column 1: Brand -->
+                <!-- Column 1: Brand (Left Aligned) -->
                 <div class="footer-col footer-brand">
                     <a href="#" onclick="navigateTo('home')" style="cursor: pointer;">
                         <span class="company-name">DDNetwork<span style="color:var(--text-tertiary)">One</span></span>
@@ -1199,7 +1275,7 @@
             <div class="footer-bottom">
                 <p class="copyright">&copy; 2025-2026 DDNetwork One. PG0572133-K All rights reserved.</p>
                 
-                <!-- Mac Dock Style Socials -->
+                <!-- Mac Dock Style Socials (Desktop Only) -->
                 <div class="mac-dock">
                     <a href="https://linkedin.com" target="_blank" class="dock-icon"><i class="ri-linkedin-fill"></i></a>
                     <a href="https://instagram.com" target="_blank" class="dock-icon"><i class="ri-instagram-line"></i></a>
@@ -1250,7 +1326,8 @@
         let ADMIN_EMAIL = "ddnetwork.one@outlook.com";
         let allUsers = [];
         let currentUserPersonalVoucher = null;
-        let siteConfig = { maintenance_active: false, message: '', prices: { html: 199, frontend: 599 }, packageDetails: {} };
+        let currentUserRole = 'user';
+        let siteConfig = { maintenance_active: false, message: '', estimated_time: '', prices: { html: 199, frontend: 599 }, packageDetails: {} };
         
         // Default Details (Fallback)
         const DEFAULT_DETAILS = {
@@ -1283,7 +1360,6 @@
 
         // DYNAMIC CONTENT LOGIC
         function renderDynamicContent() {
-            // Helper to build list HTML
             function buildListHTML(items) {
                 if(!items || items.length === 0) return '';
                 return items.map(item => `<li>• ${item}</li>`).join('');
@@ -1326,25 +1402,36 @@
             }
         }
 
-        // Listen for Config Changes (CONTENT & PRICING)
+        // Listen for Config Changes (CONTENT & PRICING & MAINTENANCE)
         db.collection("config").doc("site_settings").onSnapshot((doc) => {
             if(doc.exists) {
                 siteConfig = doc.data();
-                
-                // Re-render content lists
+                // 1. UPDATE TEXT/PRICES
                 renderDynamicContent();
 
-                // Logic for maintenance banner
+                // 2. MAINTENANCE OVERLAY LOGIC (UPDATED)
                 if(siteConfig.maintenance_active) {
-                    document.getElementById('maintenance-banner').classList.add('active');
-                    document.getElementById('maintenance-message-text').innerText = siteConfig.message || "Site is currently under maintenance.";
+                    document.getElementById('maintenance-overlay').classList.add('active');
+                    
+                    // Logic to update Estimated Time
+                    const timeText = siteConfig.estimated_time || '--:--';
+                    const timeDisplay = document.getElementById('maint-time-display');
+                    const timeContainer = document.getElementById('detail-time-container');
+
+                    if (timeText && timeText.trim() !== '') {
+                        timeDisplay.innerText = timeText;
+                        timeContainer.style.display = 'flex'; // Show it
+                    } else {
+                        timeDisplay.innerText = '--:--';
+                        timeContainer.style.display = 'none'; // Hide it
+                    }
                 } else {
-                    document.getElementById('maintenance-banner').classList.remove('active');
+                    document.getElementById('maintenance-overlay').classList.remove('active');
                 }
             }
         });
 
-        // Listen for Price Changes
+        // Listen for Price Changes (Separate listener for performance)
         db.collection("config").doc("site_settings").onSnapshot((doc) => {
             if(doc.exists && doc.data().prices) {
                 siteConfig.prices = doc.data().prices;
@@ -1362,7 +1449,6 @@
             });
             console.log("Promo Codes Updated:", PROMO_CODES);
         });
-
 
         const PHONE_NO = "60122600969"; 
         const ADMIN_PHONE_NO = "60122600969"; 
@@ -1388,15 +1474,42 @@
         };
 
         // ==========================================
-        // FIREBASE AUTH & USER DATA MANAGEMENT
+        // FIREBASE AUTH & USER DATA MANAGEMENT (ROLE CHECK)
         // ==========================================
 
         if(auth) {
             auth.onAuthStateChanged((user) => {
                 if (user) {
-                    updateHeaderForUser(user);
-                    fetchAndSyncUserData(user.uid);
-                    checkPersonalVoucher(user.uid);
+                    // Fetch user data to get ROLE
+                    db.collection("users").doc(user.uid).get().then((doc) => {
+                        if (doc.exists) {
+                            const data = doc.data();
+                            
+                            // STORE ROLE IN GLOBAL VARIABLE
+                            currentUserRole = data.role || 'user'; 
+                            updateHeaderForUser(user); // Use stored role to update header
+                            
+                            if(data.personalVoucher) {
+                                currentUserPersonalVoucher = data.personalVoucher;
+                                showVoucherCard(data.personalVoucher);
+                            } else {
+                                currentUserPersonalVoucher = null;
+                                hideVoucherCard();
+                            }
+
+                            // Fetch sync for checkout
+                            fetchAndSyncUserData(user.uid);
+                        } else {
+                            // No profile found
+                            auth.signOut();
+                            updateHeaderForGuest();
+                            clearUserData();
+                            hideVoucherCard();
+                        }
+                    }).catch((error) => {
+                        console.error("Error checking role:", error);
+                        showToast("Error verifying permissions.");
+                    });
                 } else {
                     updateHeaderForGuest();
                     clearUserData();
@@ -1460,7 +1573,7 @@
         }
 
         function fetchAndSyncUserData(uid) {
-            if(!db) return;
+            if(!db) return; 
             
             db.collection("users").doc(uid).get().then((doc) => {
                 if (doc.exists) {
@@ -1514,27 +1627,11 @@
             
             text.innerText = `${voucher.code} (-${displayVal})`;
             section.style.display = 'block';
-            
-            // Auto apply for better UX? No, let user click "Apply".
         }
 
         function hideVoucherCard() {
             document.getElementById('profile-voucher-section').style.display = 'none';
             document.getElementById('checkout-voucher-section').style.display = 'none';
-        }
-
-        function deletePersonalVoucher() {
-            if(!auth || !auth.currentUser) return;
-            if(!confirm("Are you sure you want to remove this voucher?")) {
-                db.collection("users").doc(auth.currentUser.uid).update({
-                    personalVoucher: firebase.firestore.FieldValue.delete()
-                }).then(() => {
-                    currentUserPersonalVoucher = null;
-                    loadProfilePageData();
-                    fetchAndSyncUserData(auth.currentUser.uid);
-                    showToast("Voucher removed from account.", "success");
-                });
-            }
         }
 
         function handleLogin(e) {
@@ -1568,6 +1665,7 @@
                         name: name,
                         phone: phone,
                         email: email,
+                        role: 'user', // Default to user
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
@@ -1617,6 +1715,68 @@
             }
         }
 
+        // ==========================================
+        // ADMIN DETECTION
+        // ==========================================
+        function updateHeaderForUser(user) {
+            const isAdmin = currentUserRole === 'admin';
+            
+            // Desktop Nav
+            const deskAuth = document.getElementById('desktopAuthLinks');
+            if(deskAuth) {
+                let userControls = `
+                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
+                    <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
+                    <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile')"><i class="ri-user-settings-line"></i></a>
+                    <span class="logout-btn" onclick="handleLogout()">Logout</span>
+                `;
+
+                // If Admin, prepend Admin Portal button
+                if (isAdmin) {
+                    userControls = `
+                        <a href="admin.html" target="_blank" class="admin-link" title="Admin Portal"><i class="ri-shield-user-line"></i></a>
+                        <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
+                        ${userControls}
+                    `;
+                }
+
+                deskAuth.innerHTML = userControls;
+            }
+
+            // Mobile Menu Update
+            const mobAuth = document.getElementById('mobileAuthLinks');
+            if(mobAuth) {
+                mobAuth.innerHTML = `
+                    ${isAdmin ? `
+                        <a href="admin.html" target="_blank" class="admin-link" title="Admin Portal"><i class="ri-shield-user-line"></i></a>
+                        <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
+                        ${userControls}
+                    ` : ''}
+                    <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom: 1rem;"><i class="ri-user-line"></i></a>
+                    <a href="#" onclick="handleLogout(); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Logout</a>
+                `;
+            }
+        }
+
+        function updateHeaderForGuest() {
+            const deskAuth = document.getElementById('desktopAuthLinks');
+            if(deskAuth) {
+                deskAuth.innerHTML = `
+                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
+                    <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
+                    <a href="#" onclick="navigateTo('login')">Login</a>
+                    <a href="#" onclick="navigateTo('signup')">Sign Up</a>
+                `;
+            }
+            const mobAuth = document.getElementById('mobileAuthLinks');
+            if(mobAuth) {
+                mobAuth.innerHTML = `
+                    <a href="#" onclick="navigateTo('login'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Login</a>
+                    <a href="#" onclick="navigateTo('signup'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Sign Up</a>
+                `;
+            }
+        }
+
         function handleProfileReset() {
             if(!auth || !auth.currentUser) return;
             const email = auth.currentUser.email;
@@ -1637,7 +1797,7 @@
                 .catch((error) => showToast(error.message, "error"));
         }
 
-        // --- TICKET SUBMISSION (NEW) ---
+        // --- TICKET SUBMISSION ---
         function handleTicketSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('ticket-name').value;
@@ -1685,8 +1845,7 @@
             const currentSection = document.querySelector('.page-section.active');
             const targetSection = document.getElementById(pageId);
 
-            if (currentSection === targetSection) return; // Prevent reload if same page
-            if (currentSection && currentSection.classList.contains('leaving')) return; // Prevent double clicks
+            if (currentSection === targetSection) return; 
 
             // 1. Exit Animation
             if (currentSection) {
@@ -1698,43 +1857,45 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            // 2. Switch Content & Enter Animation (Wait for exit to finish)
+            // 2. Switch Content & Enter Animation
             setTimeout(() => {
-                // Hide all sections cleanly
                 document.querySelectorAll('.page-section').forEach(sec => {
                     sec.classList.remove('active', 'leaving');
                     sec.style.display = 'none';
                 });
 
                 if (targetSection) {
-                    targetSection.style.display = 'block';
+                    targetSection.style.display = 'block'; 
                     void targetSection.offsetWidth; 
 
-                    // Trigger Entrance: Add .active (fade in and slide up)
                     targetSection.classList.add('active');
                     
                     // SPECIFIC FIX: If Profile, load data explicitly
                     if(pageId === 'profile') loadProfilePageData();
 
-                    // If Checkout and logged in, fetch data
+                    // If navigating to checkout and user is logged in, ensure data is fresh
+                    if(pageId === 'buynow' && auth && auth.currentUser) {
+                        fetchAndSyncUserData(auth.currentUser.uid);
+                    }
+
+                    // If navigating to checkout and user is logged in, ensure data is fresh
                     if(pageId === 'buynow' && auth && auth.currentUser) {
                         fetchAndSyncUserData(auth.currentUser.uid);
                         // Check Maintenance Mode
                         if(siteConfig.maintenance_active) {
-                            document.getElementById('maintenance-banner').classList.add('active');
+                            document.getElementById('maintenance-overlay').classList.add('active');
                         } else {
-                            document.getElementById('maintenance-banner').classList.remove('active');
+                            document.getElementById('maintenance-overlay').classList.remove('active');
                         }
                     }
                 }
             }, 400);
         }
 
-        // --- MAINTENANCE BANNER ---
+        // --- MAINTENANCE BANNER (LEGACY - REMOVED OR IGNORED IN FULLSCREEN VERSION) ---
         function closeBanner() {
-            document.getElementById('maintenance-banner').classList.remove('active');
+            document.getElementById('maintenance-overlay').classList.remove('active');
         }
-
 
         function toggleDrawer() {
             const drawer = document.getElementById('mobileDrawer');
@@ -1765,7 +1926,6 @@
             priceArea.innerHTML = ''; 
 
             if(type === 'html') {
-                // Check if siteConfig exists and has price, otherwise fallback
                 const price = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
                 state.packagePrice = price; 
                 document.getElementById('summary-pkg-desc').innerText = "Static Website (1-2 pages)";
@@ -1780,6 +1940,9 @@
                 document.getElementById('summary-pkg-desc').innerText = "AI Integration & Chatbot";
                 priceArea.innerHTML = `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:#a1a1aa; text-align:center;">Custom Quote required.</div>`;
             }
+
+            // UPDATE CARDS IMMEDIATELY
+            refreshCardPrices();
 
             document.getElementById('checkoutForm').reset();
             state.domainType = 'sub';
@@ -1884,6 +2047,20 @@
             updateTotal();
         }
 
+        function deletePersonalVoucher() {
+            if(!auth || !auth.currentUser) return;
+            if(!confirm("Are you sure you want to remove this voucher?")) {
+                db.collection("users").doc(auth.currentUser.uid).update({
+                    personalVoucher: firebase.firestore.FieldValue.delete()
+                }).then(() => {
+                    currentUserPersonalVoucher = null;
+                    loadProfilePageData();
+                    fetchAndSyncUserData(auth.currentUser.uid);
+                    showToast("Voucher removed from account.", "success");
+                });
+            }
+        }
+
         function removeVoucher() {
             // Remove from local state (session only)
             state.discountCode = '';
@@ -1955,17 +2132,17 @@
             }
             let targetUrl = "";
             if (state.paymentMethod === 'tng') {
-                targetUrl = "https://payment.tngdigital.com.my/sc/bDLob7YcpG";
+                targetUrl = TNG_GENERIC;
             } else if (state.paymentMethod === 'fpx') {
                 if (state.packageType === 'html') {
-                    targetUrl = "https://toyyibpay.com/htmlplan-50-depo"; 
+                    targetUrl = FPX_URLS.html; 
                 } else if (state.packageType === 'frontend') {
-                    targetUrl = "https://toyyibpay.com/frontend-depo-50"; 
+                    targetUrl = FPX_URLS.frontend; 
                 } else {
-                    targetUrl = "https://payment.tngdigital.com.my/sc/bDLob7YcpG";
+                    targetUrl = TNG_GENERIC;
                 }
             } else {
-                targetUrl = "https://payment.tngdigital.com.my/sc/bDLob7YcpG";
+                targetUrl = TNG_GENERIC;
             }
             window.open(targetUrl, '_blank');
         }
@@ -2119,7 +2296,7 @@
                 if(alpha > 0) {
                     const scale = 800 / (800 + rotZ); 
                     const x = 600 + rotX * scale; 
-                    const y = 600 + dot.y * scale;
+                    const y = 600 + dot.y * scale; 
                     ctx.beginPath();
                     ctx.arc(x, y, 1.5 * scale, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(255,255,255,${alpha})`;

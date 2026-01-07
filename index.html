@@ -263,15 +263,34 @@
 
         .mobile-drawer {
             position: fixed; top: 0; right: 0; width: 100%; height: 100vh;
-            background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(25px);
+            background: rgba(5, 5, 5, 0.98); /* Slightly darker for better contrast */
+            backdrop-filter: blur(25px);
             z-index: 2000;
-            display: flex; flex-direction: column; justify-content: center;
+            display: flex; flex-direction: column; justify-content: flex-start; /* Start from top */
             transform: translateX(100%); 
             transition: transform 0.6s var(--ease-out);
+            overflow-y: auto; /* Scrollable drawer */
+            -webkit-overflow-scrolling: touch;
+            padding-top: 100px; /* Space for header */
         }
         .mobile-drawer.open { transform: translateX(0); }
-        .mobile-drawer ul { text-align: center; display: flex; flex-direction: column; gap: 2rem; }
-        .mobile-drawer a { font-size: 2rem; font-weight: 800; color: var(--text-secondary); opacity: 0; transform: translateY(40px); transition: 0.5s var(--ease-out); }
+        .mobile-drawer ul { 
+            text-align: center; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1.5rem; 
+            padding-bottom: 80px; /* Space for bottom safe area on modern phones */
+            min-height: 100%;
+        }
+        .mobile-drawer a { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: var(--text-secondary); 
+            opacity: 0; 
+            transform: translateY(40px); 
+            transition: 0.5s var(--ease-out); 
+            display: block;
+        }
         .mobile-drawer.open a { opacity: 1; transform: translateY(0); }
         
         /* Staggered animation for drawer items */
@@ -281,6 +300,8 @@
         .mobile-drawer.open li:nth-child(4) a { transition-delay: 0.4s; }
         .mobile-drawer.open li:nth-child(5) a { transition-delay: 0.5s; }
         .mobile-drawer.open li:nth-child(6) a { transition-delay: 0.6s; }
+        .mobile-drawer.open li:nth-child(7) a { transition-delay: 0.7s; }
+        .mobile-drawer.open li:nth-child(8) a { transition-delay: 0.8s; }
 
         @media(min-width: 992px) {
             .nav-desktop { display: flex; }
@@ -654,8 +675,14 @@
             .btn { padding: 0.8rem 1.5rem !important; font-size: 0.8rem !important; min-height: 48px; }
             .form-group { margin-bottom: 1.2rem !important; }
             .form-input, .form-select, textarea { padding: 0.9rem !important; }
-            .mobile-drawer a { font-size: 1.5rem; }
             
+            /* Mobile Drawer Menu Items specific fix */
+            .mobile-drawer a { 
+                font-size: 1.5rem; 
+                color: var(--text-main); /* Changed from secondary to main for better visibility */
+                font-weight: 600; /* Slightly lighter weight for readability */
+            }
+
             /* Mobile Footer */
             footer { padding: 3rem 0 1.5rem; }
             .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
@@ -693,7 +720,8 @@
     <!-- Preloader -->
     <div id="preloader">
         <div class="loader-content">
-            <img src="https://raw.githubusercontent.com/ddnetwork-ent/DDN-One/refs/heads/main/DD-LOGO.JPEG?raw=true" alt="Logo" style="height: 60px; margin-bottom: 1rem; border-radius: 50%;">
+            <!-- UPDATED LOGO URL -->
+            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/zoom_ddn_logo.jpg" alt="Logo" style="height: 60px; margin-bottom: 1rem;">
             <h2 style="font-size: 0.8rem; letter-spacing: 2px;">LOADING</h2>
         </div>
     </div>
@@ -707,16 +735,17 @@
     <!-- Mobile Drawer Overlay -->
     <div id="mobileDrawerOverlay" class="mobile-drawer-overlay" onclick="toggleDrawer()"></div>
 
-    <!-- MOBILE FLOATING ACTION BUTTON (New Profile Button) -->
+    <!-- MOBILE FLOATING ACTION BUTTON (Updated for Helpdesk) -->
     <div class="mobile-fab" id="mobileFab" onclick="handleFabClick()">
         <div class="fab-pulse"></div>
-        <i class="ri-user-smile-line"></i>
+        <i class="ri-customer-service-2-line"></i>
     </div>
 
     <!-- Header -->
     <header id="mainHeader">
         <a href="#" onclick="navigateTo('home')" class="logo-wrapper">
-            <img src="https://raw.githubusercontent.com/ddnetwork-ent/DDN-One/refs/heads/main/DD-LOGO.JPEG?raw=true" alt="DDNetwork Logo" class="logo-img">
+            <!-- UPDATED LOGO URL -->
+            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/DDN%20Logo%20NoBG.png" alt="DDNetwork Logo" class="logo-img">
             <span class="company-name">DDNetworkOne</span>
         </a>
         
@@ -730,7 +759,7 @@
             <a href="#" onclick="openTermsModal()">Terms</a>
             
             <div class="auth-buttons" id="desktopAuthLinks">
-                <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
+                <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Start Project</a>
                 <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
                 <a href="#" onclick="navigateTo('login')">Login</a>
                 <a href="#" onclick="navigateTo('signup')">Sign Up</a>
@@ -1739,16 +1768,12 @@
         }
 
         // ==========================================
-        // ADMIN DETECTION & FAB LOGIC
+        // FAB LOGIC (Updated to Helpdesk)
         // ==========================================
         
         function handleFabClick() {
             // Mobile FAB click logic
-            if(auth && auth.currentUser) {
-                navigateTo('profile');
-            } else {
-                navigateTo('login');
-            }
+            navigateTo('helpdesk');
         }
 
         function updateHeaderForUser(user) {
@@ -1757,7 +1782,7 @@
             if(deskAuth) {
                 // Updated to use btn-profile-nav style for visibility
                 let userControls = `
-                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
+                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Start Project</a>
                     <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
                     <a href="#" onclick="navigateTo('profile')" class="btn-profile-nav">
                         <i class="ri-user-smile-line"></i> Profile
@@ -1794,7 +1819,7 @@
             const deskAuth = document.getElementById('desktopAuthLinks');
             if(deskAuth) {
                 deskAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
+                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Start Project</a>
                     <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
                     <a href="#" onclick="navigateTo('login')" class="btn-profile-nav">
                         <i class="ri-login-circle-line"></i> Login

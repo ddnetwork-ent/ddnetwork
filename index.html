@@ -35,6 +35,7 @@
             --accent-glow: rgba(59, 130, 246, 0.5);
             --accent-warn: #f59e0b;
             --accent-success: #10b981;
+            --accent-danger: #ef4444; /* Red for Discount */
             --font-display: 'Inter', sans-serif; 
             --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* Smooth Apple-like easing */
             
@@ -153,6 +154,30 @@
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* --- DISCOUNT BADGE (NEW) --- */
+        .discount-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent-danger);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+            z-index: 20;
+            display: none; /* Hidden by default until activated */
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: translateY(-20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
 
         /* --- BUTTONS --- */
@@ -285,7 +310,7 @@
         .mobile-drawer a { 
             font-size: 1.5rem; 
             font-weight: 800; 
-            color: var(--text-secondary); 
+            color: var(--text-main); 
             opacity: 0; 
             transform: translateY(40px); 
             transition: 0.5s var(--ease-out); 
@@ -301,7 +326,6 @@
         .mobile-drawer.open li:nth-child(5) a { transition-delay: 0.5s; }
         .mobile-drawer.open li:nth-child(6) a { transition-delay: 0.6s; }
         .mobile-drawer.open li:nth-child(7) a { transition-delay: 0.7s; }
-        .mobile-drawer.open li:nth-child(8) a { transition-delay: 0.8s; }
 
         @media(min-width: 992px) {
             .nav-desktop { display: flex; }
@@ -721,7 +745,7 @@
     <div id="preloader">
         <div class="loader-content">
             <!-- UPDATED LOGO URL -->
-            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/zoom_ddn_logo.jpg" alt="Logo" style="height: 60px; margin-bottom: 1rem;">
+            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/DDN%20Logo%20NoBG.png" alt="Logo" style="height: 60px; margin-bottom: 1rem;">
             <h2 style="font-size: 0.8rem; letter-spacing: 2px;">LOADING</h2>
         </div>
     </div>
@@ -751,18 +775,14 @@
         
         <nav class="nav-desktop">
             <a href="#" onclick="navigateTo('home')">Home</a>
-            <a href="#" onclick="navigateTo('helpdesk')">Helpdesk</a>
-            <a href="#" onclick="navigateTo('services')">Services</a>
+            <!-- Renamed Services to Pricing -->
+            <a href="#" onclick="navigateTo('services')">Pricing</a>
             <a href="#" onclick="navigateTo('clients')">Clients</a>
             <a href="#" onclick="navigateTo('founder')">Founder</a>
-            <a href="#" onclick="navigateTo('contact')">Contact</a>
             <a href="#" onclick="openTermsModal()">Terms</a>
             
             <div class="auth-buttons" id="desktopAuthLinks">
-                <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Start Project</a>
-                <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
-                <a href="#" onclick="navigateTo('login')">Login</a>
-                <a href="#" onclick="navigateTo('signup')">Sign Up</a>
+                <!-- Injected via JS -->
             </div>
         </nav>
 
@@ -775,17 +795,13 @@
     <div class="mobile-drawer" id="mobileDrawer">
         <ul>
             <li><a href="#" onclick="navigateTo('home'); toggleDrawer()">Home</a></li>
-            <li><a href="#" onclick="navigateTo('helpdesk'); toggleDrawer()">Helpdesk</a></li>
-            <li><a href="#" onclick="navigateTo('services'); toggleDrawer()">Services</a></li>
+            <li><a href="#" onclick="navigateTo('services'); toggleDrawer()">Pricing</a></li>
             <li><a href="#" onclick="navigateTo('clients'); toggleDrawer()">Clients</a></li>
             <li><a href="#" onclick="navigateTo('founder'); toggleDrawer()">Founder</a></li>
-            <li><a href="#" onclick="navigateTo('contact'); toggleDrawer()">Contact</a></li>
             <li><a href="#" onclick="openTermsModal(); toggleDrawer()">Terms</a></li>
-            <li><a href="#" onclick="navigateTo('buynow'); toggleDrawer()" style="color: var(--accent-primary);">Start Project</a></li>
             
             <li id="mobileAuthLinks">
-                <a href="#" onclick="navigateTo('login'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Login</a>
-                <a href="#" onclick="navigateTo('signup'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Sign Up</a>
+                <!-- Injected via JS -->
             </li>
         </ul>
     </div>
@@ -807,7 +823,7 @@
                     <p>We craft high-performance websites and AI integrations. From basic static sites to advanced digital platforms, we build tools that scale your brand.</p>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
                         <button class="btn btn-primary" onclick="navigateTo('services')">View Pricing</button>
-                        <button class="btn" onclick="navigateTo('buynow')">Start Order</button>
+                        <button class="btn" onclick="navigateTo('services')">Start Order</button>
                     </div>
 
                     <div class="trust-section">
@@ -1032,18 +1048,21 @@
             </div>
         </section>
 
-        <!-- === PAGE: SERVICES === -->
+        <!-- === PAGE: SERVICES (PRICING) === -->
         <section id="services" class="page-section">
             <div style="padding-bottom: 4rem;">
                 <div class="text-center reveal" style="margin-bottom: 3rem;">
-                    <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Select Your Package</h2>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Pricing Packages</h2>
                     <p style="color: var(--text-secondary); font-size: 0.9rem;">Transparent pricing. No hidden fees. Choose what fits your needs.</p>
                 </div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                     
                     <!-- Package 1 -->
-                    <div class="checkout-card reveal" style="text-align: center; border: 1px solid var(--border-light);">
+                    <div class="checkout-card reveal" style="text-align: center; border: 1px solid var(--border-light); position: relative;">
+                        <!-- DISCOUNT BADGE (NEW) -->
+                        <div class="discount-badge" id="card-discount-html">20% OFF</div>
+                        
                         <div style="background: rgba(255,255,255,0.05); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                             <i class="ri-file-list-2-line" style="font-size: 1.2rem; color: var(--text-secondary);"></i>
                         </div>
@@ -1060,6 +1079,9 @@
 
                     <!-- Package 2 -->
                     <div class="checkout-card reveal" style="text-align: center; border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); position: relative;">
+                         <!-- DISCOUNT BADGE (NEW) -->
+                        <div class="discount-badge" id="card-discount-frontend">20% OFF</div>
+
                         <div style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: white; padding: 2px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: 700;">MOST POPULAR</div>
                         <div style="background: var(--accent-primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 0 15px var(--accent-glow);">
                             <i class="ri-layout-masonry-line" style="font-size: 1.2rem; color: white;"></i>
@@ -1284,7 +1306,7 @@
             </div>
         </section>
 
-        <!-- === PAGE: CONTACT === -->
+        <!-- === PAGE: CONTACT (Hidden from menu but accessible via helpdesk or footer) === -->
         <section id="contact" class="page-section">
             <div class="container" style="max-width: 800px;">
                 <div class="checkout-card reveal text-center">
@@ -1420,7 +1442,17 @@
         let ADMIN_EMAIL = "ddnetwork.one@outlook.com";
         let allUsers = [];
         let currentUserPersonalVoucher = null;
-        let siteConfig = { maintenance_active: false, message: '', prices: { html: 199, frontend: 599 }, packageDetails: {} };
+        
+        // ADDED: Global Discount Config
+        let siteConfig = { 
+            maintenance_active: false, 
+            message: '', 
+            prices: { html: 199, frontend: 599 }, 
+            packageDetails: {},
+            discount_active: false,  // ADDED
+            discount_rate: 0             // ADDED (0.1 = 10%, 0.2 = 20%)
+        };
+
         let currentUserRole = 'user'; 
         
         const DEFAULT_DETAILS = {
@@ -1459,6 +1491,9 @@
 
             updateCheckoutSummary(frontendDetails, aiDetails);
             refreshCardPrices();
+            
+            // ADDED: Handle Global Discount Badges
+            updateDiscountBadges();
         }
 
         function updateCheckoutSummary(frontendList, aiList) {
@@ -1475,8 +1510,40 @@
                 const htmlPriceEl = document.getElementById('price-card-html');
                 const frontendPriceEl = document.getElementById('price-card-frontend');
                 
-                if(htmlPriceEl) htmlPriceEl.innerText = `RM ${siteConfig.prices.html}`;
-                if(frontendPriceEl) frontendPriceEl.innerText = `RM ${siteConfig.prices.frontend}`;
+                // Apply global discount to display prices
+                let htmlPrice = siteConfig.prices.html;
+                let frontendPrice = siteConfig.prices.frontend;
+                
+                if(siteConfig.discount_active && siteConfig.discount_rate > 0) {
+                    htmlPrice = Math.round(htmlPrice * (1 - siteConfig.discount_rate));
+                    frontendPrice = Math.round(frontendPrice * (1 - siteConfig.discount_rate));
+                }
+
+                if(htmlPriceEl) htmlPriceEl.innerText = `RM ${htmlPrice}`;
+                if(frontendPriceEl) frontendPriceEl.innerText = `RM ${frontendPrice}`;
+            }
+        }
+
+        // ADDED: Function to handle Badge Display
+        function updateDiscountBadges() {
+            const htmlBadge = document.getElementById('card-discount-html');
+            const frontendBadge = document.getElementById('card-discount-frontend');
+            
+            if(siteConfig.discount_active && siteConfig.discount_rate > 0) {
+                const percentage = Math.round(siteConfig.discount_rate * 100);
+                const text = `-${percentage}% OFF`;
+                
+                if(htmlBadge) {
+                    htmlBadge.innerText = text;
+                    htmlBadge.style.display = 'block';
+                }
+                if(frontendBadge) {
+                    frontendBadge.innerText = text;
+                    frontendBadge.style.display = 'block';
+                }
+            } else {
+                if(htmlBadge) htmlBadge.style.display = 'none';
+                if(frontendBadge) frontendBadge.style.display = 'none';
             }
         }
 
@@ -1490,13 +1557,6 @@
                 } else {
                     document.getElementById('maintenance-overlay').classList.remove('active');
                 }
-            }
-        });
-
-        db.collection("config").doc("site_settings").onSnapshot((doc) => {
-            if(doc.exists && doc.data().prices) {
-                siteConfig.prices = doc.data().prices;
-                refreshCardPrices();
             }
         });
 
@@ -1528,7 +1588,8 @@
             discountCode: '',
             domainType: 'sub',
             domainName: '',
-            paymentMethod: 'tng'
+            paymentMethod: 'tng',
+            globalDiscountApplied: false // Track if we are using the site-wide discount
         };
 
         // ==========================================
@@ -1780,10 +1841,8 @@
             const isAdmin = currentUserRole === 'admin';
             const deskAuth = document.getElementById('desktopAuthLinks');
             if(deskAuth) {
-                // Updated to use btn-profile-nav style for visibility
+                // MENU UPDATED: Home, Pricing, Clients, Founder, Terms, Profile, Logout
                 let userControls = `
-                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Start Project</a>
-                    <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
                     <a href="#" onclick="navigateTo('profile')" class="btn-profile-nav">
                         <i class="ri-user-smile-line"></i> Profile
                     </a>
@@ -1818,9 +1877,8 @@
         function updateHeaderForGuest() {
             const deskAuth = document.getElementById('desktopAuthLinks');
             if(deskAuth) {
+                // GUEST VIEW: Login / Sign Up (since Profile/Logout are for users)
                 deskAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Start Project</a>
-                    <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
                     <a href="#" onclick="navigateTo('login')" class="btn-profile-nav">
                         <i class="ri-login-circle-line"></i> Login
                     </a>
@@ -2036,16 +2094,33 @@
             const priceArea = document.getElementById('dynamic-price-area');
             priceArea.innerHTML = ''; 
 
+            // Logic to handle Global Discount from Config
+            let displayPrice = 0;
+            
             if(type === 'html') {
-                const price = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
-                state.packagePrice = price; 
+                const basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
+                state.packagePrice = basePrice; 
+                if(siteConfig.discount_active) {
+                    state.packagePrice = Math.round(basePrice * (1 - siteConfig.discount_rate));
+                    displayPrice = `<span style="text-decoration: line-through; color: #666; margin-right:5px;">RM ${basePrice}</span> RM ${state.packagePrice}`;
+                } else {
+                    displayPrice = `RM ${basePrice}`;
+                }
+
                 document.getElementById('summary-pkg-desc').innerText = "Static Website (1-2 pages)";
-                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM ${price}</div>`;
+                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">${displayPrice}</div>`;
             } else if (type === 'frontend') {
-                const price = (siteConfig && siteConfig.prices && siteConfig.prices.frontend) ? siteConfig.prices.frontend : 599;
-                state.packagePrice = price; 
+                const basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.frontend) ? siteConfig.prices.frontend : 599;
+                state.packagePrice = basePrice; 
+                if(siteConfig.discount_active) {
+                    state.packagePrice = Math.round(basePrice * (1 - siteConfig.discount_rate));
+                    displayPrice = `<span style="text-decoration: line-through; color: #666; margin-right:5px;">RM ${basePrice}</span> RM ${state.packagePrice}`;
+                } else {
+                    displayPrice = `RM ${basePrice}`;
+                }
+                
                 document.getElementById('summary-pkg-desc').innerText = "Interactive Website (Up to 5 pages)";
-                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Fixed Price: RM ${price}</div>`;
+                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">${displayPrice}</div>`;
             } else if (type === 'ai') {
                 state.packagePrice = 0;
                 document.getElementById('summary-pkg-desc').innerText = "AI Integration & Chatbot";
@@ -2060,6 +2135,19 @@
             state.discountRate = 0;
             state.discountFixed = 0;
             state.discountCode = '';
+            
+            // Check if global discount is active and apply logic to discount row
+            if(siteConfig.discount_active && (type === 'html' || type === 'frontend')) {
+                state.discountType = 'percent';
+                state.discountRate = siteConfig.discount_rate;
+                state.discountCode = 'SALE';
+                // Show discount row
+                document.getElementById('row-discount').style.display = 'flex';
+                document.getElementById('summary-promo-code').innerText = state.discountCode;
+                document.getElementById('summary-discount-val').innerText = `-${state.discountRate * 100}%`;
+                updateTotal();
+            }
+
             document.getElementById('terms-check').checked = false;
             
             if(auth && auth.currentUser) {

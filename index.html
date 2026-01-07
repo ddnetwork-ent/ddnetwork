@@ -364,8 +364,17 @@
         .auth-card h2 { margin-bottom: 0.5rem; }
         .auth-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
         .auth-link { color: var(--accent-primary); cursor: pointer; font-weight: 700; text-decoration: underline; }
-        .profile-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        @media(max-width: 600px) { .profile-details-grid { grid-template-columns: 1fr; } }
+        
+        /* Updated Grid for Profile to handle 4 items evenly */
+        .profile-details-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 1rem; 
+        }
+        
+        @media(max-width: 600px) { 
+            .profile-details-grid { grid-template-columns: 1fr; } 
+        }
 
         /* --- TRUST MARQUEE --- */
         .trust-section { margin-top: 4rem; width: 100%; }
@@ -491,7 +500,7 @@
 
         .ticket-list {
             display: flex;
-            flex-direction: column;
+            flex-direction: column,
             gap: 1rem;
         }
 
@@ -811,6 +820,11 @@
                                 <label class="form-label">Phone Number</label>
                                 <input type="tel" id="prof-phone" class="form-input" placeholder="Loading..." required>
                             </div>
+                            <!-- NEW: Company Name (Optional) -->
+                            <div class="form-group">
+                                <label class="form-label">Company Name <span style="font-weight:400; font-size: 0.7em; color:var(--text-tertiary);">(Optional)</span></label>
+                                <input type="text" id="prof-company" class="form-input" placeholder="e.g. Acme Corp">
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Update Profile</button>
                     </form>
@@ -1118,6 +1132,8 @@
                                 <input type="text" id="co-name" class="form-input" placeholder="Full Name" required>
                                 <input type="tel" id="co-phone" class="form-input" placeholder="Phone Number" required>
                                 <input type="email" id="co-email" class="form-input" placeholder="Email" required>
+                                <!-- NEW: Company Name (Optional) in Checkout -->
+                                <input type="text" id="co-company" class="form-input" placeholder="Company Name (Optional)">
                             </div>
                         </div>
 
@@ -1548,6 +1564,7 @@
             document.getElementById('prof-name').value = "Loading...";
             document.getElementById('prof-email').value = "Loading...";
             document.getElementById('prof-phone').value = "Loading...";
+            document.getElementById('prof-company').value = "Loading...";
 
             db.collection("users").doc(auth.currentUser.uid).get().then((doc) => {
                 if (doc.exists) {
@@ -1555,10 +1572,12 @@
                     const profName = document.getElementById('prof-name');
                     const profPhone = document.getElementById('prof-phone');
                     const profEmail = document.getElementById('prof-email');
+                    const profCompany = document.getElementById('prof-company');
                     
                     if(profName) profName.value = data.name || '';
                     if(profPhone) profPhone.value = data.phone || '';
                     if(profEmail) profEmail.value = data.email || auth.currentUser.email || '';
+                    if(profCompany) profCompany.value = data.company || '';
                     
                     if(data.personalVoucher) {
                         showVoucherCard(data.personalVoucher);
@@ -1570,6 +1589,7 @@
                     document.getElementById('prof-name').value = "";
                     document.getElementById('prof-email').value = auth.currentUser.email || "";
                     document.getElementById('prof-phone').value = "";
+                    document.getElementById('prof-company').value = "";
                     hideVoucherCard();
                 }
             }).catch((error) => {
@@ -1585,12 +1605,15 @@
                     const coName = document.getElementById('co-name');
                     const coPhone = document.getElementById('co-phone');
                     const coEmail = document.getElementById('co-email');
+                    const coCompany = document.getElementById('co-company');
                     const autoFillLabel = document.getElementById('auto-fill-label');
 
                     if(data.name && coName) coName.value = data.name;
                     if(data.phone && coPhone) coPhone.value = data.phone;
                     if(data.email && coEmail) coEmail.value = data.email;
+                    if(data.company && coCompany) coCompany.value = data.company;
 
+                    // Logic to show "Auto-filled" if basic info exists
                     if(data.name && data.phone && data.email && autoFillLabel) {
                         autoFillLabel.style.display = 'inline';
                     } else if (autoFillLabel) {
@@ -1681,12 +1704,12 @@
             
             const name = document.getElementById('prof-name').value;
             const phone = document.getElementById('prof-phone').value;
-            const email = document.getElementById('prof-email').value; 
+            const company = document.getElementById('prof-company').value;
 
             db.collection("users").doc(auth.currentUser.uid).update({ 
                 name: name, 
                 phone: phone,
-                email: email 
+                company: company
             })
             .then(() => {
                 showToast("Profile Updated Successfully!", "success");
@@ -1696,7 +1719,7 @@
         }
 
         function clearUserData() {
-            const inputs = ['prof-name', 'prof-phone', 'prof-email', 'co-name', 'co-phone', 'co-email'];
+            const inputs = ['prof-name', 'prof-phone', 'prof-email', 'prof-company', 'co-name', 'co-phone', 'co-email', 'co-company'];
             inputs.forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.value = '';
@@ -2235,6 +2258,7 @@
             const name = document.getElementById('co-name').value;
             const phone = document.getElementById('co-phone').value;
             const email = document.getElementById('co-email').value;
+            const company = document.getElementById('co-company').value;
 
             if(!name || !phone || !email) {
                 showToast("Please enter Name, Phone, and Email.", "error");
@@ -2253,6 +2277,7 @@
                 customerName: name,
                 customerPhone: phone,
                 customerEmail: email,
+                customerCompany: company || 'Individual', // Save company, default to 'Individual' if empty
                 package: pkgName,
                 domain: domain,
                 maintenance: maint,
@@ -2270,19 +2295,27 @@
                     showToast("Order Placed Successfully!", "success");
                     setTimeout(() => {
                         showToast("Thank you! Order will be reviewed within 24 hours.", "success");
-                        let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}\n*Package:* ${pkgName}\n*Total:* ${total}\n*Payment:* ${paymentLabel}`;
+                        
+                        // Include Company Name in WhatsApp message
+                        let companyText = company ? `\n*Company:* ${company}` : '';
+                        let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}\n*Package:* ${pkgName}\n*Total:* ${total}\n*Payment:* ${paymentLabel}`;
+                        
                         window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                     }, 1500);
                 })
                 .catch((error) => {
                     showToast("Cloud Save Failed. Sending via WhatsApp anyway.", "error");
-                    let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}`;
+                    
+                    let companyText = company ? `\n*Company:* ${company}` : '';
+                    let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}`;
+                    
                     window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                 });
             } else {
                 showToast("Order Placed Successfully!", "success");
                 setTimeout(() => {
-                    let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}`;
+                    let companyText = company ? `\n*Company:* ${company}` : '';
+                    let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}`;
                     window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                 }, 1500);
             }

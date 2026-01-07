@@ -34,6 +34,7 @@
             --accent-primary: #3b82f6; /* Blue */
             --accent-glow: rgba(59, 130, 246, 0.5);
             --accent-warn: #f59e0b;
+            --accent-success: #10b981;
             --font-display: 'Inter', sans-serif; 
             --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* Smooth Apple-like easing */
             
@@ -63,15 +64,15 @@
         ul { list-style: none; }
         button, input, select, textarea { font-family: inherit; border: none; outline: none; }
 
-        /* --- MAINTENANCE OVERLAY (FULL SCREEN) --- */
+        /* --- MAINTENANCE OVERLAY --- */
         #maintenance-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            background: var(--bg-deep); /* Matches body bg */
-            z-index: 99999; /* IMPORTANT: Must be higher than Header (2100) */
+            background: var(--bg-deep);
+            z-index: 99999;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -109,49 +110,6 @@
             line-height: 1.1;
         }
 
-        .maintenance-content p {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-
-        .maintenance-details {
-            margin-top: 3rem;
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .detail-item i {
-            font-size: 2rem;
-            color: var(--accent-primary);
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .detail-item span {
-            display: block;
-            color: var(--text-tertiary);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.3rem;
-        }
-
-        .detail-item strong {
-            color: white;
-            font-size: 1.1rem;
-        }
-
         /* --- PRELOADER --- */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -172,7 +130,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* --- UTILITIES & ANIMATIONS --- */
+        /* --- UTILITIES --- */
         .container { width: 92%; max-width: 1240px; margin: 0 auto; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .text-center { text-align: center; }
@@ -214,17 +172,44 @@
             cursor: pointer;
             overflow: hidden;
             z-index: 1;
+            white-space: nowrap;
         }
         .btn:hover { transform: translateY(-2px); border-color: white; background: rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .btn:active { transform: translateY(0); }
+        
         .btn-primary { background: white; color: black; border: 1px solid white; }
         .btn-primary:hover { background: transparent; color: white; }
+        
         .btn-secondary { background: transparent; border: 1px solid var(--border-light); }
         .btn-secondary:hover { border-color: white; }
+        
         .btn-success { background: #25D366; color: white; border: 1px solid #25D366; }
         .btn-success:hover { background: #128C7E; border-color: #128C7E; }
+        
         .btn-danger { background: var(--accent-warn); color: black; border: 1px solid var(--accent-warn); }
         .btn-danger:hover { background: #d97706; border-color: #d97706; color: white; }
+
+        /* Profile Button (Updated for Visibility) */
+        .btn-profile-nav {
+            background: var(--accent-primary);
+            color: white;
+            border: 1px solid var(--accent-primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+        .btn-profile-nav:hover {
+            background: white;
+            color: var(--accent-primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+        }
 
         /* --- HEADER --- */
         header {
@@ -232,7 +217,7 @@
             transform: translateX(-50%);
             width: calc(100% - 40px);
             max-width: 1200px;
-            z-index: 2100; /* Fixed Header Z-Index */
+            z-index: 2100;
             background: var(--bg-glass);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -256,15 +241,13 @@
         .nav-desktop a:hover { color: white; }
         .nav-desktop a:hover::after { width: 100%; }
 
-        .auth-buttons { display: flex; gap: 10px; align-items: center; }
-        .logout-btn { font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; transition: 0.2s; }
+        .auth-buttons { display: flex; gap: 15px; align-items: center; }
+        .logout-btn { font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; transition: 0.2s; text-decoration: underline; }
         .logout-btn:hover { color: white; }
-        .profile-link { font-size: 1.2rem; color: var(--text-main); background: rgba(255,255,255,0.1); padding: 8px; border-radius: 50%; transition: 0.2s; }
-        .profile-link:hover { background: var(--accent-primary); transform: rotate(10deg); }
         .admin-link { font-size: 1.2rem; color: var(--accent-warn); background: rgba(245, 158, 11, 0.1); padding: 8px; border-radius: 50%; transition: 0.2s; }
         .admin-link:hover { background: #d97706; transform: rotate(10deg); }
 
-        .mobile-toggle { display: block; font-size: 1.5rem; cursor: pointer; color: white; z-index: 2101; transition: transform 0.4s var(--ease-spring); }
+        .mobile-toggle { display: block; font-size: 1.5rem; cursor: pointer; color: white; z-index: 2101; transition: transform 0.4s; }
         .mobile-toggle.open { transform: rotate(90deg); }
 
         .mobile-drawer-overlay {
@@ -290,6 +273,8 @@
         .mobile-drawer ul { text-align: center; display: flex; flex-direction: column; gap: 2rem; }
         .mobile-drawer a { font-size: 2rem; font-weight: 800; color: var(--text-secondary); opacity: 0; transform: translateY(40px); transition: 0.5s var(--ease-out); }
         .mobile-drawer.open a { opacity: 1; transform: translateY(0); }
+        
+        /* Staggered animation for drawer items */
         .mobile-drawer.open li:nth-child(1) a { transition-delay: 0.1s; }
         .mobile-drawer.open li:nth-child(2) a { transition-delay: 0.2s; }
         .mobile-drawer.open li:nth-child(3) a { transition-delay: 0.3s; }
@@ -302,6 +287,43 @@
             .mobile-toggle { display: none; }
         }
 
+        /* --- MOBILE FLOATING ACTION BUTTON (FAB) --- */
+        .mobile-fab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            display: none; /* Hidden on desktop by default */
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.6);
+            z-index: 9900;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .mobile-fab:active { transform: scale(0.9); }
+        
+        .fab-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--accent-primary);
+            opacity: 0;
+            animation: fabPulse 2s infinite;
+        }
+
+        @keyframes fabPulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
         /* --- MAIN CONTENT AREA --- */
         main {
             flex: 1; 
@@ -310,7 +332,7 @@
             overflow-x: hidden;
         }
 
-        /* --- PAGE ROUTING WITH SMOOTH TRANSITIONS --- */
+        /* --- PAGE ROUTING --- */
         .page-section { 
             display: none; 
             min-height: calc(100vh - 100px); 
@@ -408,7 +430,7 @@
         .modal { 
             display: none; 
             position: fixed; 
-            z-index: 9999; /* Higher than Header (2100) to prevent disturbance */
+            z-index: 9999; 
             left: 0; 
             top: 0; 
             width: 100%; 
@@ -421,16 +443,16 @@
         .modal.open { display: block; opacity: 1; }
         .modal-content { 
             background-color: var(--bg-card); 
-            margin: 8% auto; /* Increased top margin for better spacing */
+            margin: 5% auto; 
             padding: 40px; 
             border: 1px solid var(--border-light); 
             width: 90%; 
             max-width: 800px; 
             border-radius: 24px; 
-            max-height: 85vh; /* Adjusted to fit better with spacing */
+            max-height: 90vh; 
             overflow-y: auto; 
             transform: scale(0.9); 
-            transition: transform 0.3s var(--ease-spring); 
+            transition: transform 0.3s var(--ease-out); 
             box-shadow: 0 0 50px rgba(59, 130, 246, 0.1); 
             position: relative;
             z-index: 10000;
@@ -454,7 +476,62 @@
         .modal-text ul { list-style: disc; margin-left: 20px; margin-bottom: 1rem; color: var(--text-secondary); }
         .terms-link { color: var(--accent-primary); text-decoration: underline; font-weight: 600; cursor: pointer; }
 
-        /* --- NEW FOOTER DESIGN --- */
+        /* --- TICKET HISTORY STYLES --- */
+        .ticket-history-container {
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-light);
+            padding-top: 2rem;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .ticket-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .ticket-item {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .ticket-id { font-family: monospace; color: var(--accent-primary); font-weight: 700; }
+        .ticket-status { 
+            display: inline-block; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            font-weight: 700;
+        }
+        .status-open { background: rgba(245, 158, 11, 0.2); color: var(--accent-warn); }
+        .status-closed { background: rgba(16, 185, 129, 0.2); color: var(--accent-success); }
+
+        /* Case ID Result Display */
+        .case-id-result {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent-success);
+            color: var(--accent-success);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* --- FOOTER --- */
         footer {
             background-color: #020202;
             border-top: 1px solid var(--border-light);
@@ -464,10 +541,9 @@
             z-index: 5;
         }
 
-        /* Updated to 3 Columns */
         .footer-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr; /* Wider brand, then Support, then Contact */
+            grid-template-columns: 2fr 1fr 1fr;
             gap: 3rem; 
             margin-bottom: 3rem;
         }
@@ -518,7 +594,6 @@
         }
         .footer-contact-item i { color: var(--accent-primary); }
 
-        /* Footer Bottom Bar */
         .footer-bottom {
             display: flex;
             justify-content: space-between;
@@ -532,7 +607,7 @@
             color: var(--text-tertiary);
         }
 
-        /* Mac Dock (Footer Version) */
+        /* Mac Dock */
         .mac-dock {
             display: flex; 
             gap: 1rem;
@@ -552,7 +627,7 @@
             background: rgba(30, 30, 30, 0.8); 
             color: white; 
             font-size: 1.2rem; 
-            transition: all 0.3s var(--ease-spring); 
+            transition: all 0.3s; 
         }
         .dock-icon:hover { transform: scale(1.2) translateY(-8px); background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); z-index: 10; color: white; }
 
@@ -572,43 +647,23 @@
             .form-input, .form-select, textarea { padding: 0.9rem !important; }
             .mobile-drawer a { font-size: 1.5rem; }
             
-            /* Mobile Footer - Stacks to 1 column */
+            /* Mobile Footer */
             footer { padding: 3rem 0 1.5rem; }
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 2.5rem;
-                text-align: center;
-            }
+            .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
             .footer-brand { align-items: center; display: flex; flex-direction: column; }
             .footer-contact-item { justify-content: center; }
-            .footer-bottom {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            .mac-dock { display: none; } /* Hide dock on mobile to keep clean */
-        }
+            .footer-bottom { flex-direction: column; gap: 1.5rem; }
+            .mac-dock { display: none; }
 
-        /* --- MOBILE TERMS MODAL OPTIMIZATION --- */
-        @media(max-width: 600px) {
-            .modal-content {
-                margin: 2rem auto; /* Safe margin on mobile */
-                padding: 24px; /* Reduced padding for space */
-                width: 95%;
-                max-height: 85vh;
+            /* Mobile Ticket Table */
+            .ticket-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 0.5rem;
             }
-            .modal h2 { 
-                font-size: 1.5rem; 
-                margin-bottom: 1.5rem; 
-                text-align: left;
-            }
-            .close-modal { top: 15px; right: 20px; font-size: 30px; }
-            .modal-text p, .modal-text ul {
-                font-size: 0.95rem; 
-            }
-            .modal-text h3 {
-                font-size: 1.1rem;
-                margin-top: 1.5rem;
-            }
+
+            /* Mobile FAB Display */
+            .mobile-fab { display: flex; }
         }
     </style>
 </head>
@@ -621,21 +676,6 @@
             <h1>Site is currently under maintenance.</h1>
             <p>We're making improvements to serve you better.</p>
             <p>Please check back again shortly.</p>
-            
-            <!-- Optional Details -->
-            <div class="maintenance-details">
-                <div class="detail-item">
-                    <i class="ri-time-line"></i>
-                    <span>Estimated Time</span>
-                    <!-- You can hardcode time here or use admin message variable -->
-                    <strong>--:--</strong>
-                </div>
-                <div class="detail-item">
-                    <i class="ri-mail-line"></i>
-                    <span>Contact Email</span>
-                    <strong>ddnetwork.one@outlook.com</strong>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -656,6 +696,12 @@
     <!-- Mobile Drawer Overlay -->
     <div id="mobileDrawerOverlay" class="mobile-drawer-overlay" onclick="toggleDrawer()"></div>
 
+    <!-- MOBILE FLOATING ACTION BUTTON (New Profile Button) -->
+    <div class="mobile-fab" id="mobileFab" onclick="handleFabClick()">
+        <div class="fab-pulse"></div>
+        <i class="ri-user-smile-line"></i>
+    </div>
+
     <!-- Header -->
     <header id="mainHeader">
         <a href="#" onclick="navigateTo('home')" class="logo-wrapper">
@@ -672,7 +718,7 @@
             <a href="#" onclick="navigateTo('contact')">Contact</a>
             <a href="#" onclick="openTermsModal()">Terms</a>
             
-            <div id="desktopAuthLinks">
+            <div class="auth-buttons" id="desktopAuthLinks">
                 <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
                 <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
                 <a href="#" onclick="navigateTo('login')">Login</a>
@@ -767,7 +813,6 @@
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Update Profile</button>
                     </form>
                     
-                    <!-- VOUCHER SECTION -->
                     <div id="profile-voucher-section" style="display: none; margin-top: 2rem; border-top: 1px solid var(--border-light); padding-top: 2rem;">
                         <div class="voucher-card">
                             <div class="voucher-info">
@@ -802,7 +847,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Password</label>
-                            <input type="password" id="login-password" class="form-input" placeholder="•••" required>
+                            <input type="password" id="login-password" class="form-input" placeholder="Required" required>
                             <div style="text-align: right; margin-top: 5px;">
                                 <span class="auth-link" style="font-size: 0.8rem;" onclick="navigateTo('forgot-password')">Forgot Password?</span>
                             </div>
@@ -915,7 +960,29 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Ticket</button>
+                        
+                        <!-- CASE ID DISPLAY -->
+                        <div id="case-id-display" class="case-id-result">
+                            Case Submitted Successfully!<br>
+                            <span style="font-size:0.9rem; opacity:0.8; margin-bottom:5px; display:block;">Save this ID to check your ticket status:</span>
+                            <span id="display-case-id"></span>
+                        </div>
                     </form>
+
+                    <!-- TICKET HISTORY SECTION (UPDATED: SEARCH BY ID ONLY) -->
+                    <div class="ticket-history-container">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-main);">Check Ticket Status</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Enter your unique Case ID to view the ticket details.</p>
+                        
+                        <div class="search-box">
+                            <input type="text" id="history-search-id" class="form-input" placeholder="Enter Case ID (e.g. abc123xyz)">
+                            <button type="button" class="btn btn-secondary" onclick="fetchTicketHistory()">Search</button>
+                        </div>
+
+                        <div id="ticket-list" class="ticket-list">
+                            <!-- Ticket will be injected here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -943,7 +1010,6 @@
                             <li>• Mobile Responsive</li>
                             <li>• Basic SEO Tags</li>
                         </ul>
-                        <!-- UPDATED BUTTON -->
                         <button class="btn btn-primary" style="width: 100%;" onclick="attemptSelectPackage('HTML Only', 'html')">Select</button>
                     </div>
 
@@ -957,7 +1023,6 @@
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Interactive multi-page websites.</p>
                         <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-frontend">RM 599</div>
                         
-                        <!-- DYNAMIC LIST -->
                         <ul id="list-frontend" style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• Up to 5 Pages</li>
                             <li>• Animations & Interactions</li>
@@ -965,7 +1030,6 @@
                             <li>• WhatsApp Integration</li>
                         </ul>
 
-                        <!-- UPDATED BUTTON -->
                         <button class="btn btn-primary" style="width: 100%; background: var(--accent-primary); color: white; border-color: var(--accent-primary);" onclick="attemptSelectPackage('Front-End Website', 'frontend')">Select Front-End</button>
                     </div>
 
@@ -978,7 +1042,6 @@
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Next-gen automation & chatbots.</p>
                         <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-ai">Custom</div>
                         
-                        <!-- DYNAMIC LIST -->
                         <ul id="list-ai" style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• All Front-End Features</li>
                             <li>• AI Chatbot Integration</li>
@@ -986,7 +1049,6 @@
                             <li>• Smart Analytics</li>
                         </ul>
 
-                        <!-- UPDATED BUTTON -->
                         <button class="btn" style="width: 100%; background: white; color: black;" onclick="attemptSelectPackage('AI Powered Website', 'ai')">Request Quote</button>
                     </div>
 
@@ -1048,7 +1110,6 @@
                     <h3 style="margin-bottom: 2rem; color: white;">Configuration</h3>
                     
                     <form id="checkoutForm" onsubmit="return false;">
-                        <!-- Contact Info -->
                         <div class="form-group">
                             <label class="form-label">Personal Details <span id="auto-fill-label" style="font-size: 0.7rem; color: var(--accent-primary); display: none;">(Auto-filled)</span></label>
                             <div class="profile-details-grid">
@@ -1058,7 +1119,6 @@
                             </div>
                         </div>
 
-                        <!-- VOUCHER IMPORT SECTION -->
                         <div id="checkout-voucher-section" style="display: none; margin-bottom: 2rem;">
                             <div class="voucher-card" style="margin-bottom: 0;">
                                 <div class="voucher-info">
@@ -1069,7 +1129,6 @@
                             </div>
                         </div>
 
-                        <!-- Domain Config -->
                         <div class="form-group">
                             <label class="form-label">Domain Choice</label>
                             <div class="radio-group">
@@ -1093,7 +1152,6 @@
                             </div>
                         </div>
 
-                        <!-- Maintenance Config -->
                         <div class="form-group">
                             <label class="form-label">Maintenance Plan (Optional)</label>
                             <div class="radio-group">
@@ -1109,7 +1167,6 @@
                             </div>
                         </div>
 
-                        <!-- Promo Code -->
                         <div class="form-group" style="margin-top: 2rem;">
                             <label class="form-label">Promo Code (Optional)</label>
                             <div style="display: flex; gap: 10px;">
@@ -1121,7 +1178,6 @@
 
                         <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 2rem 0;">
 
-                        <!-- Terms Checkbox -->
                         <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
                             <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.9rem; line-height: 1.5;">
                                 <input type="checkbox" id="terms-check" style="margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent-primary);">
@@ -1131,7 +1187,6 @@
                             </label>
                         </div>
 
-                        <!-- Payment & Action Buttons -->
                         <div style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
                             <label class="form-label" style="color: var(--accent-primary); font-weight: 700;">Payment Method</label>
                             <div class="radio-group" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.5rem;">
@@ -1159,7 +1214,6 @@
                 <p style="color: var(--text-secondary);">Trusted by forward-thinking businesses.</p>
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                <!-- Client 1 -->
                 <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
                     <div style="height: 200px; overflow: hidden;">
                         <img src="https://raw.githubusercontent.com/ddnetwork-ent/clinic-azam-dental/refs/heads/main/IMG_2260.JPG" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
@@ -1170,7 +1224,6 @@
                         <a href="https://ddnetwork-ent.github.io/clinic-azam-dental/" target="_blank" class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</a>
                     </div>
                 </div>
-                <!-- Client 2 -->
                 <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
                     <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #e2e8f0;">
                          <img src="https://raw.githubusercontent.com/ddnetwork-ent/mory-matcha/refs/heads/main/MORY%20ICON-green.png" style="height: 80%;">
@@ -1233,13 +1286,11 @@
 
     </main>
 
-    <!-- BETTER FOOTER (UPDATED LAYOUT) -->
+    <!-- BETTER FOOTER -->
     <footer>
         <div class="container">
-            <!-- Footer Grid Layout -->
             <div class="footer-grid">
                 
-                <!-- Column 1: Brand (Left Aligned) -->
                 <div class="footer-col footer-brand">
                     <a href="#" onclick="navigateTo('home')" style="cursor: pointer;">
                         <span class="company-name">DDNetwork<span style="color:var(--text-tertiary)">One</span></span>
@@ -1249,7 +1300,6 @@
                     </p>
                 </div>
 
-                <!-- Column 2: Support -->
                 <div class="footer-col">
                     <h4>Support</h4>
                     <ul class="footer-links">
@@ -1259,7 +1309,6 @@
                     </ul>
                 </div>
 
-                <!-- Column 3: Contact -->
                 <div class="footer-col">
                     <h4>Contact</h4>
                     <div class="footer-contact-item">
@@ -1274,11 +1323,9 @@
 
             </div>
 
-            <!-- Footer Bottom Bar -->
             <div class="footer-bottom">
                 <p class="copyright">&copy; 2025-2026 DDNetwork One. PG0572133-K All rights reserved.</p>
                 
-                <!-- Mac Dock Style Socials (Desktop Only) -->
                 <div class="mac-dock">
                     <a href="https://linkedin.com" target="_blank" class="dock-icon"><i class="ri-linkedin-fill"></i></a>
                     <a href="https://instagram.com" target="_blank" class="dock-icon"><i class="ri-instagram-line"></i></a>
@@ -1296,14 +1343,13 @@
             <h2>Terms & Conditions</h2>
             <div class="modal-text">
                 <h3>1. Acceptance of Terms</h3>
-                <p>By accessing, engaging, or using any services provided by DDNetwork One ("we", "us", "our"), you acknowledge that you have read, understood, and agreed to be legally bound by these Terms & Conditions. If you do not agree with any part of these terms, you must refrain from using our services.</p>
+                <p>By accessing, engaging, or using any services provided by DDNetwork One, you acknowledge that you have read, understood, and agreed to be legally bound by these Terms & Conditions.</p>
                 <h3>2. Scope of Services</h3>
                 <p>DDNetwork One provides website design, development, and related digital services based on selected service package.</p>
-                <h3>3. Maintenance & Renewal Policy</h3>
-                <p>Maintenance plans are billed annually. Failure to renew maintenance plan before due date will result in website being unpublished.</p>
                 <p style="margin-top: 2rem; font-weight: 700;">&copy; DDNetwork One. All rights reserved.</p>
             </div>
         </div>
+    </div>
 
     <!-- JAVASCRIPT -->
     <script>
@@ -1311,9 +1357,7 @@
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
             preloader.style.opacity = '0';
-            setTimeout(() => {
-                preloader.style.display = 'none';
-            }, 600);
+            setTimeout(() => { preloader.style.display = 'none'; }, 600);
         });
 
         const firebaseConfig = {
@@ -1330,22 +1374,11 @@
         let allUsers = [];
         let currentUserPersonalVoucher = null;
         let siteConfig = { maintenance_active: false, message: '', prices: { html: 199, frontend: 599 }, packageDetails: {} };
-        let currentUserRole = 'user'; // Store role: 'admin' or 'user'
+        let currentUserRole = 'user'; 
         
-        // Default Details (Fallback)
         const DEFAULT_DETAILS = {
-            frontend: [
-                "Up to 5 Pages",
-                "Animations & Interactions",
-                "Contact Forms",
-                "WhatsApp Integration"
-            ],
-            ai: [
-                "All Front-End Features",
-                "AI Chatbot Integration",
-                "Lead Auto-Response",
-                "Smart Analytics"
-            ]
+            frontend: ["Up to 5 Pages", "Animations & Interactions", "Contact Forms", "WhatsApp Integration"],
+            ai: ["All Front-End Features", "AI Chatbot Integration", "Lead Auto-Response", "Smart Analytics"]
         };
 
         try {
@@ -1371,17 +1404,13 @@
             const frontendDetails = siteConfig.packageDetails?.frontend || DEFAULT_DETAILS.frontend;
             const aiDetails = siteConfig.packageDetails?.ai || DEFAULT_DETAILS.ai;
 
-            // Update Service Cards
             const listFrontend = document.getElementById('list-frontend');
             const listAi = document.getElementById('list-ai');
 
             if(listFrontend) listFrontend.innerHTML = buildListHTML(frontendDetails);
             if(listAi) listAi.innerHTML = buildListHTML(aiDetails);
 
-            // Update Checkout Summary Description dynamically
             updateCheckoutSummary(frontendDetails, aiDetails);
-
-            // Update Pricing Labels dynamically
             refreshCardPrices();
         }
 
@@ -1401,18 +1430,14 @@
                 
                 if(htmlPriceEl) htmlPriceEl.innerText = `RM ${siteConfig.prices.html}`;
                 if(frontendPriceEl) frontendPriceEl.innerText = `RM ${siteConfig.prices.frontend}`;
-                // AI is always custom text
             }
         }
 
-        // Listen for Config Changes (CONTENT & PRICING)
         db.collection("config").doc("site_settings").onSnapshot((doc) => {
             if(doc.exists) {
                 siteConfig = doc.data();
-                // 1. UPDATE TEXT/PRICES
                 renderDynamicContent();
 
-                // 2. MAINTENANCE OVERLAY LOGIC
                 if(siteConfig.maintenance_active) {
                     document.getElementById('maintenance-overlay').classList.add('active');
                 } else {
@@ -1421,7 +1446,6 @@
             }
         });
 
-        // Listen for Price Changes (Separate listener for performance)
         db.collection("config").doc("site_settings").onSnapshot((doc) => {
             if(doc.exists && doc.data().prices) {
                 siteConfig.prices = doc.data().prices;
@@ -1429,15 +1453,12 @@
             }
         });
 
-        // DYNAMIC PROMO CODES
         let PROMO_CODES = {}; 
-        
         db.collection("promo_codes").onSnapshot((snapshot) => {
             PROMO_CODES = {};
             snapshot.forEach(doc => {
                 PROMO_CODES[doc.id] = doc.data().discount;
             });
-            console.log("Promo Codes Updated:", PROMO_CODES);
         });
 
         const PHONE_NO = "60122600969"; 
@@ -1464,20 +1485,17 @@
         };
 
         // ==========================================
-        // FIREBASE AUTH & USER DATA MANAGEMENT (ROLE CHECK)
+        // AUTH & USER DATA
         // ==========================================
 
         if(auth) {
             auth.onAuthStateChanged((user) => {
                 if (user) {
-                    // Fetch user data to get ROLE
                     db.collection("users").doc(user.uid).get().then((doc) => {
                         if (doc.exists) {
                             const data = doc.data();
-                            
-                            // STORE ROLE IN GLOBAL VARIABLE
-                            currentUserRole = data.role || 'user'; // Default to user if role not set
-                            updateHeaderForUser(user); // Use stored role to update header
+                            currentUserRole = data.role || 'user'; 
+                            updateHeaderForUser(user); 
                             
                             if(data.personalVoucher) {
                                 currentUserPersonalVoucher = data.personalVoucher;
@@ -1487,10 +1505,8 @@
                                 hideVoucherCard();
                             }
 
-                            // Fetch sync for checkout
                             fetchAndSyncUserData(user.uid);
                         } else {
-                            // No profile found
                             auth.signOut();
                             updateHeaderForGuest();
                             clearUserData();
@@ -1498,7 +1514,7 @@
                         }
                     }).catch((error) => {
                         console.error("Error loading user data:", error);
-                        showToast("Error loading profile data. Please try again.", "error");
+                        showToast("Error loading profile data.", "error");
                     });
                 } else {
                     updateHeaderForGuest();
@@ -1527,7 +1543,6 @@
                 navigateTo('login');
                 return;
             }
-
             document.getElementById('prof-name').value = "Loading...";
             document.getElementById('prof-email').value = "Loading...";
             document.getElementById('prof-phone').value = "Loading...";
@@ -1549,26 +1564,22 @@
                         hideVoucherCard();
                     }
                 } else {
-                    console.warn("No profile document found for this user.");
-                    showToast("Profile data not found. Please complete your signup details.", "error");
+                    showToast("Profile data not found.", "error");
                     document.getElementById('prof-name').value = "";
                     document.getElementById('prof-email').value = auth.currentUser.email || "";
                     document.getElementById('prof-phone').value = "";
                     hideVoucherCard();
                 }
             }).catch((error) => {
-                console.error("Error loading profile data:", error);
-                showToast("Error loading profile data. Please try again.", "error");
+                showToast("Error loading profile data.", "error");
             });
         }
 
         function fetchAndSyncUserData(uid) {
             if(!db) return;
-            
             db.collection("users").doc(uid).get().then((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
-
                     const coName = document.getElementById('co-name');
                     const coPhone = document.getElementById('co-phone');
                     const coEmail = document.getElementById('co-email');
@@ -1584,16 +1595,12 @@
                         autoFillLabel.style.display = 'none';
                     }
 
-                    // Handle Voucher in Checkout
                     if(data.personalVoucher) {
                         currentUserPersonalVoucher = data.personalVoucher;
                         showCheckoutVoucher(data.personalVoucher);
                     } else {
                         hideCheckoutVoucher();
                     }
-
-                } else {
-                    console.log("No user profile document found yet.");
                 }
             }).catch((error) => {
                 console.error("Error fetching user data:", error);
@@ -1655,7 +1662,7 @@
                         name: name,
                         phone: phone,
                         email: email,
-                        role: 'user', // Default to user
+                        role: 'user',
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
@@ -1698,7 +1705,6 @@
 
         function handleLogout() {
             if(auth) {
-                // BUG FIX: Clear voucher immediately on logout
                 currentUserPersonalVoucher = null;
                 auth.signOut().then(() => {
                     showToast("Logged out", "success");
@@ -1708,22 +1714,32 @@
         }
 
         // ==========================================
-        // ADMIN DETECTION
+        // ADMIN DETECTION & FAB LOGIC
         // ==========================================
+        
+        function handleFabClick() {
+            // Mobile FAB click logic
+            if(auth && auth.currentUser) {
+                navigateTo('profile');
+            } else {
+                navigateTo('login');
+            }
+        }
+
         function updateHeaderForUser(user) {
-            const isAdmin = currentUserRole === 'admin'; // Check global variable
-            
-            // Desktop Nav
+            const isAdmin = currentUserRole === 'admin';
             const deskAuth = document.getElementById('desktopAuthLinks');
             if(deskAuth) {
+                // Updated to use btn-profile-nav style for visibility
                 let userControls = `
                     <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
                     <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
-                    <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile')"><i class="ri-user-settings-line"></i></a>
+                    <a href="#" onclick="navigateTo('profile')" class="btn-profile-nav">
+                        <i class="ri-user-smile-line"></i> Profile
+                    </a>
                     <span class="logout-btn" onclick="handleLogout()">Logout</span>
                 `;
 
-                // If Admin, prepend Admin Portal button
                 if (isAdmin) {
                     userControls = `
                         <a href="https://ddnetwork-ent.github.io/admin.html/" target="_blank" class="admin-link" title="Admin Portal"><i class="ri-shield-user-line"></i></a>
@@ -1735,7 +1751,6 @@
                 deskAuth.innerHTML = userControls;
             }
 
-            // Mobile Menu Update
             const mobAuth = document.getElementById('mobileAuthLinks');
             if(mobAuth) {
                 mobAuth.innerHTML = `
@@ -1744,7 +1759,7 @@
                             <i class="ri-shield-user-line"></i> Admin Portal
                         </a>
                     ` : ''}
-                    <a href="#" class="profile-link" title="My Profile" onclick="navigateTo('profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom:1rem;"><i class="ri-user-line"></i></a>
+                    <a href="#" onclick="navigateTo('profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom:1rem;"><i class="ri-user-line"></i> Profile</a>
                     <a href="#" onclick="handleLogout(); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Logout</a>
                 `;
             }
@@ -1756,8 +1771,9 @@
                 deskAuth.innerHTML = `
                     <a href="#" onclick="navigateTo('buynow')" style="color: var(--accent-primary); font-weight: 700;">Buy Now</a>
                     <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
-                    <a href="#" onclick="navigateTo('login')">Login</a>
-                    <a href="#" onclick="navigateTo('signup')">Sign Up</a>
+                    <a href="#" onclick="navigateTo('login')" class="btn-profile-nav">
+                        <i class="ri-login-circle-line"></i> Login
+                    </a>
                 `;
             }
             const mobAuth = document.getElementById('mobileAuthLinks');
@@ -1789,7 +1805,7 @@
                 .catch((error) => showToast(error.message, "error"));
         }
 
-        // --- TICKET SUBMISSION ---
+        // --- TICKET SUBMISSION & HISTORY (UPDATED: ID ONLY) ---
         function handleTicketSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('ticket-name').value;
@@ -1816,13 +1832,24 @@
 
             if(db) {
                 db.collection("tickets").add(ticketData)
-                .then(() => {
-                    showToast("Ticket Submitted Successfully!", "success");
+                .then((docRef) => {
+                    // 1. Show Case ID prominently
+                    const caseIdDisplay = document.getElementById('case-id-display');
+                    const caseIdSpan = document.getElementById('display-case-id');
+                    caseIdSpan.innerText = docRef.id;
+                    caseIdDisplay.style.display = 'block';
+
+                    // 2. Reset Form
+                    e.target.reset();
+
+                    // 3. Show Toast
+                    showToast(`Ticket Submitted! Case ID: ${docRef.id}`, "success");
+
+                    // 4. Notify Admin
                     setTimeout(() => {
-                        showToast("We will review your ticket within 24 hours.", "success");
-                        let notifyMsg = `Hi Admin,\n*New Ticket Received.*\n\n*Name:* ${name}\n*Type:* ${type}`;
+                        let notifyMsg = `Hi Admin,\n*New Ticket Received.*\n\n*Case ID:* ${docRef.id}\n*Name:* ${name}\n*Type:* ${type}`;
                         window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
-                    }, 2000);
+                    }, 1000);
                 })
                 .catch((error) => {
                     showToast("Cloud Save Failed. Try again.", "error");
@@ -1831,6 +1858,56 @@
                 showToast("Ticket Submitted!", "success");
             }
         }
+
+        // Fetch History (UPDATED: BY ID ONLY)
+        function fetchTicketHistory() {
+            const caseId = document.getElementById('history-search-id').value.trim();
+            if(!caseId) {
+                showToast("Please enter a Case ID.", "error");
+                return;
+            }
+
+            if(!db) {
+                showToast("Database not connected.", "error");
+                return;
+            }
+
+            const listContainer = document.getElementById('ticket-list');
+            listContainer.innerHTML = '<div style="text-align:center; color: var(--text-secondary);">Searching...</div>';
+
+            // Directly fetch the document using the Case ID (Doc ID)
+            db.collection("tickets").doc(caseId).get()
+                .then((doc) => {
+                    listContainer.innerHTML = ''; // Clear loading
+
+                    if (!doc.exists) {
+                        listContainer.innerHTML = '<div style="text-align:center; color: #ef4444; padding: 1rem;">No ticket found with that Case ID.</div>';
+                        return;
+                    }
+
+                    const data = doc.data();
+                    const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : 'Pending';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'ticket-item';
+                    item.innerHTML = `
+                        <div>
+                            <div style="color:white; font-weight:600;">${data.type}</div>
+                            <div style="font-size:0.75rem; color:var(--text-tertiary);">${date}</div>
+                        </div>
+                        <div class="ticket-id">${doc.id}</div>
+                        <div style="text-align:right;">
+                            <span class="ticket-status status-${data.status.toLowerCase()}">${data.status}</span>
+                        </div>
+                    `;
+                    listContainer.appendChild(item);
+                })
+                .catch((error) => {
+                    console.error("Error fetching tickets:", error);
+                    listContainer.innerHTML = '<div style="text-align:center; color: #ef4444;">Error loading ticket.</div>';
+                });
+        }
+
 
         // --- SMOOTH PAGE TRANSITION LOGIC ---
         function navigateTo(pageId) {
@@ -1859,23 +1936,14 @@
                 if (targetSection) {
                     targetSection.style.display = 'block'; 
                     void targetSection.offsetWidth; 
-
                     targetSection.classList.add('active');
                     
-                    // SPECIFIC FIX: If Profile, load data explicitly
                     if(pageId === 'profile') loadProfilePageData();
-
-                    // If navigating to checkout and user is logged in, ensure data is fresh
                     if(pageId === 'buynow' && auth && auth.currentUser) {
                         fetchAndSyncUserData(auth.currentUser.uid);
                     }
                 }
             }, 400);
-        }
-
-        // --- MAINTENANCE BANNER (LEGACY - REMOVED OR IGNORED IN FULLSCREEN VERSION) ---
-        function closeBanner() {
-            // Placeholder to prevent error if function is called elsewhere
         }
 
         function toggleDrawer() {
@@ -1897,35 +1965,24 @@
             }
         }
 
-        // ==========================================
-        // AUTH GATE FOR PACKAGES
-        // ==========================================
+        // --- AUTH GATE FOR PACKAGES ---
         function attemptSelectPackage(name, type) {
-            // 1. Check if Auth is initialized
             if (typeof auth === 'undefined' || auth === null) {
                 showToast("Authentication system initializing. Please wait...", "error");
                 return;
             }
-
-            // 2. Check if user is logged in
             if (auth.currentUser) {
-                // User is logged in, proceed to select package
                 selectPackage(name, type);
             } else {
-                // User is NOT logged in
                 showToast("Please login or sign up to make a purchase.", "error");
-                setTimeout(() => {
-                    navigateTo('login'); // Redirect to Login page (which has a signup link)
-                }, 1500);
+                setTimeout(() => { navigateTo('login'); }, 1500);
             }
         }
 
         function selectPackage(name, type) {
             state.packageType = type;
             state.packagePrice = 0; 
-            
             document.getElementById('summary-pkg-name').innerText = name;
-            
             const priceArea = document.getElementById('dynamic-price-area');
             priceArea.innerHTML = ''; 
 
@@ -1945,9 +2002,7 @@
                 priceArea.innerHTML = `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:#a1a1aa; text-align:center;">Custom Quote required.</div>`;
             }
 
-            // UPDATE CARDS IMMEDIATELY
             refreshCardPrices();
-
             document.getElementById('checkoutForm').reset();
             state.domainType = 'sub';
             state.domainPrice = 55;
@@ -2066,11 +2121,9 @@
         }
 
         function removeVoucher() {
-            // Remove from local state (session only)
             state.discountCode = '';
             state.discountRate = 0;
             state.discountFixed = 0;
-            
             document.getElementById('row-discount').style.display = 'none';
             showToast("Voucher removed", "success");
             updateTotal();
@@ -2094,10 +2147,8 @@
             let discountAmt = 0;
 
             if(state.discountType === 'fixed') {
-                // RM 50 discount
                 discountAmt = state.discountFixed;
             } else {
-                // Percentage discount
                 discountAmt = subtotal * state.discountRate;
             }
 

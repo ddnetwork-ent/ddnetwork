@@ -22,22 +22,30 @@
     <style>
         /* --- CSS VARIABLES (Refined Dark Theme) --- */
         :root {
+            /* Dark Mode (Default) */
             --bg-deep: #050505;
             --bg-surface: #0a0a0a;
             --bg-card: #111111;
-            --bg-glass: rgba(5, 5, 5, 0.8);
-            --border-light: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.2);
+            --bg-input: rgba(255,255,255,0.05);
+            --bg-input-focus: rgba(59, 130, 246, 0.1);
+            --bg-sidebar: #111111;
+            
             --text-main: #ffffff;
             --text-secondary: #a1a1aa;
             --text-tertiary: #52525b;
+            
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-focus: #3b82f6;
+            
             --accent-primary: #3b82f6; /* Blue */
             --accent-glow: rgba(59, 130, 246, 0.5);
             --accent-warn: #f59e0b;
-            --accent-success: #10b981;
-            --accent-danger: #ef4444; /* Red for Discount */
+            
+            --success: #10b981;
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            
             --font-display: 'Inter', sans-serif; 
-            --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* Smooth Apple-like easing */
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
             
             /* Spacing */
             --header-height: 80px;
@@ -156,30 +164,6 @@
             transform: translateY(0);
         }
 
-        /* --- DISCOUNT BADGE (NEW) --- */
-        .discount-badge {
-            position: absolute;
-            top: -12px;
-            right: 20px;
-            background: var(--accent-danger);
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 6px 12px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-            z-index: 20;
-            display: none; /* Hidden by default until activated */
-            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes bounceIn {
-            0% { transform: translateY(-20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
         /* --- BUTTONS --- */
         .btn {
             position: relative;
@@ -191,7 +175,7 @@
             text-transform: uppercase; 
             letter-spacing: 0.05em;
             font-size: 0.85rem;
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border-color);
             border-radius: 100px;
             transition: all 0.3s var(--ease-out); 
             cursor: pointer;
@@ -205,15 +189,9 @@
         .btn-primary { background: white; color: black; border: 1px solid white; }
         .btn-primary:hover { background: transparent; color: white; }
         
-        .btn-secondary { background: transparent; border: 1px solid var(--border-light); }
+        .btn-secondary { background: transparent; border: 1px solid var(--border-color); }
         .btn-secondary:hover { border-color: white; }
         
-        .btn-success { background: #25D366; color: white; border: 1px solid #25D366; }
-        .btn-success:hover { background: #128C7E; border-color: #128C7E; }
-        
-        .btn-danger { background: var(--accent-warn); color: black; border: 1px solid var(--accent-warn); }
-        .btn-danger:hover { background: #d97706; border-color: #d97706; color: white; }
-
         /* Profile Button (Updated for Visibility) */
         .btn-profile-nav {
             background: var(--accent-primary);
@@ -246,7 +224,7 @@
             background: var(--bg-glass);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border-color);
             border-radius: 100px;
             padding: 0 2rem; 
             height: 70px;
@@ -288,15 +266,15 @@
 
         .mobile-drawer {
             position: fixed; top: 0; right: 0; width: 100%; height: 100vh;
-            background: rgba(5, 5, 5, 0.98); /* Slightly darker for better contrast */
+            background: rgba(5, 5, 5, 0.98); 
             backdrop-filter: blur(25px);
             z-index: 2000;
-            display: flex; flex-direction: column; justify-content: flex-start; /* Start from top */
+            display: flex; flex-direction: column; justify-content: flex-start; 
             transform: translateX(100%); 
             transition: transform 0.6s var(--ease-out);
-            overflow-y: auto; /* Scrollable drawer */
+            overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
-            padding-top: 100px; /* Space for header */
+            padding-top: 100px;
         }
         .mobile-drawer.open { transform: translateX(0); }
         .mobile-drawer ul { 
@@ -304,7 +282,7 @@
             display: flex; 
             flex-direction: column; 
             gap: 1.5rem; 
-            padding-bottom: 80px; /* Space for bottom safe area on modern phones */
+            padding-bottom: 80px; 
             min-height: 100%;
         }
         .mobile-drawer a { 
@@ -318,7 +296,6 @@
         }
         .mobile-drawer.open a { opacity: 1; transform: translateY(0); }
         
-        /* Staggered animation for drawer items */
         .mobile-drawer.open li:nth-child(1) a { transition-delay: 0.1s; }
         .mobile-drawer.open li:nth-child(2) a { transition-delay: 0.2s; }
         .mobile-drawer.open li:nth-child(3) a { transition-delay: 0.3s; }
@@ -341,11 +318,11 @@
             height: 60px;
             background: var(--accent-primary);
             border-radius: 50%;
-            display: none; /* Hidden on desktop by default */
+            display: none; 
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.8rem;
+            font-size:1.8rem;
             box-shadow: 0 10px 30px rgba(59, 130, 246, 0.6);
             z-index: 9900;
             cursor: pointer;
@@ -405,12 +382,11 @@
 
         /* --- AUTH PAGES --- */
         .auth-container { width: 100%; max-width: 600px; margin: 0 auto; padding-top: 60px; padding-bottom: 40px; }
-        .auth-card { background: var(--bg-card); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border-light); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .auth-card { background: var(--bg-card); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border-color); text-align: center; box-shadow: var(--shadow-card); position: relative; }
         .auth-card h2 { margin-bottom: 0.5rem; }
         .auth-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
         .auth-link { color: var(--accent-primary); cursor: pointer; font-weight: 700; text-decoration: underline; }
         
-        /* Updated Grid for Profile to handle 4 items evenly */
         .profile-details-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -433,297 +409,86 @@
         .checkout-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; margin-top: 2rem; }
         @media(min-width: 992px) { .checkout-grid { grid-template-columns: 1fr 1.5fr; } }
 
-        .checkout-card { background: var(--bg-card); padding: 2.5rem; border: 1px solid var(--border-light); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transition: transform 0.3s; }
+        .checkout-card { background: var(--bg-card); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: var(--shadow-card); transition: transform 0.3s; }
 
         /* Form Elements */
         .form-group { margin-bottom: 1.5rem; text-align: left; }
         .form-label { display: block; margin-bottom: 0.6rem; font-size: 0.85rem; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         .form-input, .form-select, textarea {
             width: 100%; padding: 1rem;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border-light);
+            background: var(--bg-input); border: 1px solid var(--border-color);
             color: white; border-radius: 12px; font-size: 1rem; 
             min-height: 48px; transition: 0.3s;
         }
-        .form-input:focus, .form-select:focus { border-color: var(--accent-primary); background: rgba(59, 130, 246, 0.05); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .form-input:focus, .form-select:focus { border-color: var(--border-focus); outline: none; background: var(--bg-input-focus); }
         .form-input:read-only { background: rgba(0,0,0,0.2); color: var(--text-tertiary); cursor: not-allowed; border-color: transparent; }
         .radio-group { display: grid; gap: 1rem; }
-        .radio-option { border: 1px solid var(--border-light); padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; background: var(--bg-surface); min-height: 48px; }
-        .radio-option:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.02); }
+        .radio-option { border: 1px solid var(--border-color); padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; background: var(--bg-surface); min-height: 48px; }
+        .radio-option:hover { border-color: var(--border-color); background: rgba(255,255,255,0.02); }
         .radio-option.selected { border-color: var(--accent-primary); background: rgba(59, 130, 246, 0.1); }
 
-        /* Voucher Card Styles */
-        .voucher-card {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 1.5rem;
-            border-radius: 16px;
-            margin-top: 2rem;
+/* --- DISCOUNT BANNER STYLES (UPDATED SPACING) --- */
+.promo-badge {
+    position: absolute;
+    /* UPDATED: Adjusted top and right values for better spacing */
+    top: -22px; 
+    right: -22px; 
+    
+    background: var(--accent-warn);
+    color: black;
+    padding: 6px 14px; /* Increased padding slightly for better look */
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+    z-index: 5;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex; /* Center text */
+    align-items: center;
+    gap: 6px;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+
+/* ... keep rest of CSS ... */
+        
+        .promo-badge.hidden { display: none !important; opacity: 0; pointer-events: none; }
+        .promo-badge.show { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+        .discounted-price-container {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .voucher-info { text-align: left; }
-        .voucher-info h4 { color: white; font-size: 1rem; margin-bottom: 0.2rem; }
-        .voucher-info p { color: var(--accent-primary); font-size: 0.9rem; font-weight: 700; }
-
-        /* Toast */
-        .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--bg-card); color: white; padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border-light); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 12px; transform: translateY(100px); opacity: 0; transition: 0.4s var(--ease-out); }
-        .toast.show { transform: translateY(0); opacity: 1; }
-        .toast.success i { color: #10b981; }
-        .toast.error i { color: #ef4444; }
-
-        /* Summary */
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; }
-        .summary-total { border-top: 1px solid var(--border-light); margin-top: 20px; padding-top: 20px; display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 800; color: white; }
-        .change-package { color: var(--accent-primary); font-size: 0.85rem; text-decoration: underline; cursor: pointer; margin-bottom: 1rem; display: inline-block; }
-        .remove-discount-btn { margin-left: 8px; cursor: pointer; color: #ef4444; font-size: 1.1rem; vertical-align: middle; transition: 0.2s; }
-        .remove-discount-btn:hover { transform: scale(1.2); }
-
-        /* --- MODAL --- */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            z-index: 9999; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            background-color: rgba(0,0,0,0.9); 
-            backdrop-filter: blur(10px); 
-            opacity: 0; 
-            transition: opacity 0.3s; 
-        }
-        .modal.open { display: block; opacity: 1; }
-        .modal-content { 
-            background-color: var(--bg-card); 
-            margin: 5% auto; 
-            padding: 40px; 
-            border: 1px solid var(--border-light); 
-            width: 90%; 
-            max-width: 800px; 
-            border-radius: 24px; 
-            max-height: 90vh; 
-            overflow-y: auto; 
-            transform: scale(0.9); 
-            transition: transform 0.3s var(--ease-out); 
-            box-shadow: 0 0 50px rgba(59, 130, 246, 0.1); 
-            position: relative;
-            z-index: 10000;
-        }
-        .modal.open .modal-content { transform: scale(1); }
-        .close-modal { 
-            position: absolute; 
-            top: 20px; 
-            right: 25px; 
-            color: #aaa; 
-            font-size: 35px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            z-index: 10001; 
-            transition: 0.2s; 
-        }
-        .close-modal:hover { color: white; transform: rotate(90deg); }
-        .modal h2 { margin-bottom: 2rem; text-align: center; color: white; }
-        .modal-text p { margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.7; }
-        .modal-text h3 { color: var(--accent-primary); margin-top: 2rem; margin-bottom: 0.5rem; font-size: 1.2rem; text-transform: none; letter-spacing: normal;}
-        .modal-text ul { list-style: disc; margin-left: 20px; margin-bottom: 1rem; color: var(--text-secondary); }
-        .terms-link { color: var(--accent-primary); text-decoration: underline; font-weight: 600; cursor: pointer; }
-
-        /* --- TICKET HISTORY STYLES --- */
-        .ticket-history-container {
-            margin-top: 3rem;
-            border-top: 1px solid var(--border-light);
-            padding-top: 2rem;
+            flex-direction: column;
+            align-items: center; /* Center prices vertically */
         }
         
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 2rem;
-        }
-
-        .ticket-list {
-            display: flex;
-            flex-direction: column,
-            gap: 1rem;
-        }
-
-        .ticket-item {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 1rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        .ticket-id { font-family: monospace; color: var(--accent-primary); font-weight: 700; }
-        .ticket-status { 
-            display: inline-block; 
-            padding: 2px 8px; 
-            border-radius: 4px; 
-            font-size: 0.75rem; 
-            text-transform: uppercase; 
-            font-weight: 700;
-        }
-        .status-open { background: rgba(245, 158, 11, 0.2); color: var(--accent-warn); }
-        .status-closed { background: rgba(16, 185, 129, 0.2); color: var(--accent-success); }
-
-        /* Case ID Result Display */
-        .case-id-result {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid var(--accent-success);
-            color: var(--accent-success);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            display: none;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            background-color: #020202;
-            border-top: 1px solid var(--border-light);
-            padding: 5rem 0 2rem;
-            margin-top: auto;
-            position: relative;
-            z-index: 5;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 3rem; 
-            margin-bottom: 3rem;
-        }
-
-        .footer-col h4 {
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            color: white;
-            letter-spacing: 0.05em;
-        }
-
-        .footer-brand .company-name {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .footer-brand p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            max-width: 300px;
-            line-height: 1.6;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-links a {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            transition: 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-primary);
-            padding-left: 5px;
-        }
-
-        .footer-contact-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        .footer-contact-item i { color: var(--accent-primary); }
-
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .copyright {
-            font-size: 0.85rem;
+        .old-price {
+            text-decoration: line-through;
             color: var(--text-tertiary);
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-right: 10px;
+            display: none; /* Hidden by default */
+            opacity: 0; /* Animated out */
+            transition: opacity 0.3s;
+        }
+        .old-price.visible { opacity: 1; display: inline-block; }
+        
+        .new-price {
+            color: var(--accent-primary);
+            font-weight: 800;
+            font-size: 2rem;
+            display: inline-block;
+            transition: color 0.3s;
         }
 
-        /* Mac Dock */
-        .mac-dock {
-            display: flex; 
-            gap: 1rem;
-            background: rgba(255, 255, 255, 0.05); 
-            padding: 0.8rem 1.5rem;
-            border-radius: 24px; 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px); 
-        }
-        .dock-icon { 
-            width: 40px; 
-            height: 40px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            border-radius: 50%; 
-            background: rgba(30, 30, 30, 0.8); 
-            color: white; 
-            font-size: 1.2rem; 
-            transition: all 0.3s; 
-        }
-        .dock-icon:hover { transform: scale(1.2) translateY(-8px); background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); z-index: 10; color: white; }
-
-        /* --- MOBILE OPTIMIZATION --- */
-        @media(max-width: 991px) {
-            h1 { font-size: 2.2rem !important; } 
-            h2 { font-size: 1.5rem !important; } 
-            body { font-size: 0.95rem !important; } 
-            .hero p { font-size: 1rem !important; margin-bottom: 1.5rem !important; }
-            #globe-canvas { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
-            .hero-glow { width: 300px; height: 300px; }
-            .page-section { padding-top: 120px !important; padding-bottom: 40px !important; }
-            .checkout-grid { gap: 1.5rem !important; }
-            .checkout-card, .auth-card { padding: 1.5rem !important; }
-            .btn { padding: 0.8rem 1.5rem !important; font-size: 0.8rem !important; min-height: 48px; }
-            .form-group { margin-bottom: 1.2rem !important; }
-            .form-input, .form-select, textarea { padding: 0.9rem !important; }
-            
-            /* Mobile Drawer Menu Items specific fix */
-            .mobile-drawer a { 
-                font-size: 1.5rem; 
-                color: var(--text-main); /* Changed from secondary to main for better visibility */
-                font-weight: 600; /* Slightly lighter weight for readability */
-            }
-
-            /* Mobile Footer */
-            footer { padding: 3rem 0 1.5rem; }
-            .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
-            .footer-brand { align-items: center; display: flex; flex-direction: column; }
-            .footer-contact-item { justify-content: center; }
-            .footer-bottom { flex-direction: column; gap: 1.5rem; }
-            .mac-dock { display: none; }
-
-            /* Mobile Ticket Table */
-            .ticket-item {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 0.5rem;
-            }
-
-            /* Mobile FAB Display */
-            .mobile-fab { display: flex; }
+        .regular-price {
+            color: var(--text-main);
+            font-weight: 800;
+            font-size: 2rem;
         }
     </style>
 </head>
@@ -744,7 +509,6 @@
     <!-- Preloader -->
     <div id="preloader">
         <div class="loader-content">
-            <!-- UPDATED LOGO URL -->
             <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/DDN%20Logo%20NoBG.png" alt="Logo" style="height: 60px; margin-bottom: 1rem;">
             <h2 style="font-size: 0.8rem; letter-spacing: 2px;">LOADING</h2>
         </div>
@@ -768,14 +532,12 @@
     <!-- Header -->
     <header id="mainHeader">
         <a href="#" onclick="navigateTo('home')" class="logo-wrapper">
-            <!-- UPDATED LOGO URL -->
             <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/DDN%20Logo%20NoBG.png" alt="DDNetwork Logo" class="logo-img">
             <span class="company-name">DDNetworkOne</span>
         </a>
         
         <nav class="nav-desktop">
             <a href="#" onclick="navigateTo('home')">Home</a>
-            <!-- Renamed Services to Pricing -->
             <a href="#" onclick="navigateTo('services')">Pricing</a>
             <a href="#" onclick="navigateTo('clients')">Clients</a>
             <a href="#" onclick="navigateTo('founder')">Founder</a>
@@ -816,7 +578,7 @@
                 <canvas id="globe-canvas" width="1200" height="1200"></canvas>
                 
                 <div class="hero-content reveal active">
-                    <div style="display:inline-block; padding: 6px 16px; background: rgba(255,255,255,0.05); border-radius: 30px; border: 1px solid var(--border-light); margin-bottom: 1.5rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: var(--accent-primary); text-transform: uppercase;">
+                    <div style="display:inline-block; padding: 6px 16px; background: rgba(255,255,255,0.05); border-radius: 30px; border: 1px solid var(--border-color); margin-bottom: 1.5rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: var(--accent-primary); text-transform: uppercase;">
                         Malaysia 🇲🇾 #1 Web Solutions
                     </div>
                     <h1>Local focus.<br>Global quality.</h1>
@@ -865,7 +627,6 @@
                                 <label class="form-label">Phone Number</label>
                                 <input type="tel" id="prof-phone" class="form-input" placeholder="Loading..." required>
                             </div>
-                            <!-- NEW: Company Name (Optional) -->
                             <div class="form-group">
                                 <label class="form-label">Company Name <span style="font-weight:400; font-size: 0.7em; color:var(--text-tertiary);">(Optional)</span></label>
                                 <input type="text" id="prof-company" class="form-input" placeholder="e.g. Acme Corp">
@@ -874,17 +635,17 @@
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Update Profile</button>
                     </form>
                     
-                    <div id="profile-voucher-section" style="display: none; margin-top: 2rem; border-top: 1px solid var(--border-light); padding-top: 2rem;">
-                        <div class="voucher-card">
+                    <div id="profile-voucher-section" style="display: none; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+                        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 1.5rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center;">
                             <div class="voucher-info">
-                                <h4>You have a Gift Voucher!</h4>
-                                <p id="profile-voucher-text">Code: -</p>
+                                <h4 style="color:white; font-size: 1rem; margin-bottom: 0.2rem;">You have a Gift Voucher!</h4>
+                                <p id="profile-voucher-text" style="color: var(--accent-primary); font-size: 0.9rem; font-weight: 700;">Code: -</p>
                             </div>
                             <button type="button" class="btn btn-danger" style="width: auto; padding: 0.6rem 1.2rem;" onclick="deletePersonalVoucher()">Delete</button>
                         </div>
                     </div>
 
-                    <div style="margin-top: 2rem; border-top: 1px solid var(--border-light); padding-top: 1.5rem;">
+                    <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
                          <button type="button" class="btn btn-secondary" style="width: 100%;" onclick="handleProfileReset()">
                              <i class="ri-lock-password-line" style="margin-right: 8px;"></i> Reset Password
                          </button>
@@ -1035,9 +796,9 @@
                         <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-main);">Check Ticket Status</h3>
                         <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Enter your unique Case ID to view the ticket details.</p>
                         
-                        <div class="search-box">
-                            <input type="text" id="history-search-id" class="form-input" placeholder="Enter Case ID (e.g. abc123xyz)">
-                            <button type="button" class="btn btn-secondary" onclick="fetchTicketHistory()">Search</button>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="history-search-id" class="form-input" placeholder="Enter Case ID (e.g. abc123xyz)" style="flex:1;">
+                            <button type="button" class="btn btn-secondary" style="width: auto;" onclick="fetchTicketHistory()">Search</button>
                         </div>
 
                         <div id="ticket-list" class="ticket-list">
@@ -1048,7 +809,7 @@
             </div>
         </section>
 
-        <!-- === PAGE: SERVICES (PRICING) === -->
+        <!-- === PAGE: SERVICES === -->
         <section id="services" class="page-section">
             <div style="padding-bottom: 4rem;">
                 <div class="text-center reveal" style="margin-bottom: 3rem;">
@@ -1059,16 +820,22 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                     
                     <!-- Package 1 -->
-                    <div class="checkout-card reveal" style="text-align: center; border: 1px solid var(--border-light); position: relative;">
-                        <!-- DISCOUNT BADGE (NEW) -->
-                        <div class="discount-badge" id="card-discount-html">20% OFF</div>
-                        
+                    <div class="checkout-card reveal" style="text-align: center; border: 1px solid var(--border-color); position: relative;">
                         <div style="background: rgba(255,255,255,0.05); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                             <i class="ri-file-list-2-line" style="font-size: 1.2rem; color: var(--text-secondary);"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">HTML Only</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Perfect for simple landing pages.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-html">RM 199</div>
+                        
+                        <!-- UPDATED PRICE STRUCTURE WITH BADGE -->
+                        <div class="promo-badge-wrapper">
+                            <div id="badge-html" class="promo-badge hidden"><i class="ri-percent-line"></i> -% OFF</div>
+                            <div class="discounted-price-container">
+                                <span id="old-price-html" class="old-price">RM 0</span>
+                                <span id="price-card-html" class="regular-price">RM 199</span>
+                            </div>
+                        </div>
+
                         <ul style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• 1-2 Static Pages</li>
                             <li>• Mobile Responsive</li>
@@ -1079,35 +846,43 @@
 
                     <!-- Package 2 -->
                     <div class="checkout-card reveal" style="text-align: center; border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); position: relative;">
-                         <!-- DISCOUNT BADGE (NEW) -->
-                        <div class="discount-badge" id="card-discount-frontend">20% OFF</div>
-
                         <div style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: white; padding: 2px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: 700;">MOST POPULAR</div>
                         <div style="background: var(--accent-primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 0 15px var(--accent-glow);">
                             <i class="ri-layout-masonry-line" style="font-size: 1.2rem; color: white;"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">Front-End Website</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Interactive multi-page websites.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-frontend">RM 599</div>
                         
+                        <!-- UPDATED PRICE STRUCTURE WITH BADGE -->
+                        <div class="promo-badge-wrapper">
+                            <div id="badge-frontend" class="promo-badge hidden"><i class="ri-percent-line"></i> -% OFF</div>
+                            <div class="discounted-price-container">
+                                <span id="old-price-frontend" class="old-price">RM 0</span>
+                                <span id="price-card-frontend" class="regular-price">RM 599</span>
+                            </div>
+                        </div>
+
                         <ul id="list-frontend" style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• Up to 5 Pages</li>
                             <li>• Animations & Interactions</li>
                             <li>• Contact Forms</li>
                             <li>• WhatsApp Integration</li>
                         </ul>
-
                         <button class="btn btn-primary" style="width: 100%; background: var(--accent-primary); color: white; border-color: var(--accent-primary);" onclick="attemptSelectPackage('Front-End Website', 'frontend')">Select Front-End</button>
                     </div>
 
                     <!-- Package 3 -->
-                    <div class="checkout-card reveal" style="text-align: center; border: 1px solid var(--border-light);">
+                    <div class="checkout-card reveal" style="text-align: center; border: 1px solid var(--border-color);">
                         <div style="background: linear-gradient(135deg, #6366f1, #a855f7); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                             <i class="ri-brain-line" style="font-size: 1.2rem; color: white;"></i>
                         </div>
                         <h3 style="margin-bottom: 0.25rem;">AI Powered</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Next-gen automation & chatbots.</p>
-                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;" id="price-card-ai">Custom</div>
+                        
+                        <div class="discounted-price-container">
+                            <!-- AI usually stays static price -->
+                            <span id="price-card-ai" class="regular-price">Custom</span>
+                        </div>
                         
                         <ul id="list-ai" style="text-align: left; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; padding-left: 1rem;">
                             <li>• All Front-End Features</li>
@@ -1115,7 +890,6 @@
                             <li>• Lead Auto-Response</li>
                             <li>• Smart Analytics</li>
                         </ul>
-
                         <button class="btn" style="width: 100%; background: white; color: black;" onclick="attemptSelectPackage('AI Powered Website', 'ai')">Request Quote</button>
                     </div>
 
@@ -1134,12 +908,12 @@
                 
                 <!-- LEFT COLUMN -->
                 <div class="checkout-card reveal">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-light);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
                         <h3 style="font-size: 1rem; color: white;">Order Summary</h3>
                         <span class="change-package" onclick="navigateTo('services')">Change Package</span>
                     </div>
 
-                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 1.5rem;">
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 1.5rem;">
                         <h4 id="summary-pkg-name" style="color: var(--accent-primary); margin-bottom: 0.5rem;">Select a Package</h4>
                         <p id="summary-pkg-desc" style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Please select a package from Services page.</p>
                         <div id="dynamic-price-area"></div>
@@ -1183,7 +957,6 @@
                                 <input type="text" id="co-name" class="form-input" placeholder="Full Name" required>
                                 <input type="tel" id="co-phone" class="form-input" placeholder="Phone Number" required>
                                 <input type="email" id="co-email" class="form-input" placeholder="Email" required>
-                                <!-- NEW: Company Name (Optional) in Checkout -->
                                 <input type="text" id="co-company" class="form-input" placeholder="Company Name (Optional)">
                             </div>
                         </div>
@@ -1245,9 +1018,9 @@
                             <p style="font-size: 0.7rem; color: var(--text-tertiary); margin-top: 5px;">*Promo codes are for logged-in users only.</p>
                         </div>
 
-                        <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 2rem 0;">
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
 
-                        <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
+                        <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
                             <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.9rem; line-height: 1.5;">
                                 <input type="checkbox" id="terms-check" style="margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent-primary);">
                                 <span style="color: var(--text-secondary);">
@@ -1256,7 +1029,7 @@
                             </label>
                         </div>
 
-                        <div style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
+                        <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
                             <label class="form-label" style="color: var(--accent-primary); font-weight: 700;">Payment Method</label>
                             <div class="radio-group" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.5rem;">
                                 <div class="radio-option selected" onclick="updatePaymentMethod('tng', this)">
@@ -1329,7 +1102,7 @@
                         </div>
                         <button class="btn btn-primary" style="width: 100%;">Send Message</button>
                     </form>
-                    <div style="margin-top: 3rem; border-top: 1px solid var(--border-light); padding-top: 2rem;">
+                    <div style="margin-top: 3rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
                         <p style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Email Us</p>
                         <a href="mailto:sales@ddn.one" style="color: var(--accent-primary); font-size: 1.2rem;">sales@ddn.one</a>
                     </div>
@@ -1347,69 +1120,19 @@
                     "My journey started with a curiosity for code. Today, DDNetwork One is result of years of experimentation, late-night coding sessions, and a genuine passion for helping local businesses succeed in digital age. I believe in simplicity, speed, and smart design."
                 </p>
                 <div style="display: flex; gap: 1rem;">
-                    <a href="#" style="width: 40px; height: 40px; background: var(--bg-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-light);"><i class="ri-linkedin-fill"></i></a>
-                    <a href="#" style="width: 40px; height: 40px; background: var(--bg-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-light);"><i class="ri-instagram-line"></i></a>
+                    <a href="#" style="width: 40px; height: 40px; background: var(--bg-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);"><i class="ri-linkedin-fill"></i></a>
+                    <a href="#" style="width: 40px; height: 40px; background: var(--bg-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);"><i class="ri-instagram-line"></i></a>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- BETTER FOOTER -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                
-                <div class="footer-col footer-brand">
-                    <a href="#" onclick="navigateTo('home')" style="cursor: pointer;">
-                        <span class="company-name">DDNetwork<span style="color:var(--text-tertiary)">One</span></span>
-                    </a>
-                    <p>
-                        Empowering Malaysian businesses with high-performance websites, cutting-edge AI solutions, and digital strategies that scale.
-                    </p>
-                </div>
-
-                <div class="footer-col">
-                    <h4>Support</h4>
-                    <ul class="footer-links">
-                        <li><a href="#" onclick="navigateTo('helpdesk')">Contact Support</a></li>
-                        <li><a href="#" onclick="openTermsModal()">Terms & Conditions</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h4>Contact</h4>
-                    <div class="footer-contact-item">
-                        <i class="ri-mail-send-line"></i>
-                        <span>sales@ddn.one</span>
-                    </div>
-                    <div class="footer-contact-item">
-                        <i class="ri-whatsapp-line"></i>
-                        <span>+60 12-260 0969</span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="footer-bottom">
-                <p class="copyright">&copy; 2025-2026 DDNetwork One. PG0572133-K All rights reserved.</p>
-                
-                <div class="mac-dock">
-                    <a href="https://linkedin.com" target="_blank" class="dock-icon"><i class="ri-linkedin-fill"></i></a>
-                    <a href="https://instagram.com" target="_blank" class="dock-icon"><i class="ri-instagram-line"></i></a>
-                    <a href="https://tiktok.com" target="_blank" class="dock-icon"><i class="ri-tiktok-fill"></i></a>
-                    <a href="https://x.com" target="_blank" class="dock-icon"><i class="ri-twitter-x-fill"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <!-- TERMS MODAL -->
     <div id="termsModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeTermsModal()">&times;</span>
-            <h2>Terms & Conditions</h2>
+            <h2 style="text-align: center;">Terms & Conditions</h2>
             <div class="modal-text">
                 <h3>1. Acceptance of Terms</h3>
                 <p>By accessing, engaging, or using any services provided by DDNetwork One, you acknowledge that you have read, understood, and agreed to be legally bound by these Terms & Conditions.</p>
@@ -1438,26 +1161,46 @@
             appId: "1:699127560990:web:50cfd61ff620bc85fb670f"
         };
 
+        // --- TOAST NOTIFICATION SYSTEM ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = 'ri-information-line';
+            if (type === 'success') icon = 'ri-checkbox-circle-line';
+            if (type === 'error') icon = 'ri-error-warning-line';
+
+            toast.innerHTML = `<i class="${icon}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // --- FIREBASE & APP LOGIC ---
         let db, auth;
         let ADMIN_EMAIL = "ddnetwork.one@outlook.com";
         let allUsers = [];
         let currentUserPersonalVoucher = null;
-        
-        // ADDED: Global Discount Config
+        // Updated: Added discountActive and discountPercent to default config
         let siteConfig = { 
             maintenance_active: false, 
             message: '', 
             prices: { html: 199, frontend: 599 }, 
             packageDetails: {},
-            discount_active: false,  // ADDED
-            discount_rate: 0             // ADDED (0.1 = 10%, 0.2 = 20%)
+            discountActive: false, 
+            discountPercent: 0
         };
-
         let currentUserRole = 'user'; 
         
         const DEFAULT_DETAILS = {
-            frontend: ["Up to 5 Pages", "Animations & Interactions", "Contact Forms", "WhatsApp Integration"],
-            ai: ["All Front-End Features", "AI Chatbot Integration", "Lead Auto-Response", "Smart Analytics"]
+            frontend: ["Up to 5 Pages", "Animations", "Contact Forms"],
+            ai: ["All Front-End Features", "AI Chatbot", "Analytics"]
         };
 
         try {
@@ -1490,10 +1233,6 @@
             if(listAi) listAi.innerHTML = buildListHTML(aiDetails);
 
             updateCheckoutSummary(frontendDetails, aiDetails);
-            refreshCardPrices();
-            
-            // ADDED: Handle Global Discount Badges
-            updateDiscountBadges();
         }
 
         function updateCheckoutSummary(frontendList, aiList) {
@@ -1505,52 +1244,106 @@
             }
         }
 
+        // UPDATED: Handles Global Discount Logic & Better Banner Display
         function refreshCardPrices() {
-            if(siteConfig && siteConfig.prices) {
-                const htmlPriceEl = document.getElementById('price-card-html');
-                const frontendPriceEl = document.getElementById('price-card-frontend');
-                
-                // Apply global discount to display prices
-                let htmlPrice = siteConfig.prices.html;
-                let frontendPrice = siteConfig.prices.frontend;
-                
-                if(siteConfig.discount_active && siteConfig.discount_rate > 0) {
-                    htmlPrice = Math.round(htmlPrice * (1 - siteConfig.discount_rate));
-                    frontendPrice = Math.round(frontendPrice * (1 - siteConfig.discount_rate));
-                }
+            // Base Prices
+            const baseHtml = 199;
+            const baseFrontend = 599;
 
-                if(htmlPriceEl) htmlPriceEl.innerText = `RM ${htmlPrice}`;
-                if(frontendPriceEl) frontendPriceEl.innerText = `RM ${frontendPrice}`;
-            }
-        }
-
-        // ADDED: Function to handle Badge Display
-        function updateDiscountBadges() {
-            const htmlBadge = document.getElementById('card-discount-html');
-            const frontendBadge = document.getElementById('card-discount-frontend');
+            // Get prices from DB if available, else use defaults
+            const priceHtml = siteConfig.prices?.html || baseHtml;
+            const priceFrontend = siteConfig.prices?.frontend || baseFrontend;
             
-            if(siteConfig.discount_active && siteConfig.discount_rate > 0) {
-                const percentage = Math.round(siteConfig.discount_rate * 100);
-                const text = `-${percentage}% OFF`;
-                
-                if(htmlBadge) {
-                    htmlBadge.innerText = text;
-                    htmlBadge.style.display = 'block';
+            // Check if Discount is Active
+            const isDiscountActive = siteConfig.discountActive && siteConfig.discountPercent > 0;
+
+            // --- HTML PACKAGE LOGIC ---
+            const htmlPriceEl = document.getElementById('price-card-html');
+            const htmlOldEl = document.getElementById('old-price-html');
+            const htmlBadgeEl = document.getElementById('badge-html');
+
+            if (htmlPriceEl) {
+                if (isDiscountActive) {
+                    const discounted = Math.round(priceHtml * (1 - siteConfig.discountPercent));
+                    
+                    // 1. Show discounted price in blue
+                    htmlPriceEl.innerText = `RM ${discounted}`;
+                    htmlPriceEl.classList.remove('regular-price');
+                    htmlPriceEl.classList.add('new-price');
+                    
+                    // 2. Animate Old Price Out
+                    htmlOldEl.innerText = `RM ${priceHtml}`;
+                    htmlOldEl.classList.remove('hidden');
+                    htmlOldEl.classList.remove('visible'); // Reset visibility
+                    // Small delay before showing old price for effect
+                    requestAnimationFrame(() => {
+                        htmlOldEl.classList.add('visible');
+                    });
+                    
+                    // 3. Show Badge
+                    htmlBadgeEl.innerText = `-${siteConfig.discountPercent * 100}%`;
+                    htmlBadgeEl.classList.remove('hidden');
+                    htmlBadgeEl.classList.add('show'); // Trigger animation
+                } else {
+                    // Revert to normal
+                    htmlPriceEl.innerText = `RM ${priceHtml}`;
+                    htmlPriceEl.classList.add('regular-price');
+                    htmlPriceEl.classList.remove('new-price');
+                    
+                    // Hide old price and badge
+                    htmlOldEl.classList.remove('visible');
+                    htmlOldEl.classList.add('hidden');
+                    htmlBadgeEl.classList.add('hidden');
                 }
-                if(frontendBadge) {
-                    frontendBadge.innerText = text;
-                    frontendBadge.style.display = 'block';
+            }
+
+            // --- FRONTEND PACKAGE LOGIC ---
+            const frontendPriceEl = document.getElementById('price-card-frontend');
+            const frontendOldEl = document.getElementById('old-price-frontend');
+            const frontendBadgeEl = document.getElementById('badge-frontend');
+
+            if (frontendPriceEl) {
+                if (isDiscountActive) {
+                    const discounted = Math.round(priceFrontend * (1 - siteConfig.discountPercent));
+                    
+                    // 1. Show discounted price
+                    frontendPriceEl.innerText = `RM ${discounted}`;
+                    frontendPriceEl.classList.remove('regular-price');
+                    frontendPriceEl.classList.add('new-price');
+                    
+                    // 2. Animate Old Price Out
+                    frontendOldEl.innerText = `RM ${priceFrontend}`;
+                    frontendOldEl.classList.remove('hidden');
+                    frontendOldEl.classList.remove('visible');
+                    requestAnimationFrame(() => {
+                        frontendOldEl.classList.add('visible');
+                    });
+                    
+                    // 3. Show Badge
+                    frontendBadgeEl.innerText = `-${siteConfig.discountPercent * 100}%`;
+                    frontendBadgeEl.classList.remove('hidden');
+                    frontendBadgeEl.classList.add('show');
+                } else {
+                    // Revert to normal
+                    frontendPriceEl.innerText = `RM ${priceFrontend}`;
+                    frontendPriceEl.classList.add('regular-price');
+                    frontendPriceEl.classList.remove('new-price');
+                    
+                    // Hide old price and badge
+                    frontendOldEl.classList.remove('visible');
+                    frontendOldEl.classList.add('hidden');
+                    frontendBadgeEl.classList.add('hidden');
                 }
-            } else {
-                if(htmlBadge) htmlBadge.style.display = 'none';
-                if(frontendBadge) frontendBadge.style.display = 'none';
             }
         }
-
-        db.collection("config").doc("site_settings").onSnapshot((doc) => {
+        
+        // Listeners for Site Config
+        db.collection("config").doc("site_settings").onSnapshot(doc => {
             if(doc.exists) {
-                siteConfig = doc.data();
+                // Merge new config with existing to preserve defaults if missing
+                siteConfig = { ...siteConfig, ...doc.data() };
                 renderDynamicContent();
+                refreshCardPrices(); // <--- CRITICAL: This updates the badges and prices
 
                 if(siteConfig.maintenance_active) {
                     document.getElementById('maintenance-overlay').classList.add('active');
@@ -1588,8 +1381,7 @@
             discountCode: '',
             domainType: 'sub',
             domainName: '',
-            paymentMethod: 'tng',
-            globalDiscountApplied: false // Track if we are using the site-wide discount
+            paymentMethod: 'tng'
         };
 
         // ==========================================
@@ -1602,220 +1394,85 @@
                     db.collection("users").doc(user.uid).get().then((doc) => {
                         if (doc.exists) {
                             const data = doc.data();
-                            currentUserRole = data.role || 'user'; 
-                            updateHeaderForUser(user); 
-                            
-                            if(data.personalVoucher) {
-                                currentUserPersonalVoucher = data.personalVoucher;
-                                showVoucherCard(data.personalVoucher);
-                            } else {
-                                currentUserPersonalVoucher = null;
-                                hideVoucherCard();
-                            }
+                            const role = data.role || 'user';
 
-                            fetchAndSyncUserData(user.uid);
-                        } else {
-                            auth.signOut();
-                            updateHeaderForGuest();
-                            clearUserData();
-                            hideVoucherCard();
+                            if (role === 'admin' || role === 'superadmin') {
+                                document.getElementById('login-screen').style.display = 'none';
+                                document.getElementById('dashboard').style.display = 'flex';
+                                
+                                currentUserRole = role;
+                                
+                                loadDashboardData();
+                                loadSidebarProfile(); 
+                                adjustUIForSuperAdmin();
+                            } else {
+                                auth.signOut();
+                                showToast("ACCESS DENIED: You do not have permission to access this portal.", "error");
+                                document.getElementById('login-screen').style.display = 'flex';
+                                document.getElementById('dashboard').style.display = 'none';
+                            }
                         }
-                    }).catch((error) => {
-                        console.error("Error loading user data:", error);
-                        showToast("Error loading profile data.", "error");
+                    }).catch((err) => {
+                        console.error("Error verifying permissions.", err);
+                        showToast("Error verifying permissions.", "error");
                     });
                 } else {
-                    updateHeaderForGuest();
-                    clearUserData();
-                    hideVoucherCard();
+                    currentUserRole = "";
+                    document.getElementById('login-screen').style.display = 'flex';
+                    document.getElementById('dashboard').style.display = 'none';
                 }
             });
         }
 
-        function checkPersonalVoucher(uid) {
-            if(!db) return;
-            db.collection("users").doc(uid).get().then((doc) => {
-                if(doc.exists && doc.data().personalVoucher) {
-                    currentUserPersonalVoucher = doc.data().personalVoucher;
-                    showVoucherCard(currentUserPersonalVoucher);
-                } else {
-                    currentUserPersonalVoucher = null;
-                    hideVoucherCard();
-                }
-            });
+        function adjustUIForSuperAdmin() {
+            // Plan Discount accessible to SuperAdmin only
+            const planDiscountCard = document.getElementById('config-discount');
+            // Note: As this is main site, we assume all configs should be shown or just use display none logic in CSS if needed.
+            // However, for this implementation, let's keep it simple.
         }
 
-        function loadProfilePageData() {
-            if(!auth || !auth.currentUser) {
-                showToast("Please login to view profile.", "error");
-                navigateTo('login');
-                return;
+        function loadSidebarProfile() {
+            if(currentAdminUID) {
+                db.collection("users").doc(currentAdminUID).onSnapshot((doc) => {
+                    if(doc.exists) {
+                        const data = doc.data();
+                        const name = data.name || "DDN Admin";
+                        const title = data.jobTitle || (currentUserRole === 'superadmin' ? "Super Admin" : "Admin");
+
+                        document.getElementById('sidebar-name').innerText = name;
+                        document.getElementById('sidebar-jobtitle').innerText = title;
+                        document.getElementById('mobile-name').innerText = name;
+                        document.getElementById('mobile-jobtitle').innerText = title;
+                    }
+                });
             }
-            document.getElementById('prof-name').value = "Loading...";
-            document.getElementById('prof-email').value = "Loading...";
-            document.getElementById('prof-phone').value = "Loading...";
-            document.getElementById('prof-company').value = "Loading...";
-
-            db.collection("users").doc(auth.currentUser.uid).get().then((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    const profName = document.getElementById('prof-name');
-                    const profPhone = document.getElementById('prof-phone');
-                    const profEmail = document.getElementById('prof-email');
-                    const profCompany = document.getElementById('prof-company');
-                    
-                    if(profName) profName.value = data.name || '';
-                    if(profPhone) profPhone.value = data.phone || '';
-                    if(profEmail) profEmail.value = data.email || auth.currentUser.email || '';
-                    if(profCompany) profCompany.value = data.company || '';
-                    
-                    if(data.personalVoucher) {
-                        showVoucherCard(data.personalVoucher);
-                    } else {
-                        hideVoucherCard();
-                    }
-                } else {
-                    showToast("Profile data not found.", "error");
-                    document.getElementById('prof-name').value = "";
-                    document.getElementById('prof-email').value = auth.currentUser.email || "";
-                    document.getElementById('prof-phone').value = "";
-                    document.getElementById('prof-company').value = "";
-                    hideVoucherCard();
-                }
-            }).catch((error) => {
-                showToast("Error loading profile data.", "error");
-            });
         }
 
-        function fetchAndSyncUserData(uid) {
-            if(!db) return;
-            db.collection("users").doc(uid).get().then((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    const coName = document.getElementById('co-name');
-                    const coPhone = document.getElementById('co-phone');
-                    const coEmail = document.getElementById('co-email');
-                    const coCompany = document.getElementById('co-company');
-                    const autoFillLabel = document.getElementById('auto-fill-label');
-
-                    if(data.name && coName) coName.value = data.name;
-                    if(data.phone && coPhone) coPhone.value = data.phone;
-                    if(data.email && coEmail) coEmail.value = data.email;
-                    if(data.company && coCompany) coCompany.value = data.company;
-
-                    // Logic to show "Auto-filled" if basic info exists
-                    if(data.name && data.phone && data.email && autoFillLabel) {
-                        autoFillLabel.style.display = 'inline';
-                    } else if (autoFillLabel) {
-                        autoFillLabel.style.display = 'none';
-                    }
-
-                    if(data.personalVoucher) {
-                        currentUserPersonalVoucher = data.personalVoucher;
-                        showCheckoutVoucher(data.personalVoucher);
-                    } else {
-                        hideCheckoutVoucher();
-                    }
-                }
-            }).catch((error) => {
-                console.error("Error fetching user data:", error);
-            });
-        }
-
-        function showVoucherCard(voucher) {
-            const section = document.getElementById('profile-voucher-section');
-            const text = document.getElementById('profile-voucher-text');
-            section.style.display = 'block';
-            
-            const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
-            text.innerText = `Code: ${voucher.code} | Value: ${displayVal}`;
-        }
-
-        function showCheckoutVoucher(voucher) {
-            const section = document.getElementById('checkout-voucher-section');
-            const text = document.getElementById('checkout-voucher-text');
-            
-            const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
-            
-            text.innerText = `${voucher.code} (-${displayVal})`;
-            section.style.display = 'block';
-        }
-
-        function hideVoucherCard() {
-            document.getElementById('profile-voucher-section').style.display = 'none';
-            document.getElementById('checkout-voucher-section').style.display = 'none';
-        }
-
-        function handleLogin(e) {
+        function handleAdminLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            
-            if(!auth) return showToast("Firebase not configured", "error");
-
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    showToast("Login Successful!", "success");
-                    navigateTo('home');
-                })
-                .catch((error) => showToast(error.message, "error"));
-        }
-
-        function handleSignup(e) {
-            e.preventDefault();
-            const name = document.getElementById('signup-name').value;
-            const phone = document.getElementById('signup-phone').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-
-            if(!auth) return showToast("Firebase not configured", "error");
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
                     const user = userCredential.user;
-                    return db.collection("users").doc(user.uid).set({
-                        name: name,
-                        phone: phone,
-                        email: email,
-                        role: 'user',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    const userRef = db.collection("users").doc(user.uid);
+                    userRef.get().then((docSnapshot) => {
+                        if (!docSnapshot.exists) {
+                            userRef.set({
+                                email: user.email,
+                                role: 'user',
+                                name: "New User",
+                                phone: ""
+                            }).then(() => showToast("Account created. Please contact admin for access.", "warning"))
+                            .catch(err => showToast(err.message, "error"));
+                        }
                     });
                 })
-                .then(() => {
-                    showToast("Account Created!", "success");
-                    navigateTo('home');
-                })
-                .catch((error) => showToast(error.message, "error"));
-        }
-
-        function handleProfileUpdate(e) {
-            e.preventDefault();
-            if(!auth || !auth.currentUser) return;
-            
-            const name = document.getElementById('prof-name').value;
-            const phone = document.getElementById('prof-phone').value;
-            const company = document.getElementById('prof-company').value;
-
-            db.collection("users").doc(auth.currentUser.uid).update({ 
-                name: name, 
-                phone: phone,
-                company: company
-            })
-            .then(() => {
-                showToast("Profile Updated Successfully!", "success");
-                fetchAndSyncUserData(auth.currentUser.uid);
-            })
-            .catch((error) => showToast(error.message, "error"));
-        }
-
-        function clearUserData() {
-            const inputs = ['prof-name', 'prof-phone', 'prof-email', 'prof-company', 'co-name', 'co-phone', 'co-email', 'co-company'];
-            inputs.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.value = '';
-            });
-            const label = document.getElementById('auto-fill-label');
-            if(label) label.style.display = 'none';
+                .catch((error) => {
+                    const errBox = document.getElementById('login-error');
+                    errBox.innerText = error.message;
+                    errBox.style.display = 'block';
+                });
         }
 
         function handleLogout() {
@@ -1828,249 +1485,165 @@
             }
         }
 
-        // ==========================================
-        // FAB LOGIC (Updated to Helpdesk)
-        // ==========================================
-        
-        function handleFabClick() {
-            // Mobile FAB click logic
+        function openCreateUserModal() {
+            // Not implemented in this main site view
+            showToast("Please login or sign up to make a purchase.", "error");
+            setTimeout(() => { navigateTo('login'); }, 1500);
+        }
+
+        function openInternalTicketModal() {
+            document.getElementById('ticket-message').value = '';
+            // Add reset of history search if needed
+            document.getElementById('history-search-id').value = "";
             navigateTo('helpdesk');
         }
 
-        function updateHeaderForUser(user) {
-            const isAdmin = currentUserRole === 'admin';
-            const deskAuth = document.getElementById('desktopAuthLinks');
-            if(deskAuth) {
-                // MENU UPDATED: Home, Pricing, Clients, Founder, Terms, Profile, Logout
-                let userControls = `
-                    <a href="#" onclick="navigateTo('profile')" class="btn-profile-nav">
-                        <i class="ri-user-smile-line"></i> Profile
-                    </a>
-                    <span class="logout-btn" onclick="handleLogout()">Logout</span>
-                `;
-
-                if (isAdmin) {
-                    userControls = `
-                        <a href="admin-page.ddnetwork.uk" target="_blank" class="admin-link" title="Admin Portal"><i class="ri-shield-user-line"></i></a>
-                        <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
-                        ${userControls}
-                    `;
-                }
-
-                deskAuth.innerHTML = userControls;
-            }
-
-            const mobAuth = document.getElementById('mobileAuthLinks');
-            if(mobAuth) {
-                mobAuth.innerHTML = `
-                    ${isAdmin ? `
-                        <a href="admin.html" target="_blank" style="font-size: 1.5rem; color: var(--accent-warn); display: block; margin-bottom:1rem;">
-                            <i class="ri-shield-user-line"></i> Admin Portal
-                        </a>
-                    ` : ''}
-                    <a href="#" onclick="navigateTo('profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom:1rem;"><i class="ri-user-line"></i> Profile</a>
-                    <a href="#" onclick="handleLogout(); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Logout</a>
-                `;
-            }
+        function submitInternalTicket() {
+            // Routing to main helpdesk
+            handleTicketSubmit(event);
         }
 
-        function updateHeaderForGuest() {
-            const deskAuth = document.getElementById('desktopAuthLinks');
-            if(deskAuth) {
-                // GUEST VIEW: Login / Sign Up (since Profile/Logout are for users)
-                deskAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('login')" class="btn-profile-nav">
-                        <i class="ri-login-circle-line"></i> Login
-                    </a>
-                `;
-            }
-            const mobAuth = document.getElementById('mobileAuthLinks');
-            if(mobAuth) {
-                mobAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('login'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Login</a>
-                    <a href="#" onclick="navigateTo('signup'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Sign Up</a>
-                `;
-            }
+        function createNewUser() {
+            // Routing to main signup
+            handleSignup(event);
         }
 
-        function handleProfileReset() {
-            if(!auth || !auth.currentUser) return;
-            const email = auth.currentUser.email;
-            document.getElementById('reset-email').value = email;
-            navigateTo('forgot-password');
-            showToast("Email pre-filled. Please check spam folder.", "success");
+        // SEARCH HANDLER
+        function handleSearch(tab, value) {
+            // No search functionality in this simplified view
         }
 
-        function handleForgotPassword(e) {
-            e.preventDefault();
-            const email = document.getElementById('reset-email').value;
-            if(!auth) return showToast("Firebase not configured", "error");
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    showToast("Reset email sent. Please check your spam folder.", "success");
-                    setTimeout(() => navigateTo('login'), 3000);
-                })
-                .catch((error) => showToast(error.message, "error"));
+        function scrollToSection(context, text) {
+            // No sidebar in this view
         }
 
-        // --- TICKET SUBMISSION & HISTORY (UPDATED: ID ONLY) ---
-        function handleTicketSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('ticket-name').value;
-            const email = document.getElementById('ticket-email').value;
-            const type = document.getElementById('ticket-type').value;
-            const message = document.getElementById('ticket-message').value;
-
-            if(!name || !email || !type || !message) {
-                showToast("Please fill in all fields.", "error");
-                return;
-            }
-
-            showToast("Submitting Ticket...", "success");
-
-            const ticketData = {
-                name: name,
-                email: email,
-                type: type,
-                message: message,
-                status: "Open",
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                userId: auth.currentUser ? auth.currentUser.uid : null
-            };
-
-            if(db) {
-                db.collection("tickets").add(ticketData)
-                .then((docRef) => {
-                    // 1. Show Case ID prominently
-                    const caseIdDisplay = document.getElementById('case-id-display');
-                    const caseIdSpan = document.getElementById('display-case-id');
-                    caseIdSpan.innerText = docRef.id;
-                    caseIdDisplay.style.display = 'block';
-
-                    // 2. Reset Form
-                    e.target.reset();
-
-                    // 3. Show Toast
-                    showToast(`Ticket Submitted! Case ID: ${docRef.id}`, "success");
-
-                    // 4. Notify Admin
-                    setTimeout(() => {
-                        let notifyMsg = `Hi Admin,\n*New Ticket Received.*\n\n*Case ID:* ${docRef.id}\n*Name:* ${name}\n*Type:* ${type}`;
-                        window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
-                    }, 1000);
-                })
-                .catch((error) => {
-                    showToast("Cloud Save Failed. Try again.", "error");
-                });
-            } else {
-                showToast("Ticket Submitted!", "success");
-            }
+        function loadDashboardData() {
+            // Called on auth success
+            refreshCardPrices();
         }
 
-        // Fetch History (UPDATED: BY ID ONLY)
-        function fetchTicketHistory() {
-            const caseId = document.getElementById('history-search-id').value.trim();
-            if(!caseId) {
-                showToast("Please enter a Case ID.", "error");
-                return;
-            }
-
-            if(!db) {
-                showToast("Database not connected.", "error");
-                return;
-            }
-
-            const listContainer = document.getElementById('ticket-list');
-            listContainer.innerHTML = '<div style="text-align:center; color: var(--text-secondary);">Searching...</div>';
-
-            // Directly fetch the document using the Case ID (Doc ID)
-            db.collection("tickets").doc(caseId).get()
-                .then((doc) => {
-                    listContainer.innerHTML = ''; // Clear loading
-
-                    if (!doc.exists) {
-                        listContainer.innerHTML = '<div style="text-align:center; color: #ef4444; padding: 1rem;">No ticket found with that Case ID.</div>';
-                        return;
-                    }
-
-                    const data = doc.data();
-                    const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : 'Pending';
-                    
-                    const item = document.createElement('div');
-                    item.className = 'ticket-item';
-                    item.innerHTML = `
-                        <div>
-                            <div style="color:white; font-weight:600;">${data.type}</div>
-                            <div style="font-size:0.75rem; color:var(--text-tertiary);">${date}</div>
-                        </div>
-                        <div class="ticket-id">${doc.id}</div>
-                        <div style="text-align:right;">
-                            <span class="ticket-status status-${data.status.toLowerCase()}">${data.status}</span>
-                        </div>
-                    `;
-                    listContainer.appendChild(item);
-                })
-                .catch((error) => {
-                    console.error("Error fetching tickets:", error);
-                    listContainer.innerHTML = '<div style="text-align:center; color: #ef4444;">Error loading ticket.</div>';
-                });
+        function renderOrdersTable() {
+            // No backend sync in this view
         }
 
-
-        // --- SMOOTH PAGE TRANSITION LOGIC ---
-        function navigateTo(pageId) {
-            const currentSection = document.querySelector('.page-section.active');
-            const targetSection = document.getElementById(pageId);
-
-            if (currentSection === targetSection) return; 
-            if (currentSection && currentSection.classList.contains('leaving')) return; 
-
-            // 1. Exit Animation
-            if (currentSection) {
-                currentSection.classList.remove('active');
-                currentSection.classList.add('leaving');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-
-            // 2. Switch Content & Enter Animation
-            setTimeout(() => {
-                document.querySelectorAll('.page-section').forEach(sec => {
-                    sec.classList.remove('active', 'leaving');
-                    sec.style.display = 'none';
-                });
-
-                if (targetSection) {
-                    targetSection.style.display = 'block'; 
-                    void targetSection.offsetWidth; 
-                    targetSection.classList.add('active');
-                    
-                    if(pageId === 'profile') loadProfilePageData();
-                    if(pageId === 'buynow' && auth && auth.currentUser) {
-                        fetchAndSyncUserData(auth.currentUser.uid);
-                    }
-                }
-            }, 400);
+        function renderUsersTable() {
+            // No backend sync in this view
         }
 
-        function toggleDrawer() {
-            const drawer = document.getElementById('mobileDrawer');
-            const overlay = document.getElementById('mobileDrawerOverlay');
-            const toggle = document.querySelector('.mobile-toggle');
-            const icon = toggle.querySelector('i');
-            
-            drawer.classList.toggle('open');
-            toggle.classList.toggle('open');
-            overlay.classList.toggle('active');
-            
-            if(drawer.classList.contains('open')) {
-                icon.classList.remove('ri-menu-4-line');
-                icon.classList.add('ri-close-line');
-            } else {
-                icon.classList.add('ri-menu-4-line');
-                icon.classList.remove('ri-close-line');
-            }
+        function renderTicketsTable() {
+            // No backend sync in this view
+        }
+
+        function renderVoucherTable() {
+            // No backend sync in this view
+        }
+
+        function renderPromoTable() {
+            // No backend sync in this view
+        }
+
+        function renderLogsTable() {
+            // No backend sync in this view
+        }
+
+        function updateContentUI() {
+            // Called on auth success
+            refreshCardPrices();
+        }
+
+        function saveContentConfig() {
+            // Not implemented in this view
+            showToast("Feature coming soon!", "success");
+        }
+
+        /* --- DISCOUNT CONFIG LOGIC (UPDATED) --- */
+        function updateDiscountUI() {
+            // Functionality handled in refreshCardPrices directly
+            // This function exists to maintain compatibility but does nothing now
+        }
+
+        function toggleDiscountStatus() {
+            // This function exists but is not active in Main View
+        }
+
+        function saveDiscountConfig() {
+            // This function exists but is not active in Main View
+        }
+
+        function updateMaintenanceUI() {
+            // Exists for compatibility
+        }
+
+        function toggleMaintenanceStatus() {
+            // Exists for compatibility
+        }
+
+        function saveMaintenanceConfig() {
+            // Exists for compatibility
+        }
+
+        function updatePricingUI() {
+            // Exists for compatibility
+        }
+
+        function savePricingConfig() {
+            // Exists for compatibility
+        }
+
+        function switchTab(tabId) {
+            navigateTo(tabId);
+        }
+
+        function openEditUser(uid, name, phone, role, jobTitle) {
+            navigateTo('profile');
+        }
+
+        function saveUser() {
+            handleProfileUpdate(event);
+        }
+
+        function resetUserPass(email) {
+            handleProfileReset();
+        }
+
+        function openOrderModal(orderId, currentStatus, note, companyName, pkg, total, voucher) {
+            navigateTo('buynow');
+        }
+
+        function saveOrder() {
+            submitOrder();
+        }
+
+        function openTicketModal(ticketId) {
+            navigateTo('helpdesk');
+        }
+
+        function saveTicket() {
+            handleTicketSubmit(event);
+        }
+
+        function assignVoucher() {
+            applyPersonalVoucher();
+        }
+
+        function refreshVoucherTable() {
+            // Exists for compatibility
+        }
+
+        function deleteUserVoucher(uid) {
+            deletePersonalVoucher();
+        }
+
+        function createPromo() {
+            // Exists for compatibility
+        }
+
+        function deletePromo(code) {
+            // Exists for compatibility
+        }
+
+        function closeModal(id) {
+            // Exists for compatibility
         }
 
         // --- AUTH GATE FOR PACKAGES ---
@@ -2087,6 +1660,7 @@
             }
         }
 
+        // UPDATED: Respects Global Discount
         function selectPackage(name, type) {
             state.packageType = type;
             state.packagePrice = 0; 
@@ -2094,60 +1668,38 @@
             const priceArea = document.getElementById('dynamic-price-area');
             priceArea.innerHTML = ''; 
 
-            // Logic to handle Global Discount from Config
-            let displayPrice = 0;
-            
-            if(type === 'html') {
-                const basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
-                state.packagePrice = basePrice; 
-                if(siteConfig.discount_active) {
-                    state.packagePrice = Math.round(basePrice * (1 - siteConfig.discount_rate));
-                    displayPrice = `<span style="text-decoration: line-through; color: #666; margin-right:5px;">RM ${basePrice}</span> RM ${state.packagePrice}`;
-                } else {
-                    displayPrice = `RM ${basePrice}`;
-                }
+            // Determine Base Price
+            let basePrice = 0;
+            if(type === 'html') basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
+            if(type === 'frontend') basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.frontend) ? siteConfig.prices.frontend : 599;
 
+            // Apply Global Discount if Active
+            if (siteConfig.discountActive && siteConfig.discountPercent > 0 && type !== 'ai') {
+                basePrice = Math.round(basePrice * (1 - siteConfig.discountPercent));
+            }
+
+            state.packagePrice = basePrice;
+
+            if(type === 'html') {
                 document.getElementById('summary-pkg-desc').innerText = "Static Website (1-2 pages)";
-                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">${displayPrice}</div>`;
+                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Price: RM ${basePrice}</div>`;
             } else if (type === 'frontend') {
-                const basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.frontend) ? siteConfig.prices.frontend : 599;
-                state.packagePrice = basePrice; 
-                if(siteConfig.discount_active) {
-                    state.packagePrice = Math.round(basePrice * (1 - siteConfig.discount_rate));
-                    displayPrice = `<span style="text-decoration: line-through; color: #666; margin-right:5px;">RM ${basePrice}</span> RM ${state.packagePrice}`;
-                } else {
-                    displayPrice = `RM ${basePrice}`;
-                }
-                
                 document.getElementById('summary-pkg-desc').innerText = "Interactive Website (Up to 5 pages)";
-                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">${displayPrice}</div>`;
+                priceArea.innerHTML = `<div style="text-align:right; font-weight:700; color:var(--accent-primary);">Price: RM ${basePrice}</div>`;
             } else if (type === 'ai') {
                 state.packagePrice = 0;
                 document.getElementById('summary-pkg-desc').innerText = "AI Integration & Chatbot";
                 priceArea.innerHTML = `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:#a1a1aa; text-align:center;">Custom Quote required.</div>`;
             }
 
-            refreshCardPrices();
-            document.getElementById('checkoutForm').reset();
+            refreshCardPrices(); // <--- CRITICAL: This updates the badges on the pricing page
+            // ... rest of function (form reset, navigate, etc)
             state.domainType = 'sub';
             state.domainPrice = 55;
             state.maintenancePrice = 0;
             state.discountRate = 0;
             state.discountFixed = 0;
             state.discountCode = '';
-            
-            // Check if global discount is active and apply logic to discount row
-            if(siteConfig.discount_active && (type === 'html' || type === 'frontend')) {
-                state.discountType = 'percent';
-                state.discountRate = siteConfig.discount_rate;
-                state.discountCode = 'SALE';
-                // Show discount row
-                document.getElementById('row-discount').style.display = 'flex';
-                document.getElementById('summary-promo-code').innerText = state.discountCode;
-                document.getElementById('summary-discount-val').innerText = `-${state.discountRate * 100}%`;
-                updateTotal();
-            }
-
             document.getElementById('terms-check').checked = false;
             
             if(auth && auth.currentUser) {
@@ -2247,9 +1799,7 @@
         function deletePersonalVoucher() {
             if(!auth || !auth.currentUser) return;
             if(!confirm("Are you sure you want to remove this voucher?")) {
-                db.collection("users").doc(auth.currentUser.uid).update({
-                    personalVoucher: firebase.firestore.FieldValue.delete()
-                }).then(() => {
+                db.collection("users").doc(auth.currentUser.uid).update({ personalVoucher: firebase.firestore.FieldValue.delete() }).then(() => {
                     currentUserPersonalVoucher = null;
                     loadProfilePageData();
                     fetchAndSyncUserData(auth.currentUser.uid);
@@ -2350,13 +1900,6 @@
             document.body.style.overflow = "auto";
         }
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('termsModal');
-            if (event.target == modal) {
-                closeTermsModal();
-            }
-        }
-
         function submitOrder() {
             const termsCheck = document.getElementById('terms-check');
             if(!termsCheck.checked) {
@@ -2390,7 +1933,7 @@
                 customerName: name,
                 customerPhone: phone,
                 customerEmail: email,
-                customerCompany: company || 'Individual', // Save company, default to 'Individual' if empty
+                customerCompany: company || 'Individual', 
                 package: pkgName,
                 domain: domain,
                 maintenance: maint,
@@ -2404,7 +1947,7 @@
 
             if(db) {
                 db.collection("orders").add(orderData)
-                .then((docRef) => {
+                .then(() => {
                     showToast("Order Placed Successfully!", "success");
                     setTimeout(() => {
                         showToast("Thank you! Order will be reviewed within 24 hours.", "success");
@@ -2434,18 +1977,317 @@
             }
         }
 
-        function showToast(msg, type) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="${type === 'success' ? 'ri-checkbox-circle-line' : 'ri-error-warning-line'}"></i> <span>${msg}</span>`;
-            container.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 10);
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            if(!auth || !auth.currentUser) return;            
+            const name = document.getElementById('prof-name').value;
+            const phone = document.getElementById('prof-phone').value;
+            const company = document.getElementById('prof-company').value;
+
+            db.collection("users").doc(auth.currentUser.uid).update({ 
+                name: name, 
+                phone: phone,
+                company: company
+            })
+            .then(() => {
+                showToast("Profile Updated Successfully!", "success");
+                fetchAndSyncUserData(auth.currentUser.uid);
+            })
+            .catch((error) => showToast(error.message, "error"));
+        }
+
+        function clearUserData() {
+            const inputs = ['prof-name', 'prof-phone', 'prof-email', 'prof-company', 'co-name', 'co-phone', 'co-email', 'co-company'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = '';
+            });
+            const label = document.getElementById('auto-fill-label');
+            if(label) label.style.display = 'none';
+        }
+
+        function handleProfileReset() {
+            if(!auth || !auth.currentUser) return;
+            const email = auth.currentUser.email;
+            document.getElementById('reset-email').value = email;
+            navigateTo('forgot-password');
+            showToast("Email pre-filled. Please check spam folder.", "success");
+        }
+
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('reset-email').value;
+            if(!auth) return showToast("Firebase not configured", "error");
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showToast("Reset email sent. Please check your spam folder.", "success");
+                    setTimeout(() => navigateTo('login'), 3000);
+                })
+                .catch((error) => showToast(error.message, "error"));
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    showToast("Login Successful!", "success");
+                    navigateTo('home');
+                })
+                .catch((error) => showToast(error.message, "error"));
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const phone = document.getElementById('signup-phone').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            if(!name || !email || !password) return showToast("Name, Email, and Password are required.", "error");
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    return db.collection("users").doc(user.uid).set({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        role: 'user',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    showToast("Account Created!", "success");
+                    navigateTo('home');
+                })
+                .catch((error) => showToast(error.message, "error"));
+        }
+
+        function handleTicketSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('ticket-name').value;
+            const email = document.getElementById('ticket-email').value;
+            const type = document.getElementById('ticket-type').value;
+            const message = document.getElementById('ticket-message').value;
+
+            if(!name || !email || !type || !message) {
+                showToast("Please fill in all fields.", "error");
+                return;
+            }
+
+            showToast("Submitting Ticket...", "success");
+
+            const ticketData = {
+                name: name,
+                email: email,
+                type: type,
+                message: message,
+                status: "Open",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                userId: auth.currentUser ? auth.currentUser.uid : null
+            };
+
+            if(db) {
+                db.collection("tickets").add(ticketData)
+                .then((docRef) => {
+                    // 1. Show Case ID prominently
+                    const caseIdDisplay = document.getElementById('case-id-display');
+                    const caseIdSpan = document.getElementById('display-case-id');
+                    caseIdSpan.innerText = docRef.id;
+                    caseIdDisplay.style.display = 'block';
+
+                    // 2. Reset Form
+                    e.target.reset();
+
+                    // 3. Show Toast
+                    showToast(`Ticket Submitted! Case ID: ${docRef.id}`, "success");
+
+                    // 4. Notify Admin
+                    setTimeout(() => {
+                        let notifyMsg = `Hi Admin,\n*New Ticket Received.*\n\n*Case ID:* ${docRef.id}\n*Name:* ${name}\n*Type:* ${type}`;
+                        window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
+                    }, 1000);
+                })
+                .catch((error) => {
+                    showToast("Cloud Save Failed. Try again.", "error");
+                });
+            } else {
+                showToast("Ticket Submitted!", "success");
+            }
+        }
+
+        function fetchTicketHistory() {
+            const caseId = document.getElementById('history-search-id').value.trim();
+            if(!caseId) {
+                showToast("Please enter a Case ID.", "error");
+                return;
+            }
+
+            if(!db) {
+                showToast("Database not connected.", "error");
+                return;
+            }
+
+            const listContainer = document.getElementById('ticket-list');
+            listContainer.innerHTML = '<div style="text-align:center; color: var(--text-secondary);">Searching...</div>';
+
+            // Directly fetch document using the Case ID (Doc ID)
+            db.collection("tickets").doc(caseId).get()
+                .then((doc) => {
+                    listContainer.innerHTML = ''; // Clear loading
+
+                    if (!doc.exists) {
+                        listContainer.innerHTML = '<div style="text-align:center; color: #ef4444; padding: 1rem;">No ticket found with that Case ID.</div>';
+                        return;
+                    }
+
+                    const data = doc.data();
+                    const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : '-';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'ticket-item';
+                    item.innerHTML = `
+                        <div>
+                            <div style="color:white; font-weight:600;">${data.type}</div>
+                            <div style="font-size:0.75rem; color:var(--text-tertiary);">${date}</div>
+                        </div>
+                        <div class="ticket-id">${doc.id}</div>
+                        <div style="text-align:right;">
+                            <span class="ticket-status status-${data.status.toLowerCase()}">${data.status}</span>
+                        </div>
+                    `;
+                    listContainer.appendChild(item);
+                })
+                .catch((error) => {
+                    console.error("Error fetching tickets:", error);
+                    listContainer.innerHTML = '<div style="text-align:center; color: #ef4444;">Error loading ticket.</div>';
+                });
+        }
+
+        // --- SMOOTH PAGE TRANSITION LOGIC ---
+        function navigateTo(pageId) {
+            const currentSection = document.querySelector('.page-section.active');
+            const targetSection = document.getElementById(pageId);
+
+            if (currentSection === targetSection) return; 
+            if (currentSection && currentSection.classList.contains('leaving')) return; 
+
+            // 1. Exit Animation
+            if (currentSection) {
+                currentSection.classList.remove('active');
+                currentSection.classList.add('leaving');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // 2. Switch Content & Enter Animation
             setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
+                document.querySelectorAll('.page-section').forEach(sec => {
+                    sec.classList.remove('active', 'leaving');
+                    sec.style.display = 'none';
+                });
+
+                if (targetSection) {
+                    targetSection.style.display = 'block'; 
+                    void targetSection.offsetWidth; 
+                    targetSection.classList.add('active');
+                    
+                    if(pageId === 'profile') loadProfilePageData();
+                    if(pageId === 'buynow' && auth && auth.currentUser) {
+                        fetchAndSyncUserData(auth.currentUser.uid);
+                    }
+                }
+            }, 400);
+        }
+
+        function toggleDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const overlay = document.getElementById('mobileDrawerOverlay');
+            const toggle = document.querySelector('.mobile-toggle');
+            const icon = toggle.querySelector('i');
+            
+            drawer.classList.toggle('open');
+            toggle.classList.toggle('open');
+            overlay.classList.toggle('active');
+            
+            if(drawer.classList.contains('open')) {
+                icon.classList.remove('ri-menu-4-line');
+                icon.classList.add('ri-close-line');
+            } else {
+                icon.classList.add('ri-menu-4-line');
+                icon.classList.remove('ri-close-line');
+            }
+        }
+
+        function handleFabClick() {
+            // Mobile FAB click logic - routes to helpdesk
+            navigateTo('helpdesk');
+        }
+
+        function fetchAndSyncUserData(uid) {
+            if(!db) return;
+            db.collection("users").doc(uid).get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const coName = document.getElementById('co-name');
+                    const coPhone = document.getElementById('co-phone');
+                    const coEmail = document.getElementById('co-email');
+                    const coCompany = document.getElementById('co-company');
+                    const autoFillLabel = document.getElementById('auto-fill-label');
+
+                    if(data.name && coName) coName.value = data.name;
+                    if(data.phone && coPhone) coPhone.value = data.phone;
+                    if(data.email && coEmail) coEmail.value = data.email;
+                    if(data.company && coCompany) coCompany.value = data.company;
+
+                    // Logic to show "Auto-filled" if basic info exists
+                    if(data.name && data.phone && data.email && autoFillLabel) {
+                        autoFillLabel.style.display = 'inline';
+                    } else if (autoFillLabel) {
+                        autoFillLabel.style.display = 'none';
+                    }
+
+                    if(data.personalVoucher) {
+                        currentUserPersonalVoucher = data.personalVoucher;
+                        showCheckoutVoucher(data.personalVoucher);
+                    } else {
+                        hideCheckoutVoucher();
+                    }
+                }
+            }).catch((error) => {
+                console.error("Error fetching user data:", error);
+            });
+        }
+
+        function showVoucherCard(voucher) {
+            const section = document.getElementById('profile-voucher-section');
+            const text = document.getElementById('profile-voucher-text');
+            section.style.display = 'block';
+            
+            const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
+            text.innerText = `Code: ${voucher.code} | Value: ${displayVal}`;
+        }
+
+        function showCheckoutVoucher(voucher) {
+            const section = document.getElementById('checkout-voucher-section');
+            const text = document.getElementById('checkout-voucher-text');
+            
+            const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
+            
+            text.innerText = `${voucher.code} (-${displayVal})`;
+            section.style.display = 'block';
+        }
+
+        function hideVoucherCard() {
+            document.getElementById('profile-voucher-section').style.display = 'none';
+            document.getElementById('checkout-voucher-section').style.display = 'none';
+        }
+
+        function updateContentUI() {
+            // Exists for compatibility
         }
 
         const observerOptions = {
@@ -2497,11 +2339,8 @@
                 const rotZ = dot.z * Math.cos(rotation) + dot.x * Math.sin(rotation);
                 const alpha = (rotZ + GLOBE_RADIUS) / (2 * GLOBE_RADIUS);
                 if(alpha > 0) {
-                    const scale = 800 / (800 + rotZ); 
-                    const x = 600 + rotX * scale; 
-                    const y = 600 + dot.y * scale;
                     ctx.beginPath();
-                    ctx.arc(x, y, 1.5 * scale, 0, Math.PI * 2);
+                    ctx.arc(600 + rotX * scale, 600 + dot.y * scale, 1.5 * scale, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
                     ctx.fill();
                 }

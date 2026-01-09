@@ -310,16 +310,17 @@
         .mobile-drawer.open li:nth-child(6) a { transition-delay: 0.6s; }
         .mobile-drawer.open li:nth-child(7) a { transition-delay: 0.7s; }
 
-        /* --- MOBILE FLOATING ACTION BUTTON (FAB) --- */
+        /* --- MOBILE & DESKTOP FLOATING ACTION BUTTON (FAB) --- */
+        /* UPDATED: Removed 'display: none' so it appears on desktop too */
         .mobile-fab {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
+            bottom: 40px;
+            right: 40px;
             width: 60px;
             height: 60px;
             background: var(--accent-primary);
             border-radius: 50%;
-            display: none; 
+            display: flex; 
             align-items: center;
             justify-content: center;
             color: white;
@@ -420,9 +421,20 @@
             background: var(--bg-input); border: 1px solid var(--border-color);
             color: white; border-radius: 12px; font-size: 1rem; 
             min-height: 48px; transition: 0.3s;
+            appearance: none; /* Removes default native styling for select */
         }
+        /* Custom arrow for select dropdown */
+        .form-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2rem;
+            cursor: pointer;
+        }
+
         .form-input:focus, .form-select:focus { border-color: var(--border-focus); outline: none; background: var(--bg-input-focus); }
         .form-input:read-only { background: rgba(0,0,0,0.2); color: var(--text-tertiary); cursor: not-allowed; border-color: transparent; }
+        
         .radio-group { display: grid; gap: 1rem; }
         .radio-option { border: 1px solid var(--border-color); padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; background: var(--bg-surface); min-height: 48px; }
         .radio-option:hover { border-color: var(--border-color); background: rgba(255,255,255,0.02); }
@@ -562,23 +574,22 @@
             text-align: center;
         }
 
-        /* --- DISCOUNT BANNER STYLES (UPDATED FOR VISIBILITY & SPACING) --- */
+        /* --- DISCOUNT BANNER STYLES --- */
         .promo-badge-wrapper {
             position: relative;
             display: inline-block;
             margin-bottom: 1.5rem;
-            overflow: visible; /* Prevent badge clipping */
+            overflow: visible;
         }
 
         .promo-badge {
             position: absolute;
-            /* UPDATED: Better Spacing */
             top: -22px; 
             right: -22px;
             
             background: var(--accent-warn);
             color: black;
-            padding: 6px 12px; /* Increased padding slightly for better look */
+            padding: 6px 12px;
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 800;
@@ -588,7 +599,7 @@
             opacity: 0;
             transform: scale(0.5);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; /* Center text */
+            display: flex; 
             align-items: center;
             gap: 6px;
         }
@@ -599,17 +610,17 @@
         .discounted-price-container {
             display: flex;
             flex-direction: column;
-            align-items: center; /* Center prices vertically */
+            align-items: center; 
         }
         
         .old-price {
             text-decoration: line-through;
             color: var(--text-tertiary);
-            font-size: 1.4rem; /* Slightly larger old price */
+            font-size: 1.4rem; 
             font-weight: 500;
             margin-right: 10px;
-            display: none; /* Hidden by default */
-            opacity: 0; /* Animated out */
+            display: none; 
+            opacity: 0; 
             transition: opacity 0.3s;
         }
         .old-price.visible { opacity: 1; display: inline-block; }
@@ -762,7 +773,11 @@
                 gap: 0.5rem;
             }
 
-            .mobile-fab { display: flex; }
+            /* UPDATED: Adjust FAB for Mobile */
+            .mobile-fab { 
+                bottom: 25px; 
+                right: 25px; 
+            }
         }
     </style>
 </head>
@@ -797,7 +812,7 @@
     <!-- Mobile Drawer Overlay -->
     <div id="mobileDrawerOverlay" class="mobile-drawer-overlay" onclick="toggleDrawer()"></div>
 
-    <!-- MOBILE FLOATING ACTION BUTTON (Updated for Helpdesk) -->
+    <!-- UPDATED: MOBILE & DESKTOP FAB (Floating Action Button) -->
     <div class="mobile-fab" id="mobileFab" onclick="handleFabClick()">
         <div class="fab-pulse"></div>
         <i class="ri-customer-service-2-line"></i>
@@ -1065,7 +1080,7 @@
                         </div>
                     </form>
 
-                    <!-- TICKET HISTORY SECTION (UPDATED: SEARCH BY ID ONLY) -->
+                    <!-- TICKET HISTORY SECTION -->
                     <div class="ticket-history-container">
                         <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-main);">Check Ticket Status</h3>
                         <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Enter your unique Case ID to view the ticket details.</p>
@@ -1101,7 +1116,7 @@
                         <h3 style="margin-bottom: 0.25rem;">HTML Only</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Perfect for simple landing pages.</p>
                         
-                        <!-- UPDATED PRICE STRUCTURE WITH BADGE -->
+                        <!-- PRICE STRUCTURE WITH BADGE -->
                         <div class="promo-badge-wrapper">
                             <div id="badge-html" class="promo-badge hidden"><i class="ri-percent-line"></i> -% OFF</div>
                             <div class="discounted-price-container">
@@ -1127,7 +1142,7 @@
                         <h3 style="margin-bottom: 0.25rem;">Front-End Website</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Interactive multi-page websites.</p>
                         
-                        <!-- UPDATED PRICE STRUCTURE WITH BADGE -->
+                        <!-- PRICE STRUCTURE WITH BADGE -->
                         <div class="promo-badge-wrapper">
                             <div id="badge-frontend" class="promo-badge hidden"><i class="ri-percent-line"></i> -% OFF</div>
                             <div class="discounted-price-container">
@@ -1154,7 +1169,7 @@
                         <h3 style="margin-bottom: 0.25rem;">AI Powered</h3>
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Next-gen automation & chatbots.</p>
                         
-                        <!-- UPDATED PRICE STRUCTURE -->
+                        <!-- PRICE STRUCTURE -->
                         <div class="promo-badge-wrapper">
                              <span id="price-card-ai" class="regular-price">Custom</span>
                         </div>
@@ -1296,28 +1311,24 @@
 
                         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
 
+                        <!-- UPDATED: PAYMENT METHOD DROPDOWN -->
                         <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                            <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.9rem; line-height: 1.5;">
+                            <label class="form-label" style="color: var(--accent-primary); font-weight: 700;">Payment Method</label>
+                            
+                            <select id="payment-method-select" class="form-select" onchange="updatePaymentSelection()">
+                                <option value="" disabled selected>Select Payment Method</option>
+                                <!-- Options populated dynamically by JS from Firebase -->
+                            </select>
+                            
+                            <button type="button" class="btn" style="width: 100%; margin-bottom: 1rem; margin-top: 1rem;" onclick="triggerPayment()"><span style="margin-right: 8px;">Step 1</span> Proceed to Payment</button>
+                            
+                            <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
                                 <input type="checkbox" id="terms-check" style="margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent-primary);">
                                 <span style="color: var(--text-secondary);">
                                     I have read and agreed to <span class="terms-link" onclick="openTermsModal()">Terms & Conditions</span>.
                                 </span>
                             </label>
-                        </div>
-
-                        <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                            <label class="form-label" style="color: var(--accent-primary); font-weight: 700;">Payment Method</label>
-                            <div class="radio-group" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.5rem;">
-                                <div class="radio-option selected" onclick="updatePaymentMethod('tng', this)">
-                                    <input type="radio" name="pay_method" value="tng" checked> 
-                                    <span style="font-size: 1rem; color: var(--text-main); font-weight: 700;">TNG eWallet</span>
-                                </div>
-                                <div class="radio-option" onclick="updatePaymentMethod('fpx', this)">
-                                    <input type="radio" name="pay_method" value="fpx">
-                                    <span style="font-size: 1rem; color: var(--text-main); font-weight: 700;">FPX via Toyyibpay</span>
-                                </div>
-                            </div>
-                            <button type="button" class="btn" style="width: 100%; margin-bottom: 1rem;" onclick="triggerPayment()"><span style="margin-right: 8px;">Step 1</span> Proceed to Payment</button>
+                            
                             <button type="button" class="btn btn-success" style="width: 100%;" onclick="submitOrder()"><i class="ri-shopping-bag-line" style="margin-right: 8px;"></i> Place Order</button>
                         </div>
                     </form>
@@ -1355,7 +1366,7 @@
             </div>
         </section>
 
-        <!-- === PAGE: CONTACT (Hidden from menu but accessible via helpdesk or footer) === -->
+        <!-- === PAGE: CONTACT === -->
         <section id="contact" class="page-section">
             <div class="container" style="max-width: 800px;">
                 <div class="checkout-card reveal text-center">
@@ -1404,7 +1415,7 @@
 
     </main>
 
-    <!-- BETTER FOOTER -->
+    <!-- FOOTER -->
     <footer>
         <div class="container">
             <div class="footer-grid">
@@ -1513,14 +1524,22 @@
         let ADMIN_EMAIL = "ddnetwork.one@outlook.com";
         let allUsers = [];
         let currentUserPersonalVoucher = null;
-        // Updated: Added discountActive and discountPercent to default config
+        
+        // Default Payment Methods (Fallback)
+        const DEFAULT_PAYMENT_METHODS = [
+            { id: 'tng', name: 'TNG eWallet', url: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
+            { id: 'fpx', name: 'Online Banking (FPX)', url: 'https://toyyibpay.com', active: true } 
+            // Note: For FPX we usually redirect to a specific package link, this is handled in logic
+        ];
+
         let siteConfig = { 
             maintenance_active: false, 
             message: '', 
             prices: { html: 199, frontend: 599 }, 
             packageDetails: {},
             discountActive: false, 
-            discountPercent: 0
+            discountPercent: 0,
+            payment_methods: [] // Will be populated from DB
         };
         let currentUserRole = 'user'; 
         
@@ -1572,18 +1591,14 @@
 
         // UPDATED: Handles Global Discount Logic & Better Banner Display
         function refreshCardPrices() {
-            // Base Prices
             const baseHtml = 199;
             const baseFrontend = 599;
 
-            // Get prices from DB if available, else use defaults
             const priceHtml = siteConfig.prices?.html || baseHtml;
             const priceFrontend = siteConfig.prices?.frontend || baseFrontend;
             
-            // Check if Discount is Active
             const isDiscountActive = siteConfig.discountActive && siteConfig.discountPercent > 0;
 
-            // --- HTML PACKAGE LOGIC ---
             const htmlPriceEl = document.getElementById('price-card-html');
             const htmlOldEl = document.getElementById('old-price-html');
             const htmlBadgeEl = document.getElementById('badge-html');
@@ -1591,38 +1606,29 @@
             if (htmlPriceEl) {
                 if (isDiscountActive) {
                     const discounted = Math.round(priceHtml * (1 - siteConfig.discountPercent));
-                    // 1. Show discounted price in blue
                     htmlPriceEl.innerText = `RM ${discounted}`;
                     htmlPriceEl.classList.remove('regular-price');
                     htmlPriceEl.classList.add('new-price');
                     
-                    // 2. Animate Old Price Out
                     htmlOldEl.innerText = `RM ${priceHtml}`;
                     htmlOldEl.classList.remove('hidden');
-                    htmlOldEl.classList.remove('visible'); // Reset visibility
-                    // Small delay before showing old price for effect
-                    requestAnimationFrame(() => {
-                        htmlOldEl.classList.add('visible');
-                    });
+                    htmlOldEl.classList.remove('visible');
+                    requestAnimationFrame(() => { htmlOldEl.classList.add('visible'); });
                     
-                    // 3. Show Badge
                     htmlBadgeEl.innerText = `-${siteConfig.discountPercent * 100}%`;
                     htmlBadgeEl.classList.remove('hidden');
-                    htmlBadgeEl.classList.add('show'); // Trigger animation
+                    htmlBadgeEl.classList.add('show');
                 } else {
-                    // Revert to normal
                     htmlPriceEl.innerText = `RM ${priceHtml}`;
                     htmlPriceEl.classList.add('regular-price');
                     htmlPriceEl.classList.remove('new-price');
                     
-                    // Hide old price and badge
                     htmlOldEl.classList.remove('visible');
                     htmlOldEl.classList.add('hidden');
                     htmlBadgeEl.classList.add('hidden');
                 }
             }
 
-            // --- FRONTEND PACKAGE LOGIC ---
             const frontendPriceEl = document.getElementById('price-card-frontend');
             const frontendOldEl = document.getElementById('old-price-frontend');
             const frontendBadgeEl = document.getElementById('badge-frontend');
@@ -1631,50 +1637,68 @@
                 if (isDiscountActive) {
                     const discounted = Math.round(priceFrontend * (1 - siteConfig.discountPercent));
                     
-                    // 1. Show discounted price
                     frontendPriceEl.innerText = `RM ${discounted}`;
                     frontendPriceEl.classList.remove('regular-price');
                     frontendPriceEl.classList.add('new-price');
                     
-                    // 2. Animate Old Price Out
                     frontendOldEl.innerText = `RM ${priceFrontend}`;
                     frontendOldEl.classList.remove('hidden');
                     frontendOldEl.classList.remove('visible');
-                    requestAnimationFrame(() => {
-                        frontendOldEl.classList.add('visible');
-                    });
+                    requestAnimationFrame(() => { frontendOldEl.classList.add('visible'); });
                     
-                    // 3. Show Badge
                     frontendBadgeEl.innerText = `-${siteConfig.discountPercent * 100}%`;
                     frontendBadgeEl.classList.remove('hidden');
                     frontendBadgeEl.classList.add('show');
                 } else {
-                    // Revert to normal
                     frontendPriceEl.innerText = `RM ${priceFrontend}`;
                     frontendPriceEl.classList.add('regular-price');
                     frontendPriceEl.classList.remove('new-price');
                     
-                    // Hide old price and badge
                     frontendOldEl.classList.remove('visible');
                     frontendOldEl.classList.add('hidden');
                     frontendBadgeEl.classList.add('hidden');
                 }
             }
         }
-        
+
+        // NEW: Render Payment Dropdown Options
+        function renderPaymentMethods() {
+            const select = document.getElementById('payment-method-select');
+            if(!select) return;
+
+            select.innerHTML = '<option value="" disabled selected>Select Payment Method</option>';
+
+            // If DB has config, use it. Else use defaults.
+            const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
+                            ? siteConfig.payment_methods 
+                            : DEFAULT_PAYMENT_METHODS;
+
+            methods.forEach(pm => {
+                if(pm.active) {
+                    const option = document.createElement('option');
+                    option.value = pm.id;
+                    option.innerText = pm.name;
+                    select.appendChild(option);
+                }
+            });
+        }
+
         // Listeners for Site Config
         db.collection("config").doc("site_settings").onSnapshot((doc) => {
             if(doc.exists) {
-                // Merge new config with existing to preserve defaults if missing
                 siteConfig = { ...siteConfig, ...doc.data() };
                 renderDynamicContent();
-                refreshCardPrices(); // <--- CRITICAL: This updates badges on pricing page
+                refreshCardPrices(); 
+                renderPaymentMethods(); // <--- NEW: Populate dropdown on config load
 
                 if(siteConfig.maintenance_active) {
                     document.getElementById('maintenance-overlay').classList.add('active');
                 } else {
                     document.getElementById('maintenance-overlay').classList.remove('active');
                 }
+            } else {
+                // Initialize default if config doesn't exist yet
+                renderPaymentMethods();
             }
         });
 
@@ -1689,12 +1713,12 @@
         const PHONE_NO = "60122600969"; 
         const ADMIN_PHONE_NO = "60122600969"; 
         
+        // Hardcoded FPX URLs for package mapping
         const FPX_URLS = {
             'html': 'https://toyyibpay.com/htmlplan-50-depo',
             'frontend': 'https://toyyibpay.com/frontend-depo-50' 
         };
-        const TNG_GENERIC = 'https://payment.tngdigital.com.my/sc/bDLob7YcpG';
-
+        
         let state = {
             packageType: null,
             packagePrice: 0,
@@ -1706,7 +1730,7 @@
             discountCode: '',
             domainType: 'sub',
             domainName: '',
-            paymentMethod: 'tng'
+            paymentMethodId: null // Store ID instead of method string
         };
 
         // ==========================================
@@ -1820,7 +1844,6 @@
                     if(data.email && coEmail) coEmail.value = data.email;
                     if(data.company && coCompany) coCompany.value = data.company;
 
-                    // Logic to show "Auto-filled" if basic info exists
                     if(data.name && data.phone && data.email && autoFillLabel) {
                         autoFillLabel.style.display = 'inline';
                     } else if (autoFillLabel) {
@@ -1946,7 +1969,7 @@
         }
 
         // ==========================================
-        // FAB LOGIC (Updated to Helpdesk)
+        // FAB LOGIC
         // ==========================================
         
         function handleFabClick() {
@@ -2027,7 +2050,7 @@
                 .catch((error) => showToast(error.message, "error"));
         }
 
-        // --- TICKET SUBMISSION & HISTORY (UPDATED: ID ONLY) ---
+        // --- TICKET SUBMISSION & HISTORY ---
         function handleTicketSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('ticket-name').value;
@@ -2055,19 +2078,15 @@
             if(db) {
                 db.collection("tickets").add(ticketData)
                 .then((docRef) => {
-                    // 1. Show Case ID prominently
                     const caseIdDisplay = document.getElementById('case-id-display');
                     const caseIdSpan = document.getElementById('display-case-id');
                     caseIdSpan.innerText = docRef.id;
                     caseIdDisplay.style.display = 'block';
 
-                    // 2. Reset Form
                     e.target.reset();
 
-                    // 3. Show Toast
                     showToast(`Ticket Submitted! Case ID: ${docRef.id}`, "success");
 
-                    // 4. Notify Admin
                     setTimeout(() => {
                         let notifyMsg = `Hi Admin,\n*New Ticket Received.*\n\n*Case ID:* ${docRef.id}\n*Name:* ${name}\n*Type:* ${type}`;
                         window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
@@ -2081,7 +2100,6 @@
             }
         }
 
-        // Fetch History (UPDATED: BY ID ONLY)
         function fetchTicketHistory() {
             const caseId = document.getElementById('history-search-id').value.trim();
             if(!caseId) {
@@ -2097,10 +2115,9 @@
             const listContainer = document.getElementById('ticket-list');
             listContainer.innerHTML = '<div style="text-align:center; color: var(--text-secondary);">Searching...</div>';
 
-            // Directly fetch document using the Case ID (Doc ID)
             db.collection("tickets").doc(caseId).get()
                 .then((doc) => {
-                    listContainer.innerHTML = ''; // Clear loading
+                    listContainer.innerHTML = ''; 
 
                     if (!doc.exists) {
                         listContainer.innerHTML = '<div style="text-align:center; color: #ef4444; padding: 1rem;">No ticket found with that Case ID.</div>';
@@ -2139,7 +2156,6 @@
             if (currentSection === targetSection) return; 
             if (currentSection && currentSection.classList.contains('leaving')) return; 
 
-            // 1. Exit Animation
             if (currentSection) {
                 currentSection.classList.remove('active');
                 currentSection.classList.add('leaving');
@@ -2148,7 +2164,6 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            // 2. Switch Content & Enter Animation
             setTimeout(() => {
                 document.querySelectorAll('.page-section').forEach(sec => {
                     sec.classList.remove('active', 'leaving');
@@ -2187,7 +2202,6 @@
             }
         }
 
-        // --- AUTH GATE FOR PACKAGES ---
         function attemptSelectPackage(name, type) {
             if (typeof auth === 'undefined' || auth === null) {
                 showToast("Authentication system initializing. Please wait...", "error");
@@ -2201,7 +2215,6 @@
             }
         }
 
-        // UPDATED: Respects Global Discount
         function selectPackage(name, type) {
             state.packageType = type;
             state.packagePrice = 0; 
@@ -2209,12 +2222,10 @@
             const priceArea = document.getElementById('dynamic-price-area');
             priceArea.innerHTML = ''; 
 
-            // Determine Base Price
             let basePrice = 0;
             if(type === 'html') basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
             if(type === 'frontend') basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.frontend) ? siteConfig.prices.frontend : 599;
 
-            // Apply Global Discount if Active
             if (siteConfig.discountActive && siteConfig.discountPercent > 0 && type !== 'ai') {
                 basePrice = Math.round(basePrice * (1 - siteConfig.discountPercent));
             }
@@ -2233,14 +2244,16 @@
                 priceArea.innerHTML = `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:#a1a1aa; text-align:center;">Custom Quote required.</div>`;
             }
 
-            refreshCardPrices(); // <--- CRITICAL: This updates badges on pricing page
-            // ... rest of function (form reset, navigate, etc)
+            refreshCardPrices();
+            
             state.domainType = 'sub';
             state.domainPrice = 55;
             state.maintenancePrice = 0;
             state.discountRate = 0;
             state.discountFixed = 0;
             state.discountCode = '';
+            state.paymentMethodId = null; // Reset payment
+            document.getElementById('payment-method-select').value = ""; // Reset dropdown UI
             document.getElementById('terms-check').checked = false;
             
             if(auth && auth.currentUser) {
@@ -2393,22 +2406,17 @@
             document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
             const subOpt = document.querySelector('input[name="domain_type"][value="sub"]').parentElement;
             const noneOpt = document.querySelector('input[name="maint"][value="none"]').parentElement;
-            const tngOpt = document.querySelector('input[name="pay_method"][value="tng"]').parentElement;
             if(subOpt) subOpt.classList.add('selected');
             if(noneOpt) noneOpt.classList.add('selected');
-            if(tngOpt) tngOpt.classList.add('selected');
             
             updateSummaryText();
             updateTotal();
         }
 
-        function updatePaymentMethod(method, element) {
-            state.paymentMethod = method;
-            const options = element.parentElement.querySelectorAll('.radio-option');
-            options.forEach(opt => opt.classList.remove('selected'));
-            element.classList.add('selected');
-            const input = element.querySelector('input');
-            if(input) input.checked = true;
+        // NEW: Update payment selection from dropdown
+        function updatePaymentSelection() {
+            const select = document.getElementById('payment-method-select');
+            state.paymentMethodId = select.value;
         }
 
         function triggerPayment() {
@@ -2416,20 +2424,34 @@
                 showToast("Please select a package first.", "error");
                 return;
             }
-            let targetUrl = "";
-            if (state.paymentMethod === 'tng') {
-                targetUrl = TNG_GENERIC;
-            } else if (state.paymentMethod === 'fpx') {
-                if (state.packageType === 'html') {
-                    targetUrl = FPX_URLS.html; 
-                } else if (state.packageType === 'frontend') {
-                    targetUrl = FPX_URLS.frontend; 
-                } else {
-                    targetUrl = TNG_GENERIC;
-                }
-            } else {
-                targetUrl = TNG_GENERIC;
+
+            const select = document.getElementById('payment-method-select');
+            const methodId = select.value;
+
+            if(!methodId) {
+                showToast("Please select a Payment Method.", "error");
+                return;
             }
+
+            // Determine which method config to use
+            const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
+                            ? siteConfig.payment_methods 
+                            : DEFAULT_PAYMENT_METHODS;
+            
+            const selectedMethod = methods.find(m => m.id === methodId);
+
+            if(!selectedMethod) {
+                showToast("Payment method configuration error.", "error");
+                return;
+            }
+
+            let targetUrl = selectedMethod.url;
+
+            // Special Logic for FPX: Redirect to specific package link
+            if(methodId === 'fpx' && FPX_URLS[state.packageType]) {
+                targetUrl = FPX_URLS[state.packageType];
+            }
+
             window.open(targetUrl, '_blank');
         }
 
@@ -2460,6 +2482,10 @@
                 showToast("Please select a package first.", "error");
                 return;
             }
+            if(!state.paymentMethodId) {
+                showToast("Please select a Payment Method.", "error");
+                return;
+            }
 
             const name = document.getElementById('co-name').value;
             const phone = document.getElementById('co-phone').value;
@@ -2477,7 +2503,13 @@
             const total = document.getElementById('summary-final-total').innerText;
             const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
             const maint = document.getElementById('summary-maintenance').innerText;
-            const paymentLabel = state.paymentMethod === 'fpx' ? 'FPX via Toyyibpay' : 'TNG eWallet';
+            
+            // Get name of selected payment method for display
+            const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
+                            ? siteConfig.payment_methods 
+                            : DEFAULT_PAYMENT_METHODS;
+            const paymentObj = methods.find(m => m.id === state.paymentMethodId);
+            const paymentLabel = paymentObj ? paymentObj.name : "Unknown";
 
             const orderData = {
                 customerName: name,
@@ -2502,7 +2534,6 @@
                     setTimeout(() => {
                         showToast("Thank you! Order will be reviewed within 24 hours.", "success");
                         
-                        // Include Company Name in WhatsApp message
                         let companyText = company ? `\n*Company:* ${company}` : '';
                         let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}\n*Package:* ${pkgName}\n*Total:* ${total}\n*Payment:* ${paymentLabel}`;
                         

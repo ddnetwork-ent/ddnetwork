@@ -185,6 +185,7 @@
         }
         .btn:hover { transform: translateY(-2px); border-color: white; background: rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
         
         .btn-primary { background: white; color: black; border: 1px solid white; }
         .btn-primary:hover { background: transparent; color: white; }
@@ -311,7 +312,6 @@
         .mobile-drawer.open li:nth-child(7) a { transition-delay: 0.7s; }
 
         /* --- MOBILE & DESKTOP FLOATING ACTION BUTTON (FAB) --- */
-        /* UPDATED: Removed 'display: none' so it appears on desktop too */
         .mobile-fab {
             position: fixed;
             bottom: 40px;
@@ -330,7 +330,6 @@
             cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
         .mobile-fab:active { transform: scale(0.9); }
         
         .fab-pulse {
@@ -389,15 +388,8 @@
         .auth-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
         .auth-link { color: var(--accent-primary); cursor: pointer; font-weight: 700; text-decoration: underline; }
         
-        .profile-details-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 1rem; 
-        }
-        
-        @media(max-width: 600px) { 
-            .profile-details-grid { grid-template-columns: 1fr; } 
-        }
+        .profile-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media(max-width: 600px) { .profile-details-grid { grid-template-columns: 1fr; } }
 
         /* --- TRUST MARQUEE --- */
         .trust-section { margin-top: 4rem; width: 100%; }
@@ -559,7 +551,7 @@
             font-weight: 700;
         }
         .status-open { background: rgba(245, 158, 11, 0.2); color: var(--accent-warn); }
-        .status-closed { background: rgba(16, 185, 129, 0.2); color: var(--accent-success); }
+        .status-closed { background: rgba(16, 185, 129, 0.2); color: var(--success); }
 
         /* Case ID Result Display */
         .case-id-result {
@@ -773,7 +765,6 @@
                 gap: 0.5rem;
             }
 
-            /* UPDATED: Adjust FAB for Mobile */
             .mobile-fab { 
                 bottom: 25px; 
                 right: 25px; 
@@ -927,10 +918,13 @@
                     <div id="profile-voucher-section" style="display: none; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
                         <div class="voucher-card">
                             <div class="voucher-info">
-                                <h4>You have a Gift Voucher!</h4>
+                                <h4 id="profile-voucher-title">You have a Gift Voucher!</h4>
                                 <p id="profile-voucher-text">Code: -</p>
                             </div>
-                            <button type="button" class="btn btn-danger" style="width: auto; padding: 0.6rem 1.2rem;" onclick="deletePersonalVoucher()">Delete</button>
+                            <!-- If redeemed, show Redeemed Badge, else Delete Button -->
+                            <div id="profile-voucher-action">
+                                <button type="button" class="btn btn-danger" style="width: auto; padding: 0.6rem 1.2rem;" onclick="deletePersonalVoucher()">Delete</button>
+                            </div>
                         </div>
                     </div>
 
@@ -1255,10 +1249,10 @@
                         <div id="checkout-voucher-section" style="display: none; margin-bottom: 2rem;">
                             <div class="voucher-card" style="margin-bottom: 0;">
                                 <div class="voucher-info">
-                                    <h4>Gift Voucher Available</h4>
+                                    <h4 id="checkout-voucher-title">Gift Voucher Available</h4>
                                     <p id="checkout-voucher-text">-</p>
                                 </div>
-                                <button type="button" class="btn btn-primary" style="width: auto; padding: 0.6rem 1.5rem;" onclick="applyPersonalVoucher()">Apply</button>
+                                <button type="button" id="btn-apply-voucher" class="btn btn-primary" style="width: auto; padding: 0.6rem 1.5rem;" onclick="applyPersonalVoucher()">Apply</button>
                             </div>
                         </div>
 
@@ -1332,6 +1326,27 @@
                             <button type="button" class="btn btn-success" style="width: 100%;" onclick="submitOrder()"><i class="ri-shopping-bag-line" style="margin-right: 8px;"></i> Place Order</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- === NEW: THANK YOU PAGE === -->
+        <section id="thank-you" class="page-section">
+            <div class="auth-container reveal" style="text-align: center;">
+                <div style="background: var(--bg-card); padding: 3rem 2rem; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: var(--shadow-card);">
+                    <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+                        <i class="ri-check-line" style="font-size: 3rem; color: var(--success);"></i>
+                    </div>
+                    <h2 style="margin-bottom: 1rem;">Order Placed Successfully!</h2>
+                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.6;">
+                        Thank you for choosing DDNetwork One. We have received your order and payment details.<br>
+                        Our team will review your order and contact you via WhatsApp/Email within 24 hours.
+                    </p>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="navigateTo('home')">Return Home</button>
+                        <button class="btn btn-secondary" onclick="navigateTo('profile')">My Profile</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1529,7 +1544,6 @@
         const DEFAULT_PAYMENT_METHODS = [
             { id: 'tng', name: 'TNG eWallet', url: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
             { id: 'fpx', name: 'Online Banking (FPX)', url: 'https://toyyibpay.com', active: true } 
-            // Note: For FPX we usually redirect to a specific package link, this is handled in logic
         ];
 
         let siteConfig = { 
@@ -1539,7 +1553,7 @@
             packageDetails: {},
             discountActive: false, 
             discountPercent: 0,
-            payment_methods: [] // Will be populated from DB
+            payment_methods: []
         };
         let currentUserRole = 'user'; 
         
@@ -1661,7 +1675,7 @@
             }
         }
 
-        // NEW: Render Payment Dropdown Options
+        // Render Payment Dropdown Options
         function renderPaymentMethods() {
             const select = document.getElementById('payment-method-select');
             if(!select) return;
@@ -1689,7 +1703,7 @@
                 siteConfig = { ...siteConfig, ...doc.data() };
                 renderDynamicContent();
                 refreshCardPrices(); 
-                renderPaymentMethods(); // <--- NEW: Populate dropdown on config load
+                renderPaymentMethods();
 
                 if(siteConfig.maintenance_active) {
                     document.getElementById('maintenance-overlay').classList.add('active');
@@ -1697,7 +1711,6 @@
                     document.getElementById('maintenance-overlay').classList.remove('active');
                 }
             } else {
-                // Initialize default if config doesn't exist yet
                 renderPaymentMethods();
             }
         });
@@ -1730,7 +1743,7 @@
             discountCode: '',
             domainType: 'sub',
             domainName: '',
-            paymentMethodId: null // Store ID instead of method string
+            paymentMethodId: null
         };
 
         // ==========================================
@@ -1862,23 +1875,64 @@
             });
         }
 
+        // UPDATED: Handles both Profile and Checkout Voucher Display with Redeemed status
         function showVoucherCard(voucher) {
+            // Profile Page Voucher Card
             const section = document.getElementById('profile-voucher-section');
             const text = document.getElementById('profile-voucher-text');
+            const title = document.getElementById('profile-voucher-title');
+            const actionBtn = document.getElementById('profile-voucher-action');
+
             section.style.display = 'block';
-            
             const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
+            
             text.innerText = `Code: ${voucher.code} | Value: ${displayVal}`;
+
+            if (voucher.status === 'redeemed') {
+                title.innerText = "Voucher Redeemed";
+                title.style.color = 'var(--text-tertiary)';
+                text.style.color = 'var(--text-tertiary)';
+                text.style.textDecoration = 'line-through';
+                // Hide delete button, replace with status badge
+                actionBtn.innerHTML = '<span style="color:var(--success); font-weight:700; border:1px solid var(--success); padding: 4px 12px; border-radius:20px; font-size:0.8rem;">USED</span>';
+            } else {
+                title.innerText = "You have a Gift Voucher!";
+                title.style.color = 'white';
+                text.style.color = 'var(--accent-primary)';
+                text.style.textDecoration = 'none';
+                actionBtn.innerHTML = '<button type="button" class="btn btn-danger" style="width: auto; padding: 0.6rem 1.2rem;" onclick="deletePersonalVoucher()">Delete</button>';
+            }
         }
 
+        // UPDATED: Handles Checkout Voucher display with Redeemed status
         function showCheckoutVoucher(voucher) {
             const section = document.getElementById('checkout-voucher-section');
             const text = document.getElementById('checkout-voucher-text');
-            
+            const title = document.getElementById('checkout-voucher-title');
+            const applyBtn = document.getElementById('btn-apply-voucher');
+
             const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
             
             text.innerText = `${voucher.code} (-${displayVal})`;
             section.style.display = 'block';
+
+            if (voucher.status === 'redeemed') {
+                title.innerText = "Voucher Redeemed";
+                title.style.color = 'var(--text-tertiary)';
+                text.style.color = 'var(--text-tertiary)';
+                text.style.textDecoration = 'line-through';
+                applyBtn.disabled = true;
+                applyBtn.innerText = "Redeemed";
+                applyBtn.classList.replace('btn-primary', 'btn-secondary');
+            } else {
+                title.innerText = "Gift Voucher Available";
+                title.style.color = 'white';
+                text.style.color = 'var(--accent-primary)';
+                text.style.textDecoration = 'none';
+                applyBtn.disabled = false;
+                applyBtn.innerText = "Apply";
+                applyBtn.classList.replace('btn-secondary', 'btn-primary');
+            }
         }
 
         function hideVoucherCard() {
@@ -2159,10 +2213,10 @@
             if (currentSection) {
                 currentSection.classList.remove('active');
                 currentSection.classList.add('leaving');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
             setTimeout(() => {
                 document.querySelectorAll('.page-section').forEach(sec => {
@@ -2179,6 +2233,10 @@
                     if(pageId === 'buynow' && auth && auth.currentUser) {
                         fetchAndSyncUserData(auth.currentUser.uid);
                     }
+                    
+                    // Trigger reveal animations for new elements
+                    const newReveals = targetSection.querySelectorAll('.reveal');
+                    newReveals.forEach(el => el.classList.add('active'));
                 }
             }, 400);
         }
@@ -2252,8 +2310,8 @@
             state.discountRate = 0;
             state.discountFixed = 0;
             state.discountCode = '';
-            state.paymentMethodId = null; // Reset payment
-            document.getElementById('payment-method-select').value = ""; // Reset dropdown UI
+            state.paymentMethodId = null; 
+            document.getElementById('payment-method-select').value = ""; 
             document.getElementById('terms-check').checked = false;
             
             if(auth && auth.currentUser) {
@@ -2325,8 +2383,14 @@
             }
         }
 
+        // UPDATED: Check voucher status before applying
         function applyPersonalVoucher() {
             if(!currentUserPersonalVoucher) return; 
+            
+            if(currentUserPersonalVoucher.status === 'redeemed') {
+                showToast("This voucher has already been used.", "error");
+                return;
+            }
             
             state.discountType = currentUserPersonalVoucher.type;
             state.discountCode = currentUserPersonalVoucher.code;
@@ -2352,7 +2416,7 @@
 
         function deletePersonalVoucher() {
             if(!auth || !auth.currentUser) return;
-            if(!confirm("Are you sure you want to remove this voucher?")) {
+            if(confirm("Are you sure you want to remove this voucher?")) {
                 db.collection("users").doc(auth.currentUser.uid).update({
                     personalVoucher: firebase.firestore.FieldValue.delete()
                 }).then(() => {
@@ -2413,7 +2477,7 @@
             updateTotal();
         }
 
-        // NEW: Update payment selection from dropdown
+        // Update payment selection from dropdown
         function updatePaymentSelection() {
             const select = document.getElementById('payment-method-select');
             state.paymentMethodId = select.value;
@@ -2433,7 +2497,6 @@
                 return;
             }
 
-            // Determine which method config to use
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
@@ -2447,7 +2510,6 @@
 
             let targetUrl = selectedMethod.url;
 
-            // Special Logic for FPX: Redirect to specific package link
             if(methodId === 'fpx' && FPX_URLS[state.packageType]) {
                 targetUrl = FPX_URLS[state.packageType];
             }
@@ -2472,6 +2534,7 @@
             }
         }
 
+        // UPDATED: Submit Order with Thank You Page & Voucher Redeeming
         function submitOrder() {
             const termsCheck = document.getElementById('terms-check');
             if(!termsCheck.checked) {
@@ -2504,7 +2567,6 @@
             const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
             const maint = document.getElementById('summary-maintenance').innerText;
             
-            // Get name of selected payment method for display
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
@@ -2528,29 +2590,41 @@
             };
 
             if(db) {
-                db.collection("orders").add(orderData)
-                .then((docRef) => {
+                // Promise array: Save order AND (if applicable) Redeem Voucher
+                const promises = [db.collection("orders").add(orderData)];
+
+                // If a personal voucher was used (not just a promo code), update its status
+                if (state.discountCode && currentUserPersonalVoucher && state.discountCode === currentUserPersonalVoucher.code && currentUserPersonalVoucher.status !== 'redeemed') {
+                    const redeemPromise = db.collection("users").doc(auth.currentUser.uid).update({
+                        "personalVoucher.status": "redeemed"
+                    });
+                    promises.push(redeemPromise);
+                }
+
+                Promise.all(promises)
+                .then(() => {
                     showToast("Order Placed Successfully!", "success");
                     setTimeout(() => {
-                        showToast("Thank you! Order will be reviewed within 24 hours.", "success");
+                        // Navigate to Thank You Page
+                        navigateTo('thank-you');
                         
+                        // Optional: Notify Admin
                         let companyText = company ? `\n*Company:* ${company}` : '';
                         let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}\n*Package:* ${pkgName}\n*Total:* ${total}\n*Payment:* ${paymentLabel}`;
-                        
                         window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                     }, 1500);
                 })
                 .catch((error) => {
+                    console.error(error);
                     showToast("Cloud Save Failed. Sending via WhatsApp anyway.", "error");
-                    
                     let companyText = company ? `\n*Company:* ${company}` : '';
                     let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}`;
-                    
                     window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                 });
             } else {
                 showToast("Order Placed Successfully!", "success");
                 setTimeout(() => {
+                    navigateTo('thank-you');
                     let companyText = company ? `\n*Company:* ${company}` : '';
                     let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}`;
                     window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');

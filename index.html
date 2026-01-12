@@ -601,7 +601,7 @@
 
         .discounted-price-container {
             display: flex; /* COMMA FIX */
-            flex-direction: column, /* COMMA FIX */
+            flex-direction: column; /* COMMA FIX */
             align-items: center; 
         }
         
@@ -761,7 +761,7 @@
 
             .ticket-item {
                 grid-template-columns: 1fr, /* COMMA FIX */
-                text-align: center, /* COMMA FIX */
+                text-align: center; /* COMMA FIX */
                 gap: 0.5rem,
             }
 
@@ -778,8 +778,8 @@
     <div id="maintenance-overlay">
         <div class="maintenance-content">
             <i class="ri-tools-line"></i>
-            <h1>Site is currently under maintenance.</h1>
-            <p>We're making improvements to serve you better.</p>
+            <h1 id="maint-title">Site is currently under maintenance.</h1>
+            <p id="maint-desc">We're making improvements to serve you better.</p>
             <p>Please check back again shortly.</p>
             <p>"If you facing any issues, kindly email to"</p>
             <p>ddnetwork.one@outlook.com</p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-mail"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10" /><path d="M3 7l9 6l9 -6" /></svg></p>
@@ -1193,7 +1193,7 @@
                 
                 <!-- LEFT COLUMN -->
                 <div class="checkout-card reveal">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom:1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
                         <h3 style="font-size: 1rem; color: white;">Order Summary</h3>
                         <span class="change-package" onclick="navigateTo('services')">Change Package</span>
                     </div>
@@ -1541,9 +1541,10 @@
         let currentUserPersonalVoucher = null;
         
         // Default Payment Methods (Fallback)
+        // UPDATED: Changed 'url' property to 'link' to match DB schema requirement
         const DEFAULT_PAYMENT_METHODS = [
-            { id: 'tng', name: 'TNG eWallet', url: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
-            { id: 'fpx', name: 'Online Banking (FPX)', url: 'https://toyyibpay.com', active: true } 
+            { id: 'tng', name: 'TNG eWallet', link: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
+            { id: 'fpx', name: 'Online Banking (FPX)', link: 'https://toyyibpay.com', active: true } 
         ];
 
         let siteConfig = { 
@@ -1576,12 +1577,15 @@
         }
 
         // --- AUTO INITIALIZE DATABASE IF NOT EXISTS ---
+        // This function ensures that if the main site loads before the admin sets up the DB,
+        // it automatically creates the default config document.
         async function initializeDatabase() {
             const configRef = db.collection("config").doc("site_settings");
             const doc = await configRef.get();
             
             if (!doc.exists) {
                 console.log("Config not found, creating default...");
+                // UPDATED: Changed 'url' to 'link' in default data
                 await configRef.set({
                     maintenance_active: false,
                     maintenance_message: "We are currently performing scheduled maintenance.",
@@ -1593,8 +1597,8 @@
                     discountActive: false,
                     discountPercent: 0.1,
                     payment_methods: [
-                        { id: 'tng', name: 'TNG eWallet', url: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
-                        { id: 'fpx', name: 'Online Banking (FPX)', url: 'https://toyyibpay.com', active: true }
+                        { id: 'tng', name: 'TNG eWallet', link: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
+                        { id: 'fpx', name: 'Online Banking (FPX)', link: 'https://toyyibpay.com', active: true }
                     ]
                 });
                 showToast("Database initialized!", "success");
@@ -1608,6 +1612,7 @@
                 return items.map(item => `<li>• ${item}</li>`).join('');
             }
 
+            // SYNC: Use Firebase data, fallback to hardcoded defaults
             const frontendDetails = siteConfig.packageDetails?.frontend || DEFAULT_DETAILS.frontend;
             const aiDetails = siteConfig.packageDetails?.ai || DEFAULT_DETAILS.ai;
 
@@ -1631,11 +1636,9 @@
 
         // UPDATED: Handles Global Discount Logic & Better Banner Display
         function refreshCardPrices() {
-            const baseHtml = 199;
-            const baseFrontend = 599;
-
-            const priceHtml = siteConfig.prices?.html || baseHtml;
-            const priceFrontend = siteConfig.prices?.frontend || baseFrontend;
+            // SYNC: Use Firebase data, fallback to defaults
+            const baseHtml = siteConfig.prices?.html || 199;
+            const baseFrontend = siteConfig.prices?.frontend || 599;
             
             const isDiscountActive = siteConfig.discountActive && siteConfig.discountPercent > 0;
 
@@ -1645,12 +1648,12 @@
 
             if (htmlPriceEl) {
                 if (isDiscountActive) {
-                    const discounted = Math.round(priceHtml * (1 - siteConfig.discountPercent));
+                    const discounted = Math.round(baseHtml * (1 - siteConfig.discountPercent));
                     htmlPriceEl.innerText = `RM ${discounted}`;
                     htmlPriceEl.classList.remove('regular-price');
                     htmlPriceEl.classList.add('new-price');
                     
-                    htmlOldEl.innerText = `RM ${priceHtml}`;
+                    htmlOldEl.innerText = `RM ${baseHtml}`;
                     htmlOldEl.classList.remove('hidden');
                     htmlOldEl.classList.remove('visible');
                     requestAnimationFrame(() => { htmlOldEl.classList.add('visible'); });
@@ -1659,7 +1662,7 @@
                     htmlBadgeEl.classList.remove('hidden');
                     htmlBadgeEl.classList.add('show');
                 } else {
-                    htmlPriceEl.innerText = `RM ${priceHtml}`;
+                    htmlPriceEl.innerText = `RM ${baseHtml}`;
                     htmlPriceEl.classList.add('regular-price');
                     htmlPriceEl.classList.remove('new-price');
                     
@@ -1675,13 +1678,13 @@
 
             if (frontendPriceEl) {
                 if (isDiscountActive) {
-                    const discounted = Math.round(priceFrontend * (1 - siteConfig.discountPercent));
+                    const discounted = Math.round(baseFrontend * (1 - siteConfig.discountPercent));
                     
                     frontendPriceEl.innerText = `RM ${discounted}`;
                     frontendPriceEl.classList.remove('regular-price');
                     frontendPriceEl.classList.add('new-price');
                     
-                    frontendOldEl.innerText = `RM ${priceFrontend}`;
+                    frontendOldEl.innerText = `RM ${baseFrontend}`;
                     frontendOldEl.classList.remove('hidden');
                     frontendOldEl.classList.remove('visible');
                     requestAnimationFrame(() => { frontendOldEl.classList.add('visible'); });
@@ -1690,7 +1693,7 @@
                     frontendBadgeEl.classList.remove('hidden');
                     frontendBadgeEl.classList.add('show');
                 } else {
-                    frontendPriceEl.innerText = `RM ${priceFrontend}`;
+                    frontendPriceEl.innerText = `RM ${baseFrontend}`;
                     frontendPriceEl.classList.add('regular-price');
                     frontendPriceEl.classList.remove('new-price');
                     
@@ -1708,7 +1711,7 @@
 
             select.innerHTML = '<option value="" disabled selected>Select Payment Method</option>';
 
-            // If DB has config, use it. Else use defaults.
+            // SYNC: If DB has config, use it. Else use defaults.
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
@@ -1724,18 +1727,28 @@
         }
 
         // Listeners for Site Config
+        // SYNC: Listens to "config/site_settings" document and updates UI in real-time.
         db.collection("config").doc("site_settings").onSnapshot((doc) => {
             if(doc.exists) {
+                // SYNC: Update global state object
                 siteConfig = { ...siteConfig, ...doc.data() };
-                renderDynamicContent();
-                refreshCardPrices(); 
-                renderPaymentMethods();
-
+                
+                // Maintenance Mode Sync
                 if(siteConfig.maintenance_active) {
                     document.getElementById('maintenance-overlay').classList.add('active');
+                    // Sync message text
+                    const maintTitle = document.getElementById('maint-title');
+                    const maintDesc = document.getElementById('maint-desc');
+                    if(maintTitle) maintTitle.innerText = siteConfig.maintenance_message;
+                    if(maintDesc) maintDesc.innerText = siteConfig.maintenance_message;
                 } else {
                     document.getElementById('maintenance-overlay').classList.remove('active');
                 }
+                
+                // Sync content features and prices
+                renderDynamicContent();
+                refreshCardPrices(); 
+                renderPaymentMethods();
             } else {
                 renderPaymentMethods();
             }
@@ -1751,12 +1764,6 @@
 
         const PHONE_NO = "60122600969"; 
         const ADMIN_PHONE_NO = "60122600969"; 
-        
-        // Hardcoded FPX URLs for package mapping
-        const FPX_URLS = {
-            'html': 'https://toyyibpay.com/htmlplan-50-depo',
-            'frontend': 'https://toyyibpay.com/frontend-depo-50' 
-        };
         
         let state = {
             packageType: null,
@@ -1917,7 +1924,7 @@
             if(voucher.expiryDate) {
                 const date = voucher.expiryDate.toDate();
                 const yyyy = date.getFullYear();
-                const mm = String(date.getMonth() +1).padStart(2, '0');
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
                 const dd = String(date.getDate()).padStart(2, '0');
                 expiryText = ` | Exp: ${yyyy}-${mm}-${dd}`;
             }
@@ -1983,7 +1990,7 @@
                 if(isApplied) {
                     applyBtn.disabled = true;
                     applyBtn.innerText = "Applied";
-                    applyBtn.classList.replace('btn-primary', 'btn-success');
+                    applyBtn.classList.replace('btn-secondary', 'btn-success');
                 } else {
                     applyBtn.disabled = false;
                     applyBtn.innerText = "Apply";
@@ -2337,10 +2344,12 @@
             const priceArea = document.getElementById('dynamic-price-area');
             priceArea.innerHTML = ''; 
 
+            // SYNC: Get prices from Firebase config
             let basePrice = 0;
             if(type === 'html') basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
             if(type === 'frontend') basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.frontend) ? siteConfig.prices.frontend : 599;
 
+            // SYNC: Apply discount if active
             if (siteConfig.discountActive && siteConfig.discountPercent > 0 && type !== 'ai') {
                 basePrice = Math.round(basePrice * (1 - siteConfig.discountPercent));
             }
@@ -2566,6 +2575,7 @@
             state.paymentMethodId = select.value;
         }
 
+        // UPDATED: Reads 'link' field strictly from DB settings
         function triggerPayment() {
             if(!state.packageType) {
                 showToast("Please select a package first.", "error");
@@ -2580,6 +2590,7 @@
                 return;
             }
 
+            // SYNC: Use dynamic DB list
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
@@ -2591,10 +2602,12 @@
                 return;
             }
 
-            let targetUrl = selectedMethod.url;
+            // STRICT CHANGE: Read 'link' field directly, no hardcoded overrides
+            let targetUrl = selectedMethod.link;
 
-            if(methodId === 'fpx' && FPX_URLS[state.packageType]) {
-                targetUrl = FPX_URLS[state.packageType];
+            if(!targetUrl) {
+                showToast("Payment link is missing for this method.", "error");
+                return;
             }
 
             window.open(targetUrl, '_blank');
@@ -2645,17 +2658,18 @@
 
             showToast("Processing Order...", "success");
 
-            const pkgName = document.getElementById('summary-pkg-name').innerText;
-            const total = document.getElementById('summary-final-total').innerText;
-            const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
-            const maint = document.getElementById('summary-maintenance').innerText;
-            
+            // SYNC: Fetch method name from DB
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
             const paymentObj = methods.find(m => m.id === state.paymentMethodId);
             const paymentLabel = paymentObj ? paymentObj.name : "Unknown";
 
+            const pkgName = document.getElementById('summary-pkg-name').innerText;
+            const total = document.getElementById('summary-final-total').innerText;
+            const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
+            const maint = document.getElementById('summary-maintenance').innerText;
+            
             const orderData = {
                 customerName: name,
                 customerPhone: phone,
@@ -2822,7 +2836,7 @@
             }
         });
 
-        // Run DB Init
+        // RUN DB INIT
         initializeDatabase();
 
     </script>

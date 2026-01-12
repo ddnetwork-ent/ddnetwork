@@ -185,7 +185,7 @@
         }
         .btn:hover { transform: translateY(-2px); border-color: white; background: rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .btn:active { transform: translateY(0); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; transform: none !important; }
         
         .btn-primary { background: white; color: black; border:1px solid white; }
         .btn-primary:hover { background: transparent; color: white; }
@@ -556,15 +556,51 @@
         /* Case ID Result Display */
         .case-id-result {
             background: rgba(16, 185, 129, 0.1);
-            border: 1px solid var(--accent-success);
+            border: 1px dashed var(--accent-success);
             color: var(--accent-success);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
             display: none;
-            font-weight: 600;
             text-align: center;
+            position: relative;
         }
+        
+        .case-id-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-id-display {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: monospace;
+            color: white;
+            margin: 10px 0;
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 8px;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-success);
+            border: 1px solid var(--accent-success);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+        }
+        .copy-btn:hover { background: var(--accent-success); color: black; }
 
         /* --- DISCOUNT BANNER STYLES --- */
         .promo-badge-wrapper {
@@ -1064,13 +1100,16 @@
                             <textarea id="ticket-message" class="form-input" placeholder="Describe your issue in detail..." required rows="5"></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Ticket</button>
+                        <button type="submit" id="btn-submit-ticket" class="btn btn-primary" style="width: 100%;">Submit Ticket</button>
                         
-                        <!-- CASE ID DISPLAY -->
+                        <!-- UPDATED: SMART TICKET ID DISPLAY -->
                         <div id="case-id-display" class="case-id-result">
-                            Case Submitted Successfully!<br>
-                            <span style="font-size:0.9rem; opacity:0.8; margin-bottom:5px; display:block;">Save this ID to check your ticket status:</span>
-                            <span id="display-case-id"></span>
+                            <div class="case-id-title">Ticket Submitted Successfully!</div>
+                            <div style="font-size:0.85rem; opacity:0.8; margin-bottom:5px;">Save this Case ID to track your ticket:</div>
+                            <div id="display-case-id" class="case-id-display">#Ticket-0000</div>
+                            <button class="copy-btn" onclick="copyTicketId()">
+                                <i class="ri-file-copy-line"></i> Copy ID
+                            </button>
                         </div>
                     </form>
 
@@ -1080,7 +1119,7 @@
                         <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Enter your unique Case ID to view ticket details.</p>
                         
                         <div class="search-box">
-                            <input type="text" id="history-search-id" class="form-input" placeholder="Enter Case ID (e.g. abc123xyz)">
+                            <input type="text" id="history-search-id" class="form-input" placeholder="Enter Case ID (e.g. #Ticket-0001)">
                             <button type="button" class="btn btn-secondary" onclick="fetchTicketHistory()">Search</button>
                         </div>
 
@@ -2165,8 +2204,44 @@
         }
 
         // --- TICKET SUBMISSION & HISTORY ---
-        function handleTicketSubmit(e) {
+        
+        // UPDATE: Function to generate Smart ID
+        async function generateSmartTicketId() {
+            try {
+                // 1. Query the most recent ticket that has a ticketId field
+                const snapshot = await db.collection("tickets")
+                    .where("ticketId", "!=", null)
+                    .orderBy("ticketId", "desc")
+                    .limit(1)
+                    .get();
+                
+                let nextNumber = 1;
+
+                if (!snapshot.empty) {
+                    const lastTicket = snapshot.docs[0].data();
+                    // Parse format #Ticket-0001
+                    const parts = lastTicket.ticketId.split('-');
+                    const lastNum = parseInt(parts[1]);
+                    if (!isNaN(lastNum)) {
+                        nextNumber = lastNum + 1;
+                    }
+                }
+                
+                // Format with zero padding
+                const idString = String(nextNumber).padStart(4, '0');
+                return `#Ticket-${idString}`;
+            } catch (error) {
+                console.error("Error generating ID:", error);
+                // Fallback to random if error (unlikely but safe)
+                return `#Ticket-${Math.floor(1000 + Math.random() * 9000)}`;
+            }
+        }
+
+        // UPDATE: Modified Handle Submit to use Smart ID
+        async function handleTicketSubmit(e) {
             e.preventDefault();
+            const btn = document.getElementById('btn-submit-ticket');
+            
             const name = document.getElementById('ticket-name').value;
             const email = document.getElementById('ticket-email').value;
             const type = document.getElementById('ticket-type').value;
@@ -2177,41 +2252,63 @@
                 return;
             }
 
-            showToast("Submitting Ticket...", "success");
+            // Disable button and show loading
+            btn.disabled = true;
+            const originalText = btn.innerText;
+            btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Generating ID...';
 
-            const ticketData = {
-                name: name,
-                email: email,
-                type: type,
-                message: message,
-                status: "Open",
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                userId: auth.currentUser ? auth.currentUser.uid : null
-            };
+            try {
+                // 1. Generate Smart ID
+                const smartId = await generateSmartTicketId();
 
-            if(db) {
-                db.collection("tickets").add(ticketData)
-                .then((docRef) => {
-                    const caseIdDisplay = document.getElementById('case-id-display');
-                    const caseIdSpan = document.getElementById('display-case-id');
-                    caseIdSpan.innerText = docRef.id;
-                    caseIdDisplay.style.display = 'block';
+                showToast("ID Generated. Saving...", "success");
 
-                    e.target.reset();
+                const ticketData = {
+                    ticketId: smartId, // Store the Smart ID
+                    name: name,
+                    email: email,
+                    type: type,
+                    message: message,
+                    status: "Open",
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    userId: auth.currentUser ? auth.currentUser.uid : null
+                };
 
-                    showToast(`Ticket Submitted! Case ID: ${docRef.id}`, "success");
+                // 2. Save to DB
+                await db.collection("tickets").add(ticketData);
 
-                    setTimeout(() => {
-                        let notifyMsg = `Hi Admin,\n*New Ticket Received.*\n\n*Case ID:* ${docRef.id}\n*Name:* ${name}\n*Type:* ${type}`;
-                        window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
-                    }, 1000);
-                })
-                .catch((error) => {
-                    showToast("Cloud Save Failed. Try again.", "error");
-                });
-            } else {
-                showToast("Ticket Submitted!", "success");
+                // 3. Update UI
+                const caseIdDisplay = document.getElementById('case-id-display');
+                const caseIdSpan = document.getElementById('display-case-id');
+                caseIdSpan.innerText = smartId;
+                caseIdDisplay.style.display = 'block';
+
+                e.target.reset();
+                showToast(`Ticket Submitted! ID: ${smartId}`, "success");
+
+                setTimeout(() => {
+                    let notifyMsg = `Hi Admin,\n*New Ticket Received.*\n\n*Case ID:* ${smartId}\n*Name:* ${name}\n*Type:* ${type}`;
+                    window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
+                }, 1000);
+
+            } catch (error) {
+                console.error(error);
+                showToast("Failed to submit ticket. Try again.", "error");
+            } finally {
+                // Reset button
+                btn.disabled = false;
+                btn.innerText = originalText;
             }
+        }
+
+        // UPDATE: Copy to clipboard function
+        function copyTicketId() {
+            const idText = document.getElementById('display-case-id').innerText;
+            navigator.clipboard.writeText(idText).then(() => {
+                showToast("ID copied to clipboard!", "success");
+            }).catch(err => {
+                showToast("Failed to copy", "error");
+            });
         }
 
         function fetchTicketHistory() {
@@ -2229,31 +2326,33 @@
             const listContainer = document.getElementById('ticket-list');
             listContainer.innerHTML = '<div style="text-align:center; color: var(--text-secondary);">Searching...</div>';
 
-            db.collection("tickets").doc(caseId).get()
-                .then((doc) => {
+            db.collection("tickets").where("ticketId", "==", caseId).get()
+                .then((snapshot) => {
                     listContainer.innerHTML = ''; 
 
-                    if (!doc.exists) {
+                    if (snapshot.empty) {
                         listContainer.innerHTML = '<div style="text-align:center; color: #ef4444; padding: 1rem;">No ticket found with that Case ID.</div>';
                         return;
                     }
 
-                    const data = doc.data();
-                    const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : '-';
-                    
-                    const item = document.createElement('div');
-                    item.className = 'ticket-item';
-                    item.innerHTML = `
-                        <div>
-                            <div style="color:white; font-weight:600;">${data.type}</div>
-                            <div style="font-size:0.75rem; color:var(--text-tertiary);">${date}</div>
-                        </div>
-                        <div class="ticket-id">${doc.id}</div>
-                        <div style="text-align:right;">
-                            <span class="ticket-status status-${data.status.toLowerCase()}">${data.status}</span>
-                        </div>
-                    `;
-                    listContainer.appendChild(item);
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : '-';
+                        
+                        const item = document.createElement('div');
+                        item.className = 'ticket-item';
+                        item.innerHTML = `
+                            <div>
+                                <div style="color:white; font-weight:600;">${data.type}</div>
+                                <div style="font-size:0.75rem; color:var(--text-tertiary);">${date}</div>
+                            </div>
+                            <div class="ticket-id">${data.ticketId || doc.id}</div>
+                            <div style="text-align:right;">
+                                <span class="ticket-status status-${data.status.toLowerCase()}">${data.status}</span>
+                            </div>
+                        `;
+                        listContainer.appendChild(item);
+                    });
                 })
                 .catch((error) => {
                     console.error("Error fetching tickets:", error);
@@ -2805,7 +2904,7 @@
                     const x = 600 + rotX * scale; 
                     const y = 600 + dot.y * scale;
                     ctx.beginPath();
-                    ctx.arc(x, y, 1.5 * scale, 0, Math.PI *2);
+                    ctx.arc(x, y,1.5 * scale, 0, Math.PI *2);
                     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
                     ctx.fill();
                 }

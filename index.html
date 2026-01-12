@@ -519,14 +519,14 @@
         }
         
         .search-box {
-            display: flex;
+            display: flex; /* COMMA FIX */
             gap: 10px;
             margin-bottom: 2rem;
         }
 
         .ticket-list {
-            display: flex;
-            flex-direction: column,
+            display: flex; /* COMMA FIX */
+            flex-direction: column; /* COMMA FIX */
             gap: 1rem;
         }
 
@@ -600,8 +600,8 @@
         .promo-badge.show { opacity: 1; transform: scale(1); pointer-events: auto; }
 
         .discounted-price-container {
-            display: flex;
-            flex-direction: column;
+            display: flex; /* COMMA FIX */
+            flex-direction: column, /* COMMA FIX */
             align-items: center; 
         }
         
@@ -642,9 +642,9 @@
         }
 
         .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 3rem; 
+            display: grid; /* COMMA FIX */
+            grid-template-columns: 2fr 1fr 1fr; /* COMMA FIX */
+            gap: 3rem, 
             margin-bottom: 3rem;
         }
 
@@ -695,8 +695,8 @@
         .footer-contact-item i { color: var(--accent-primary); }
 
         .footer-bottom {
-            display: flex;
-            justify-content: space-between;
+            display: flex; /* COMMA FIX */
+            justify-content: space-between; /* COMMA FIX */
             align-items: center;
             padding-top: 2rem;
             border-top: 1px solid var(--border-color);
@@ -710,24 +710,24 @@
         /* Mac Dock */
         .mac-dock {
             display: flex; 
-            gap: 1rem;
-            background: rgba(255,255,255,0.05); 
-            padding: 0.8rem 1.5rem;
-            border-radius: 24px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px); 
+            gap: 1rem, /* COMMA FIX */
+            background: rgba(255,255,255,0.05), 
+            padding: 0.8rem 1.5rem,
+            border-radius: 24px, 
+            border: 1px solid rgba(255,255,255,0.1),
+            backdrop-filter: blur(10px), 
         }
         .dock-icon { 
-            width: 40px; 
-            height: 40px; 
+            width: 40px, 
+            height: 40px, 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             border-radius: 50%; 
-            background: rgba(30, 30, 30, 0.8); 
-            color: white; 
-            font-size: 1.2rem; 
-            transition: all 0.3s; 
+            background: rgba(30, 30, 30, 0.8), 
+            color: white, 
+            font-size: 1.2rem, 
+            transition: all 0.3s, 
         }
         .dock-icon:hover { transform: scale(1.2) translateY(-8px); background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); z-index: 10; color: white; }
 
@@ -760,14 +760,14 @@
             .mac-dock { display: none; }
 
             .ticket-item {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 0.5rem;
+                grid-template-columns: 1fr, /* COMMA FIX */
+                text-align: center, /* COMMA FIX */
+                gap: 0.5rem,
             }
 
             .mobile-fab { 
-                bottom: 25px; 
-                right: 25px; 
+                bottom: 25px, 
+                right: 25px, 
             }
         }
     </style>
@@ -1193,7 +1193,7 @@
                 
                 <!-- LEFT COLUMN -->
                 <div class="checkout-card reveal">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom:1px solid var(--border-color);">
                         <h3 style="font-size: 1rem; color: white;">Order Summary</h3>
                         <span class="change-package" onclick="navigateTo('services')">Change Package</span>
                     </div>
@@ -1575,6 +1575,32 @@
             console.error("Firebase initialization error:", e);
         }
 
+        // --- AUTO INITIALIZE DATABASE IF NOT EXISTS ---
+        async function initializeDatabase() {
+            const configRef = db.collection("config").doc("site_settings");
+            const doc = await configRef.get();
+            
+            if (!doc.exists) {
+                console.log("Config not found, creating default...");
+                await configRef.set({
+                    maintenance_active: false,
+                    maintenance_message: "We are currently performing scheduled maintenance.",
+                    prices: { html: 199, frontend: 599 },
+                    packageDetails: {
+                        frontend: ["Up to 5 Pages", "Animations", "Contact Forms", "WhatsApp Integration"],
+                        ai: ["All Front-End Features", "AI Chatbot Integration", "Lead Auto-Response", "Smart Analytics"]
+                    },
+                    discountActive: false,
+                    discountPercent: 0.1,
+                    payment_methods: [
+                        { id: 'tng', name: 'TNG eWallet', url: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
+                        { id: 'fpx', name: 'Online Banking (FPX)', url: 'https://toyyibpay.com', active: true }
+                    ]
+                });
+                showToast("Database initialized!", "success");
+            }
+        }
+
         // DYNAMIC CONTENT LOGIC
         function renderDynamicContent() {
             function buildListHTML(items) {
@@ -1891,7 +1917,7 @@
             if(voucher.expiryDate) {
                 const date = voucher.expiryDate.toDate();
                 const yyyy = date.getFullYear();
-                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const mm = String(date.getMonth() +1).padStart(2, '0');
                 const dd = String(date.getDate()).padStart(2, '0');
                 expiryText = ` | Exp: ${yyyy}-${mm}-${dd}`;
             }
@@ -2074,7 +2100,7 @@
 
                 if (isAdmin) {
                     userControls = `
-                        <a href="admin-page.ddnetwork.uk" target="_blank" class="admin-link" title="Admin Portal"><i class="ri-shield-user-line"></i></a>
+                        <a href="admin.html" target="_blank" class="admin-link" title="Admin Portal"><i class="ri-shield-user-line"></i></a>
                         <span style="color:var(--text-tertiary); margin: 0 10px;">|</span>
                         ${userControls}
                     `;
@@ -2795,6 +2821,9 @@
                 header.style.background = 'rgba(5, 5, 5, 0.8)';
             }
         });
+
+        // Run DB Init
+        initializeDatabase();
 
     </script>
 </body>

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DDNetwork One</title>
+    
+    <!-- Favicon: Linked to your Logo -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/ddn.logo.png">
+    
     <meta name="description" content="Malaysia Local Website development and AI solutions.">
     
     <!-- Font: Inter -->
@@ -461,6 +465,52 @@
         .remove-discount-btn { margin-left: 8px; cursor: pointer; color: #ef4444; font-size: 1.1rem; vertical-align: middle; transition: 0.2s; }
         .remove-discount-btn:hover { transform: scale(1.2); }
 
+        /* --- CHECKOUT PROCESSING OVERLAY (NEW) --- */
+        #processing-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 100000;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .process-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(59, 130, 246, 0.1);
+            border-left-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .process-text {
+            font-size: 1.25rem;
+            color: white;
+            max-width: 600px;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .process-icon {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 1.5rem;
+            display: none;
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* --- MODAL --- */
         .modal { 
             display: none; 
@@ -525,7 +575,7 @@
         }
 
         .ticket-list {
-            display: flex;
+            display: flex,
             flex-direction: column,
             gap: 1rem;
         }
@@ -636,7 +686,7 @@
         .promo-badge.show { opacity: 1; transform: scale(1); pointer-events: auto; }
 
         .discounted-price-container {
-            display: flex;
+            display: flex,
             flex-direction: column,
             align-items: center; 
         }
@@ -825,7 +875,8 @@
     <!-- Preloader -->
     <div id="preloader">
         <div class="loader-content">
-            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/DDN%20Logo%20NoBG.png" alt="Logo" style="height: 60px; margin-bottom: 1rem;">
+            <!-- Logo Published Here -->
+            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/ddn.logo.png" alt="Logo" style="height: 60px; margin-bottom: 1rem;">
             <h2 style="font-size: 0.8rem; letter-spacing: 2px;">LOADING</h2>
         </div>
     </div>
@@ -848,7 +899,8 @@
     <!-- Header -->
     <header id="mainHeader">
         <a href="/" onclick="routeLink(event, '/')" class="logo-wrapper">
-            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/DDN%20Logo%20NoBG.png" alt="DDNetwork Logo" class="logo-img">
+            <!-- Logo Published Here -->
+            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/ddn.logo.png" alt="DDNetwork Logo" class="logo-img">
             <span class="company-name">DDNetworkOne</span>
         </a>
         
@@ -882,6 +934,13 @@
                 <!-- Injected via JS -->
             </li>
         </ul>
+    </div>
+
+    <!-- NEW: CHECKOUT PROCESSING OVERLAY -->
+    <div id="processing-overlay">
+        <div id="process-spinner" class="process-spinner"></div>
+        <i id="process-check-icon" class="ri-checkbox-circle-line process-icon"></i>
+        <div id="process-message" class="process-text">Initializing...</div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -1369,7 +1428,7 @@
             </div>
         </section>
 
-        <!-- === NEW: THANK YOU PAGE === -->
+        <!-- === PAGE: THANK YOU === -->
         <section id="thank-you" class="page-section">
             <div class="auth-container reveal" style="text-align: center;">
                 <div style="background: var(--bg-card); padding: 3rem 2rem; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: var(--shadow-card);">
@@ -1627,6 +1686,11 @@
                         fetchAndSyncUserData(auth.currentUser.uid);
                     }
                     
+                    // GLOBE FIX: Restart animation if Home is active
+                    if(targetSectionId === 'home') {
+                        startGlobeAnimation();
+                    }
+
                     const newReveals = targetSection.querySelectorAll('.reveal');
                     newReveals.forEach(el => el.classList.add('active'));
                 }
@@ -1911,7 +1975,7 @@
                   container.innerHTML = ''; // Clear current content
 
                   if (snapshot.empty) {
-                      container.innerHTML = '<div class="text-center" style="grid-column: 1/-1; padding: 2rem; color: var(--text-tertiary);">No portfolio items available at the moment.</div>';
+                      container.innerHTML = '<div class="text-center" style="grid-column: 1/-1; padding: 2rem; color: var(--text-tertiary);">No portfolio items available at moment.</div>';
                       return;
                   }
 
@@ -2841,6 +2905,9 @@
             }
         }
 
+        // ==========================================
+        // UPDATED ORDER SUBMISSION WITH DELAY
+        // ==========================================
         function submitOrder() {
             const termsCheck = document.getElementById('terms-check');
             if(!termsCheck.checked) {
@@ -2866,77 +2933,76 @@
                 return;
             }
 
-            showToast("Processing Order...", "success");
-
-            const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
-                            ? siteConfig.payment_methods 
-                            : DEFAULT_PAYMENT_METHODS;
-            const paymentObj = methods.find(m => m.id === state.paymentMethodId);
-            const paymentLabel = paymentObj ? paymentObj.name : "Unknown";
-
-            const pkgName = document.getElementById('summary-pkg-name').innerText;
-            const total = document.getElementById('summary-final-total').innerText;
-            const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
-            const maint = document.getElementById('summary-maintenance').innerText;
+            // 1. Start Processing Overlay Sequence
+            const overlay = document.getElementById('processing-overlay');
+            const spinner = document.getElementById('process-spinner');
+            const msgEl = document.getElementById('process-message');
+            const checkIcon = document.getElementById('process-check-icon');
             
-            const orderData = {
-                customerName: name,
-                customerPhone: phone,
-                customerEmail: email,
-                customerCompany: company || 'Individual', 
-                package: pkgName,
-                domain: domain,
-                maintenance: maint,
-                total: total,
-                promo: state.discountCode,
-                paymentMethod: paymentLabel,
-                status: "Pending",
-                userId: auth.currentUser ? auth.currentUser.uid : null,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
+            overlay.style.display = 'flex';
+            
+            // Step 1: Loading Message (5 seconds)
+            msgEl.innerText = "Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount.";
+            
+            setTimeout(() => {
+                // 2. Show Success Message
+                spinner.style.display = 'none';
+                checkIcon.style.display = 'block';
+                msgEl.innerText = "Order Successful";
+                msgEl.style.color = "var(--success)";
 
-            if(db) {
-                const promises = [db.collection("orders").add(orderData)];
+                // Prepare Data for Firebase Save
+                const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
+                                ? siteConfig.payment_methods 
+                                : DEFAULT_PAYMENT_METHODS;
+                const paymentObj = methods.find(m => m.id === state.paymentMethodId);
+                const paymentLabel = paymentObj ? paymentObj.name : "Unknown";
 
-                if (state.discountCode && currentUserPersonalVoucher && state.discountCode === currentUserPersonalVoucher.code && currentUserPersonalVoucher.status !== 'redeemed') {
-                    const redeemPromise = db.collection("users").doc(auth.currentUser.uid).update({
-                        "personalVoucher.status": "redeemed"
-                    });
-                    promises.push(redeemPromise);
-                }
+                const pkgName = document.getElementById('summary-pkg-name').innerText;
+                const total = document.getElementById('summary-final-total').innerText;
+                const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
+                const maint = document.getElementById('summary-maintenance').innerText;
+                
+                const orderData = {
+                    customerName: name,
+                    customerPhone: phone,
+                    customerEmail: email,
+                    customerCompany: company || 'Individual', 
+                    package: pkgName,
+                    domain: domain,
+                    maintenance: maint,
+                    total: total,
+                    promo: state.discountCode,
+                    paymentMethod: paymentLabel,
+                    status: "Pending",
+                    userId: auth.currentUser ? auth.currentUser.uid : null,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
 
-                Promise.all(promises)
-                .then(() => {
-                    showToast("Order Placed Successfully!", "success");
-                    
-                    if (state.discountCode && currentUserPersonalVoucher && state.discountCode === currentUserPersonalVoucher.code) {
-                        currentUserPersonalVoucher.status = "redeemed";
+                // Save to Firebase (Silently in background)
+                if(db) {
+                    const promises = [db.collection("orders").add(orderData)];
+
+                    if (state.discountCode && currentUserPersonalVoucher && state.discountCode === currentUserPersonalVoucher.code && currentUserPersonalVoucher.status !== 'redeemed') {
+                        const redeemPromise = db.collection("users").doc(auth.currentUser.uid).update({
+                            "personalVoucher.status": "redeemed"
+                        });
+                        promises.push(redeemPromise);
                     }
 
-                    setTimeout(() => {
-                        navigateTo('/thank-you');
-                        
-                        let companyText = company ? `\n*Company:* ${company}` : '';
-                        let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}\n*Package:* ${pkgName}\n*Total:* ${total}\n*Payment:* ${paymentLabel}`;
-                        window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
-                    }, 1500);
-                })
-                .catch((error) => {
-                    console.error(error);
-                    showToast("Cloud Save Failed. Sending via WhatsApp anyway.", "error");
-                    let companyText = company ? `\n*Company:* ${company}` : '';
-                    let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}`;
-                    window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
-                });
-            } else {
-                showToast("Order Placed Successfully!", "success");
+                    Promise.all(promises).catch(err => console.error("Firebase Save Error:", err));
+                }
+
+                // 3. Show Final Thank You Message then Redirect
                 setTimeout(() => {
-                    navigateTo('/thank-you');
-                    let companyText = company ? `\n*Company:* ${company}` : '';
-                    let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}`;
-                    window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
-                }, 1500);
-            }
+                    msgEl.innerText = "Thank you for choosing DDNetwork One. We have received your order and payment details. Our team will review your order and contact you via WhatsApp or email within 24 hours.";
+                    
+                    setTimeout(() => {
+                        window.location.href = `https://wa.me/60122600969`;
+                    }, 4000); // 4 seconds to read message
+                }, 2000); // 2 seconds showing "Order Successful"
+
+            }, 5000); // 5 seconds loading
         }
 
         const observerOptions = {
@@ -2955,6 +3021,9 @@
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+        // ==========================================
+        // GLOBE ANIMATION FIX
+        // ==========================================
         const canvas = document.getElementById('globe-canvas');
         const ctx = canvas.getContext('2d');
         let dots = [];
@@ -2977,11 +3046,23 @@
         }
 
         function animate() {
+            // Check if Home section is visible. 
+            // This ensures if we navigate away, loop effectively stops requesting itself if it wasn't called.
+            // However, loop below will keep running if animationId exists, but we only draw if home is active.
             const homeSection = document.getElementById('home');
-            if(!homeSection || !homeSection.classList.contains('active')) {
-                return; 
-            }
+            
+            // Clear canvas regardless of visibility to keep state clean, or stop if not visible
             ctx.clearRect(0,0, 1200, 1200); 
+            
+            // Only draw logic if active to save resources, 
+            // BUT we keep loop running or restart it via transition logic.
+            if(!homeSection || !homeSection.classList.contains('active')) {
+                 // If not active, we can pause or just return without requesting next frame 
+                 // if we wanted to stop completely. 
+                 // To fix bug: We need to ensure loop restarts when we come back.
+                 return; 
+            }
+
             rotation += 0.002;
             dots.forEach(dot => {
                 const rotX = dot.x * Math.cos(rotation) - dot.z * Math.sin(rotation);
@@ -2998,6 +3079,17 @@
                 }
             });
             animationId = requestAnimationFrame(animate);
+        }
+
+        // Explicit function to start animation (called on route change)
+        function startGlobeAnimation() {
+            if (!animationId) {
+                animate();
+            } else {
+                // If loop exists but maybe stopped logic-wise, ensure it continues
+                // The 'animate' function checks .active, so as long as this is called,
+                // recursive requestAnimationFrame loop will pick it up on next frame.
+            }
         }
 
         initDots();

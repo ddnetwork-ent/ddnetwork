@@ -696,8 +696,8 @@
         .promo-badge.show { opacity: 1; transform: scale(1); pointer-events: auto; }
 
         .discounted-price-container {
-            display: flex;
-            flex-direction: column;
+            display: flex,
+            flex-direction: column,
             align-items: center; 
         }
         
@@ -2875,7 +2875,7 @@
         }
 
         // ==========================================
-        // UPDATED CHECKOUT FLOW
+        // UPDATED CHECKOUT FLOW (FIXED POPUP BLOCKER)
         // ==========================================
         
         // STEP 1: PROCEED TO PAYMENT
@@ -2907,28 +2907,41 @@
 
             const targetUrl = selectedMethod.link;
 
-            // Show Processing Overlay (Instructions)
+            // FIX 1: OPEN IMMEDIATELY (Synchronous)
+            // Browsers allow popups triggered directly by user click events.
+            const newWindow = window.open(targetUrl, '_blank');
+
+            // Check if popup was blocked
+            const isBlocked = !newWindow || newWindow.closed || typeof newWindow.closed == 'undefined';
+
+            // Show Overlay for Instructions (5 seconds)
             const overlay = document.getElementById('processing-overlay');
             const spinner = document.getElementById('process-spinner');
             const msgEl = document.getElementById('process-message');
             const checkIcon = document.getElementById('process-check-icon');
             
             overlay.style.display = 'flex';
-            spinner.style.display = 'block';
+            spinner.style.display = 'none';
             checkIcon.style.display = 'none';
-            
-            // Step 1 Instruction Text
-            msgEl.innerText = "Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount. Kindly Screenshot the payment for proof.";
-            
-            // 5 Seconds delay then open link
-            setTimeout(() => {
-                window.open(targetUrl, '_blank');
-                // We do NOT close the overlay immediately. 
-                // The user will manually come back to the tab to click "Place Order".
-                // However, to let them see the popup, we hide the overlay after they see the instruction.
-                overlay.style.display = 'none';
-                showToast("Payment gateway opened. Please complete payment then click 'Place Order'.", "success");
-            }, 5000);
+
+            if (isBlocked) {
+                // POPUP BLOCKED FALLBACK
+                msgEl.innerHTML = `
+                    <p style="margin-bottom:1rem">Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount. Kindly Screenshot the payment for proof.</p>
+                    <p style="color:var(--accent-warn); font-weight:700; margin-bottom:1rem;">Popup was blocked by your browser.</p>
+                    <a href="${targetUrl}" target="_blank" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Open Payment Link</a>
+                `;
+                // Keep overlay open so they can click the link
+            } else {
+                // SUCCESS STATE
+                msgEl.innerText = "Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount. Kindly Screenshot the payment for proof.";
+                
+                // Hide overlay after 5 seconds
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    showToast("Payment gateway opened in a new tab. Please complete payment there.", "success");
+                }, 5000);
+            }
         }
 
         function openTermsModal() {

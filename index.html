@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DDNetwork One</title>
     
     <!-- Favicon: Linked to your Logo -->
@@ -50,9 +50,7 @@
             --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
             
             --font-display: 'Inter', sans-serif; 
-            /* IMPROVED: Smoother easing for premium feel */
-            --ease-out: cubic-bezier(0.16, 1, 0.3, 1); 
-            --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1); 
             
             /* Spacing */
             --header-height: 80px;
@@ -60,7 +58,7 @@
         }
 
         /* --- RESET --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         
         body {
@@ -126,6 +124,26 @@
             line-height: 1.1;
         }
 
+        /* --- PRELOADER (Clean/Minimal) --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-deep); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease;
+        }
+        
+        /* Minimal CSS Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
         /* --- GRAIN OVERLAY --- */
         .grain {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -147,16 +165,15 @@
             color: white;
         }
 
-        /* IMPROVED: Scroll Reveal Animation */
+        /* Scroll Reveal Animation */
         .reveal {
             opacity: 0;
-            transform: translateY(20px) scale(0.98); /* Slight scale for pop effect */
-            transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
-            will-change: opacity, transform;
+            transform: translateY(30px);
+            transition: all 0.8s var(--ease-out);
         }
         .reveal.active {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
 
         /* --- BUTTONS --- */
@@ -194,7 +211,7 @@
         .btn-danger { background: var(--accent-warn); color: black; border: 1px solid var(--accent-warn); }
         .btn-danger:hover { background: #d97706; border-color: #d97706; color: white; }
 
-        /* Profile Button */
+        /* Profile Button (Updated for Visibility) */
         .btn-profile-nav {
             background: var(--accent-primary);
             color: rgb(0, 0, 0);
@@ -357,12 +374,9 @@
             padding-top: 100px; 
             padding-bottom: 60px; 
             opacity: 0; 
-            /* Slight slide up for entrance */
-            transform: translateY(15px);
-            /* IMPROVED: Smoother transition */
-            transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out); 
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out; 
             will-change: opacity, transform;
-            backface-visibility: hidden; /* Prevents flickering */
         }
         
         .page-section.active { 
@@ -373,17 +387,7 @@
 
         /* --- HERO --- */
         .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 0; overflow: hidden; margin-top: -100px; }
-        
-        /* FIX: Ensure canvas stays positioned correctly and doesn't collapse */
-        #globe-canvas { 
-            position: absolute; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            z-index: 1; 
-            pointer-events: none; 
-            opacity: 1;
-            transition: opacity 0.5s ease;
-        }
-        
+        #globe-canvas { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; pointer-events: none; }
         .hero-glow { position: absolute; top: 50%; left: 50%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
         .hero-content { position: relative; z-index: 10; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; }
         .hero h1 { font-size: clamp(3rem, 7vw, 6rem); margin-bottom: 1.5rem; background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3)); }
@@ -421,8 +425,9 @@
             background: var(--bg-input); border: 1px solid var(--border-color);
             color: white; border-radius: 12px; font-size: 1rem; 
             min-height: 48px; transition: 0.3s;
-            appearance: none;
+            appearance: none; /* Removes default native styling for select */
         }
+        /* Custom arrow for select dropdown */
         .form-select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
@@ -472,9 +477,8 @@
         #processing-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 5, 5, 0.98); /* Darker for better contrast */
+            background: rgba(5, 5, 5, 0.95);
             backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
             z-index: 100000;
             display: none; /* Hidden by default */
             flex-direction: column;
@@ -506,7 +510,7 @@
 
         .process-icon {
             font-size: 4rem;
-            color: var(--success);
+            color: var(--accent-success);
             margin-bottom: 1.5rem;
             display: none;
             animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -872,8 +876,13 @@
             <p id="maint-desc">We're making improvements to serve you better.</p>
             <p>Please check back again shortly.</p>
             <p>"If you facing any issues, kindly email to"</p>
-            <p>ddnetwork.one@outlook.com</p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-mail"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10" /><path d="M3 7l9 6l9 -6" /></svg></p>
+            <p>ddnetwork.one@outlook.com</p>
         </div>
+    </div>
+
+    <!-- Preloader (Clean Minimal Version) -->
+    <div id="preloader">
+        <div class="spinner"></div>
     </div>
 
     <!-- Grain Texture -->
@@ -931,17 +940,11 @@
         </ul>
     </div>
 
-    <!-- UPDATED: CHECKOUT PROCESSING OVERLAY -->
+    <!-- NEW: CHECKOUT PROCESSING OVERLAY -->
     <div id="processing-overlay">
         <div id="process-spinner" class="process-spinner"></div>
         <i id="process-check-icon" class="ri-checkbox-circle-line process-icon"></i>
-        
         <div id="process-message" class="process-text">Initializing...</div>
-        
-        <!-- NEW: Dismiss Button for better UX -->
-        <div id="process-close-btn" style="margin-top: 2rem; display: none;">
-            <button class="btn btn-secondary" onclick="closeProcessingOverlay()">Close / I Have Paid</button>
-        </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -951,7 +954,6 @@
         <section id="home" class="page-section active">
             <div class="hero">
                 <div class="hero-glow"></div>
-                <!-- Globe Canvas -->
                 <canvas id="globe-canvas" width="1200" height="1200"></canvas>
                 
                 <div class="hero-content reveal active">
@@ -1414,10 +1416,8 @@
                                 <!-- Options populated dynamically by JS from Firebase -->
                             </select>
                             
-                            <!-- STEP 1: PROCEED TO PAYMENT -->
-                            <button type="button" id="btn-proceed-pay" class="btn" style="width: 100%; margin-bottom: 1rem; margin-top: 1rem;" onclick="triggerPaymentStep1()">
-                                <span style="margin-right: 8px;">Step 1</span> Proceed to Payment
-                            </button>
+                            <!-- Step 1: Proceed to Payment -->
+                            <button type="button" class="btn" style="width: 100%; margin-bottom: 1rem; margin-top: 1rem;" onclick="triggerPayment()"><span style="margin-right: 8px;">Step 1</span> Proceed to Payment</button>
                             
                             <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
                                 <input type="checkbox" id="terms-check" style="margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent-primary);">
@@ -1426,10 +1426,8 @@
                                 </span>
                             </label>
                             
-                            <!-- STEP 2: PLACE ORDER -->
-                            <button type="button" id="btn-place-order" class="btn btn-success" style="width: 100%;" onclick="submitOrder()">
-                                <i class="ri-shopping-bag-line" style="margin-right: 8px;"></i> Place Order
-                            </button>
+                            <!-- Step 2: Place Order -->
+                            <button type="button" class="btn btn-success" style="width: 100%;" onclick="submitOrder()"><i class="ri-shopping-bag-line" style="margin-right: 8px;"></i> Place Order</button>
                         </div>
                     </form>
                 </div>
@@ -1586,6 +1584,13 @@
 
     <!-- JAVASCRIPT -->
     <script>
+        // Preloader Removal
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(() => { preloader.style.display = 'none'; }, 600);
+        });
+
         // ==========================================
         // FRONTEND ROUTING (History Mode)
         // ==========================================
@@ -1649,26 +1654,29 @@
             }
         }
 
-        // Actual UI Transition Logic (IMPROVED SMOOTHNESS)
+        // Actual UI Transition Logic
         function performTransition(targetSectionId, isInstant = false) {
             const currentSection = document.querySelector('.page-section.active');
             const targetSection = document.getElementById(targetSectionId);
 
             if (currentSection === targetSection) return; 
+            if (currentSection && currentSection.classList.contains('leaving')) return; 
 
-            // Add pointer events none to body to prevent spam clicking during transition
-            document.body.style.pointerEvents = 'none';
+            // GLOBE FIX: Stop animation if leaving home
+            if(currentSection && currentSection.id === 'home') {
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+            }
 
             // Hide current
             if (currentSection) {
                 currentSection.classList.remove('active');
-                // IMPROVED: Keep opacity 0 but display none for a split second to prevent overlap
-                setTimeout(() => {
-                   if(currentSection !== targetSection) currentSection.style.display = 'none';
-                }, 400); // Matches CSS transition time
+                currentSection.classList.add('leaving');
             }
 
-            // Scroll to top
+            // Scroll to top (smooth)
             if (!isInstant) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
@@ -1679,44 +1687,33 @@
             setTimeout(() => {
                 document.querySelectorAll('.page-section').forEach(sec => {
                     sec.classList.remove('active', 'leaving');
-                    if(sec !== targetSection) sec.style.display = 'none';
+                    sec.style.display = 'none';
                 });
 
                 if (targetSection) {
                     targetSection.style.display = 'block'; 
-                    void targetSection.offsetWidth; // Force reflow
-                    
-                    // Use requestAnimationFrame for smoother paint
-                    requestAnimationFrame(() => {
-                        targetSection.classList.add('active');
-                    });
+                    void targetSection.offsetWidth; // Trigger reflow
+                    targetSection.classList.add('active');
                     
                     if(targetSectionId === 'profile') loadProfilePageData();
                     if(targetSectionId === 'buynow' && auth && auth.currentUser) {
                         fetchAndSyncUserData(auth.currentUser.uid);
                     }
                     
-                    // Trigger reveal animations inside new section
-                    setTimeout(() => {
-                        const newReveals = targetSection.querySelectorAll('.reveal');
-                        newReveals.forEach((el, index) => {
-                            // Stagger effect
-                            setTimeout(() => {
-                                el.classList.add('active');
-                            }, index * 50); 
-                        });
-                    }, 100);
-                }
+                    // GLOBE FIX: Restart animation if Home is active
+                    if(targetSectionId === 'home') {
+                        // Explicit restart
+                        startGlobeAnimation();
+                    }
 
-                // Re-enable pointer events
-                setTimeout(() => {
-                    document.body.style.pointerEvents = 'all';
-                }, 500);
-            }, isInstant ? 0 : 300);
+                    const newReveals = targetSection.querySelectorAll('.reveal');
+                    newReveals.forEach(el => el.classList.add('active'));
+                }
+            }, isInstant ? 0 : 400);
         }
 
         // Initialize Router on Load
-        setTimeout(handleInitialRoute, 50);
+        setTimeout(handleInitialRoute, 100);
 
         // ==========================================
         // FIREBASE & APP LOGIC
@@ -1749,7 +1746,7 @@
             packageDetails: {},
             discountActive: false, 
             discountPercent: 0,
-            payment_methods: [] 
+            payment_methods: [] // Will be populated from dedicated collection
         };
         let currentUserRole = 'user'; 
         
@@ -2000,7 +1997,7 @@
                   snapshot.forEach((doc) => {
                       const data = doc.data();
                       
-                      // Construct card HTML
+                      // Construct the card HTML
                       const cardHTML = `
                           <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
                               <div style="height: 200px; overflow: hidden;">
@@ -2871,16 +2868,10 @@
         }
 
         // ==========================================
-        // MOBILE FIX: UPDATED CHECKOUT FLOW
+        // UPDATED PAYMENT & ORDER SUBMISSION
         // ==========================================
-        
-        function closeProcessingOverlay() {
-            const overlay = document.getElementById('processing-overlay');
-            overlay.style.display = 'none';
-        }
 
-        // STEP 1: PROCEED TO PAYMENT
-        function triggerPaymentStep1() {
+        function triggerPayment() {
             if(!state.packageType) {
                 showToast("Please select a package first.", "error");
                 return;
@@ -2901,41 +2892,50 @@
             
             const selectedMethod = methods.find(m => m.id === methodId);
 
-            if(!selectedMethod || !selectedMethod.link) {
+            if(!selectedMethod) {
+                showToast("Payment method configuration error.", "error");
+                return;
+            }
+
+            let targetUrl = selectedMethod.link;
+
+            if(!targetUrl) {
                 showToast("Payment link is missing for this method.", "error");
                 return;
             }
 
-            const targetUrl = selectedMethod.link;
-
-            // Show Processing Overlay immediately
+            // STEP 1: Show Verification Message in Overlay
             const overlay = document.getElementById('processing-overlay');
+            const spinner = document.getElementById('process-spinner');
             const msgEl = document.getElementById('process-message');
-            const closeBtnDiv = document.getElementById('process-close-btn');
+            const checkIcon = document.getElementById('process-check-icon');
+            const closeBtn = document.createElement('button');
             
             overlay.style.display = 'flex';
-            closeBtnDiv.style.display = 'none'; // Hide close button initially
+            spinner.style.display = 'none';
+            checkIcon.style.display = 'none';
             
-            // Text 1: Connecting
-            msgEl.innerText = "Securely connecting to payment gateway...";
-            
-            // CRITICAL FIX FOR MOBILE: Open the link immediately or with negligible delay
-            // Mobile browsers block popups inside setTimeout.
-            // We open it immediately after showing the overlay to maintain the "click event".
-            const newWindow = window.open(targetUrl, '_blank');
-            
-            // If popup is blocked (rare on mobile but possible on desktop), fallback
-            if (!newWindow) {
-                // Fallback: redirect main window
-                window.location.href = targetUrl;
-                return; // Stop execution since we left the page
-            }
+            msgEl.innerText = "Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount. Kindly Screenshot the payment for proof.";
+            msgEl.style.color = "white";
 
-            // Update text AFTER opening link
-            msgEl.innerText = "We have opened the payment gateway in a new tab. Please complete your payment there, then return here and click 'Place Order'.";
-            
-            // Show Close button so user can access form again
-            closeBtnDiv.style.display = 'block';
+            // Add a temporary close button to the overlay if not exists
+            let existingClose = document.getElementById('temp-close-ov');
+            if(existingClose) existingClose.remove();
+
+            const tempClose = document.createElement('button');
+            tempClose.id = 'temp-close-ov';
+            tempClose.className = 'btn';
+            tempClose.innerText = "Close";
+            tempClose.style.marginTop = "20px";
+            tempClose.onclick = () => {
+                overlay.style.display = 'none';
+            };
+            overlay.appendChild(tempClose);
+
+            // Wait a brief moment then open link
+            setTimeout(() => {
+                window.open(targetUrl, '_blank');
+            }, 500);
         }
 
         function openTermsModal() {
@@ -2955,7 +2955,6 @@
             }
         }
 
-        // STEP 2: PLACE ORDER
         function submitOrder() {
             const termsCheck = document.getElementById('terms-check');
             if(!termsCheck.checked) {
@@ -2981,23 +2980,23 @@
                 return;
             }
 
+            // Remove temp close button if it exists
+            let existingClose = document.getElementById('temp-close-ov');
+            if(existingClose) existingClose.remove();
+
             // 1. Start Processing Overlay Sequence
             const overlay = document.getElementById('processing-overlay');
             const spinner = document.getElementById('process-spinner');
             const msgEl = document.getElementById('process-message');
             const checkIcon = document.getElementById('process-check-icon');
-            const closeBtnDiv = document.getElementById('process-close-btn');
             
             overlay.style.display = 'flex';
-            spinner.style.display = 'block';
-            checkIcon.style.display = 'none';
-            closeBtnDiv.style.display = 'none';
             
-            // Step 2: "Order Successful" Message
+            // PHASE 1: Processing/Success
             spinner.style.display = 'none';
             checkIcon.style.display = 'block';
             msgEl.innerText = "Order Successful";
-            msgEl.style.color = "var(--success)";
+            msgEl.style.color = "var(--accent-success)";
 
             // Prepare Data for Firebase Save
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
@@ -3041,21 +3040,18 @@
                 Promise.all(promises).catch(err => console.error("Firebase Save Error:", err));
             }
 
-            // 3. Show Final Thank You Message then Redirect
+            // 2. Show Final Thank You Message then Redirect
             setTimeout(() => {
                 msgEl.innerText = "Thank you for choosing DDNetwork One. We have received your order and payment details. Our team will review your order and contact you via WhatsApp or email within 24 hours.";
                 
-                // Show close button so they can manually exit overlay if redirect doesn't happen
-                closeBtnDiv.style.display = 'block';
-
+                // 3. Redirect to WhatsApp
                 setTimeout(() => {
-                    // Construct WhatsApp Message
-                    const waText = `Hi Admin Team,\nI have just placed a new order. Please find my details below:\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nVoucher: ${state.discountCode || 'None'}\nPayment Type: ${paymentLabel}\n\nKindly let me know if any additional information is required.\nThank you.`;
+                    const voucherText = state.discountCode ? state.discountCode : "None";
+                    const whatsappMessage = `Hi Admin Team,\nI have just placed a new order. Please find my details below:\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nVoucher: ${voucherText}\nPlan: ${pkgName}\nPayment Type: ${paymentLabel}\n\nKindly let me know if any additional information is required.\nThank you.`;
                     
-                    // CRITICAL FIX FOR MOBILE: Use window.open(url, '_self')
-                    // This acts like location.href but is more robust across mobile browsers
-                    window.open(`https://wa.me/60122600969?text=${encodeURIComponent(waText)}`, '_self');
-                }, 4000); // 4 seconds to read message
+                    window.location.href = `https://wa.me/60122600969?text=${encodeURIComponent(whatsappMessage)}`;
+                }, 3000); // 3 seconds to read thank you message
+
             }, 2000); // 2 seconds showing "Order Successful"
         }
 
@@ -3076,7 +3072,7 @@
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
         // ==========================================
-        // GLOBE ANIMATION (OPTIMIZED LOOP)
+        // GLOBE ANIMATION FIX (Explicit Restart)
         // ==========================================
         const canvas = document.getElementById('globe-canvas');
         const ctx = canvas.getContext('2d');
@@ -3084,6 +3080,7 @@
         const DOT_COUNT = 850; 
         const GLOBE_RADIUS = 380; 
         let rotation = 0;
+        let animationId;
 
         function initDots() {
             dots = [];
@@ -3099,20 +3096,16 @@
         }
 
         function animate() {
-            // CRITICAL FIX: Always request next frame to keep loop alive
-            requestAnimationFrame(animate);
-
-            // Check if Home section is visible
+            ctx.clearRect(0,0, 1200, 1200); 
+            
             const homeSection = document.getElementById('home');
             
-            // If not active, skip drawing but keep loop running (saving CPU)
+            // Stop animation if home section is not active
             if(!homeSection || !homeSection.classList.contains('active')) {
                  return; 
             }
 
             rotation += 0.002;
-            ctx.clearRect(0,0, 1200, 1200); // Clear canvas every frame
-            
             dots.forEach(dot => {
                 const rotX = dot.x * Math.cos(rotation) - dot.z * Math.sin(rotation);
                 const rotZ = dot.z * Math.cos(rotation) + dot.x * Math.sin(rotation);
@@ -3127,10 +3120,20 @@
                     ctx.fill();
                 }
             });
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Explicit function to start animation (called on route change)
+        function startGlobeAnimation() {
+            // Ensure no duplicates
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            animate();
         }
 
         initDots();
-        animate(); // Start loop immediately
+        animate();
 
         window.addEventListener('scroll', () => {
             const header = document.getElementById('mainHeader');

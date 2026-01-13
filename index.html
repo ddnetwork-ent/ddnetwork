@@ -50,6 +50,7 @@
             
             --font-display: 'Inter', sans-serif; 
             --ease-out: cubic-bezier(0.23, 1, 0.32, 1); 
+            --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
             
             /* Spacing */
             --header-height: 80px;
@@ -157,11 +158,11 @@
             color: white;
         }
 
-        /* Scroll Reveal Animation */
+        /* Scroll Reveal Animation - Enhanced */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
-            transition: all 0.8s var(--ease-out);
+            transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
         }
         .reveal.active {
             opacity: 1;
@@ -203,7 +204,7 @@
         .btn-danger { background: var(--accent-warn); color: black; border: 1px solid var(--accent-warn); }
         .btn-danger:hover { background: #d97706; border-color: #d97706; color: white; }
 
-        /* Profile Button (Updated for Visibility) */
+        /* Profile Button */
         .btn-profile-nav {
             background: var(--accent-primary);
             color: rgb(0, 0, 0);
@@ -232,7 +233,7 @@
             width: calc(100% - 40px);
             max-width: 1200px;
             z-index: 2100;
-            background: var(--bg-glass);
+            background: rgba(5, 5, 5, 0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
@@ -367,7 +368,7 @@
             padding-bottom: 60px; 
             opacity: 0; 
             transform: translateY(30px);
-            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out; 
+            transition: opacity 0.5s var(--ease-in-out), transform 0.5s var(--ease-in-out); 
             will-change: opacity, transform;
         }
         
@@ -379,7 +380,17 @@
 
         /* --- HERO --- */
         .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 0; overflow: hidden; margin-top: -100px; }
-        #globe-canvas { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; pointer-events: none; }
+        
+        /* FIX: Ensure canvas stays positioned correctly and doesn't collapse */
+        #globe-canvas { 
+            position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 1; 
+            pointer-events: none; 
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
         .hero-glow { position: absolute; top: 50%; left: 50%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
         .hero-content { position: relative; z-index: 10; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; }
         .hero h1 { font-size: clamp(3rem, 7vw, 6rem); margin-bottom: 1.5rem; background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3)); }
@@ -417,9 +428,8 @@
             background: var(--bg-input); border: 1px solid var(--border-color);
             color: white; border-radius: 12px; font-size: 1rem; 
             min-height: 48px; transition: 0.3s;
-            appearance: none; /* Removes default native styling for select */
+            appearance: none;
         }
-        /* Custom arrow for select dropdown */
         .form-select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
@@ -465,7 +475,7 @@
         .remove-discount-btn { margin-left: 8px; cursor: pointer; color: #ef4444; font-size: 1.1rem; vertical-align: middle; transition: 0.2s; }
         .remove-discount-btn:hover { transform: scale(1.2); }
 
-        /* --- CHECKOUT PROCESSING OVERLAY (NEW) --- */
+        /* --- CHECKOUT PROCESSING OVERLAY (UPDATED) --- */
         #processing-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -569,13 +579,13 @@
         }
         
         .search-box {
-            display: flex,
+            display: flex;
             gap: 10px;
             margin-bottom: 2rem;
         }
 
         .ticket-list {
-            display: flex,
+            display: flex;
             flex-direction: column,
             gap: 1rem;
         }
@@ -686,8 +696,8 @@
         .promo-badge.show { opacity: 1; transform: scale(1); pointer-events: auto; }
 
         .discounted-price-container {
-            display: flex,
-            flex-direction: column,
+            display: flex;
+            flex-direction: column;
             align-items: center; 
         }
         
@@ -950,6 +960,7 @@
         <section id="home" class="page-section active">
             <div class="hero">
                 <div class="hero-glow"></div>
+                <!-- Globe Canvas -->
                 <canvas id="globe-canvas" width="1200" height="1200"></canvas>
                 
                 <div class="hero-content reveal active">
@@ -1412,7 +1423,10 @@
                                 <!-- Options populated dynamically by JS from Firebase -->
                             </select>
                             
-                            <button type="button" class="btn" style="width: 100%; margin-bottom: 1rem; margin-top: 1rem;" onclick="triggerPayment()"><span style="margin-right: 8px;">Step 1</span> Proceed to Payment</button>
+                            <!-- STEP 1: PROCEED TO PAYMENT -->
+                            <button type="button" id="btn-proceed-pay" class="btn" style="width: 100%; margin-bottom: 1rem; margin-top: 1rem;" onclick="triggerPaymentStep1()">
+                                <span style="margin-right: 8px;">Step 1</span> Proceed to Payment
+                            </button>
                             
                             <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
                                 <input type="checkbox" id="terms-check" style="margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent-primary);">
@@ -1421,7 +1435,10 @@
                                 </span>
                             </label>
                             
-                            <button type="button" class="btn btn-success" style="width: 100%;" onclick="submitOrder()"><i class="ri-shopping-bag-line" style="margin-right: 8px;"></i> Place Order</button>
+                            <!-- STEP 2: PLACE ORDER -->
+                            <button type="button" id="btn-place-order" class="btn btn-success" style="width: 100%;" onclick="submitOrder()">
+                                <i class="ri-shopping-bag-line" style="margin-right: 8px;"></i> Place Order
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -1654,15 +1671,20 @@
             const targetSection = document.getElementById(targetSectionId);
 
             if (currentSection === targetSection) return; 
-            if (currentSection && currentSection.classList.contains('leaving')) return; 
+
+            // Add pointer events none to body to prevent spam clicking during transition
+            document.body.style.pointerEvents = 'none';
 
             // Hide current
             if (currentSection) {
                 currentSection.classList.remove('active');
-                currentSection.classList.add('leaving');
+                // Delay display none for smooth fade out
+                setTimeout(() => {
+                   if(currentSection !== targetSection) currentSection.style.display = 'none';
+                }, 500); 
             }
 
-            // Scroll to top (smooth)
+            // Scroll to top
             if (!isInstant) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
@@ -1673,12 +1695,12 @@
             setTimeout(() => {
                 document.querySelectorAll('.page-section').forEach(sec => {
                     sec.classList.remove('active', 'leaving');
-                    sec.style.display = 'none';
+                    if(sec !== targetSection) sec.style.display = 'none';
                 });
 
                 if (targetSection) {
                     targetSection.style.display = 'block'; 
-                    void targetSection.offsetWidth; 
+                    void targetSection.offsetWidth; // Force reflow
                     targetSection.classList.add('active');
                     
                     if(targetSectionId === 'profile') loadProfilePageData();
@@ -1686,14 +1708,14 @@
                         fetchAndSyncUserData(auth.currentUser.uid);
                     }
                     
-                    // GLOBE FIX: Restart animation if Home is active
-                    if(targetSectionId === 'home') {
-                        startGlobeAnimation();
-                    }
-
                     const newReveals = targetSection.querySelectorAll('.reveal');
                     newReveals.forEach(el => el.classList.add('active'));
                 }
+
+                // Re-enable pointer events
+                setTimeout(() => {
+                    document.body.style.pointerEvents = 'all';
+                }, 500);
             }, isInstant ? 0 : 400);
         }
 
@@ -1731,7 +1753,7 @@
             packageDetails: {},
             discountActive: false, 
             discountPercent: 0,
-            payment_methods: [] // Will be populated from dedicated collection
+            payment_methods: [] 
         };
         let currentUserRole = 'user'; 
         
@@ -2852,7 +2874,12 @@
             state.paymentMethodId = select.value;
         }
 
-        function triggerPayment() {
+        // ==========================================
+        // UPDATED CHECKOUT FLOW
+        // ==========================================
+        
+        // STEP 1: PROCEED TO PAYMENT
+        function triggerPaymentStep1() {
             if(!state.packageType) {
                 showToast("Please select a package first.", "error");
                 return;
@@ -2873,19 +2900,35 @@
             
             const selectedMethod = methods.find(m => m.id === methodId);
 
-            if(!selectedMethod) {
-                showToast("Payment method configuration error.", "error");
-                return;
-            }
-
-            let targetUrl = selectedMethod.link;
-
-            if(!targetUrl) {
+            if(!selectedMethod || !selectedMethod.link) {
                 showToast("Payment link is missing for this method.", "error");
                 return;
             }
 
-            window.open(targetUrl, '_blank');
+            const targetUrl = selectedMethod.link;
+
+            // Show Processing Overlay (Instructions)
+            const overlay = document.getElementById('processing-overlay');
+            const spinner = document.getElementById('process-spinner');
+            const msgEl = document.getElementById('process-message');
+            const checkIcon = document.getElementById('process-check-icon');
+            
+            overlay.style.display = 'flex';
+            spinner.style.display = 'block';
+            checkIcon.style.display = 'none';
+            
+            // Step 1 Instruction Text
+            msgEl.innerText = "Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount. Kindly Screenshot the payment for proof.";
+            
+            // 5 Seconds delay then open link
+            setTimeout(() => {
+                window.open(targetUrl, '_blank');
+                // We do NOT close the overlay immediately. 
+                // The user will manually come back to the tab to click "Place Order".
+                // However, to let them see the popup, we hide the overlay after they see the instruction.
+                overlay.style.display = 'none';
+                showToast("Payment gateway opened. Please complete payment then click 'Place Order'.", "success");
+            }, 5000);
         }
 
         function openTermsModal() {
@@ -2905,9 +2948,7 @@
             }
         }
 
-        // ==========================================
-        // UPDATED ORDER SUBMISSION WITH DELAY
-        // ==========================================
+        // STEP 2: PLACE ORDER
         function submitOrder() {
             const termsCheck = document.getElementById('terms-check');
             if(!termsCheck.checked) {
@@ -2941,68 +2982,65 @@
             
             overlay.style.display = 'flex';
             
-            // Step 1: Loading Message (5 seconds)
-            msgEl.innerText = "Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount.";
+            // Step 2: "Order Successful" Message (5 seconds)
+            spinner.style.display = 'none';
+            checkIcon.style.display = 'block';
+            msgEl.innerText = "Order Successful";
+            msgEl.style.color = "var(--success)";
+
+            // Prepare Data for Firebase Save
+            const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
+                            ? siteConfig.payment_methods 
+                            : DEFAULT_PAYMENT_METHODS;
+            const paymentObj = methods.find(m => m.id === state.paymentMethodId);
+            const paymentLabel = paymentObj ? paymentObj.name : "Unknown";
+
+            const pkgName = document.getElementById('summary-pkg-name').innerText;
+            const total = document.getElementById('summary-final-total').innerText;
+            const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
+            const maint = document.getElementById('summary-maintenance').innerText;
             
-            setTimeout(() => {
-                // 2. Show Success Message
-                spinner.style.display = 'none';
-                checkIcon.style.display = 'block';
-                msgEl.innerText = "Order Successful";
-                msgEl.style.color = "var(--success)";
+            const orderData = {
+                customerName: name,
+                customerPhone: phone,
+                customerEmail: email,
+                customerCompany: company || 'Individual', 
+                package: pkgName,
+                domain: domain,
+                maintenance: maint,
+                total: total,
+                promo: state.discountCode,
+                paymentMethod: paymentLabel,
+                status: "Pending",
+                userId: auth.currentUser ? auth.currentUser.uid : null,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
 
-                // Prepare Data for Firebase Save
-                const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
-                                ? siteConfig.payment_methods 
-                                : DEFAULT_PAYMENT_METHODS;
-                const paymentObj = methods.find(m => m.id === state.paymentMethodId);
-                const paymentLabel = paymentObj ? paymentObj.name : "Unknown";
+            // Save to Firebase (Silently in background)
+            if(db) {
+                const promises = [db.collection("orders").add(orderData)];
 
-                const pkgName = document.getElementById('summary-pkg-name').innerText;
-                const total = document.getElementById('summary-final-total').innerText;
-                const domain = state.domainName || (state.domainType === 'sub' ? 'DDN Subdomain' : 'Custom');
-                const maint = document.getElementById('summary-maintenance').innerText;
-                
-                const orderData = {
-                    customerName: name,
-                    customerPhone: phone,
-                    customerEmail: email,
-                    customerCompany: company || 'Individual', 
-                    package: pkgName,
-                    domain: domain,
-                    maintenance: maint,
-                    total: total,
-                    promo: state.discountCode,
-                    paymentMethod: paymentLabel,
-                    status: "Pending",
-                    userId: auth.currentUser ? auth.currentUser.uid : null,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                // Save to Firebase (Silently in background)
-                if(db) {
-                    const promises = [db.collection("orders").add(orderData)];
-
-                    if (state.discountCode && currentUserPersonalVoucher && state.discountCode === currentUserPersonalVoucher.code && currentUserPersonalVoucher.status !== 'redeemed') {
-                        const redeemPromise = db.collection("users").doc(auth.currentUser.uid).update({
-                            "personalVoucher.status": "redeemed"
-                        });
-                        promises.push(redeemPromise);
-                    }
-
-                    Promise.all(promises).catch(err => console.error("Firebase Save Error:", err));
+                if (state.discountCode && currentUserPersonalVoucher && state.discountCode === currentUserPersonalVoucher.code && currentUserPersonalVoucher.status !== 'redeemed') {
+                    const redeemPromise = db.collection("users").doc(auth.currentUser.uid).update({
+                        "personalVoucher.status": "redeemed"
+                    });
+                    promises.push(redeemPromise);
                 }
 
-                // 3. Show Final Thank You Message then Redirect
-                setTimeout(() => {
-                    msgEl.innerText = "Thank you for choosing DDNetwork One. We have received your order and payment details. Our team will review your order and contact you via WhatsApp or email within 24 hours.";
-                    
-                    setTimeout(() => {
-                        window.location.href = `https://wa.me/60122600969`;
-                    }, 4000); // 4 seconds to read message
-                }, 2000); // 2 seconds showing "Order Successful"
+                Promise.all(promises).catch(err => console.error("Firebase Save Error:", err));
+            }
 
-            }, 5000); // 5 seconds loading
+            // 3. Show Final Thank You Message then Redirect
+            setTimeout(() => {
+                msgEl.innerText = "Thank you for choosing DDNetwork One. We have received your order and payment details. Our team will review your order and contact you via WhatsApp or email within 24 hours.";
+                
+                setTimeout(() => {
+                    // Construct WhatsApp Message
+                    const waText = `Hi Admin Team,\nI have just placed a new order. Please find my details below:\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nVoucher: ${state.discountCode || 'None'}\nPayment Type: ${paymentLabel}\n\nKindly let me know if any additional information is required.\nThank you.`;
+                    
+                    window.location.href = `https://wa.me/60122600969?text=${encodeURIComponent(waText)}`;
+                }, 4000); // 4 seconds to read message
+            }, 2000); // 2 seconds showing "Order Successful"
         }
 
         const observerOptions = {
@@ -3022,7 +3060,7 @@
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
         // ==========================================
-        // GLOBE ANIMATION FIX
+        // GLOBE ANIMATION FIX (ROBUST LOOP)
         // ==========================================
         const canvas = document.getElementById('globe-canvas');
         const ctx = canvas.getContext('2d');
@@ -3030,7 +3068,6 @@
         const DOT_COUNT = 850; 
         const GLOBE_RADIUS = 380; 
         let rotation = 0;
-        let animationId;
 
         function initDots() {
             dots = [];
@@ -3046,24 +3083,20 @@
         }
 
         function animate() {
-            // Check if Home section is visible. 
-            // This ensures if we navigate away, loop effectively stops requesting itself if it wasn't called.
-            // However, loop below will keep running if animationId exists, but we only draw if home is active.
+            // CRITICAL FIX: Always request next frame to keep loop alive
+            requestAnimationFrame(animate);
+
+            // Check if Home section is visible
             const homeSection = document.getElementById('home');
             
-            // Clear canvas regardless of visibility to keep state clean, or stop if not visible
-            ctx.clearRect(0,0, 1200, 1200); 
-            
-            // Only draw logic if active to save resources, 
-            // BUT we keep loop running or restart it via transition logic.
+            // If not active, skip drawing but keep loop running (saving CPU)
             if(!homeSection || !homeSection.classList.contains('active')) {
-                 // If not active, we can pause or just return without requesting next frame 
-                 // if we wanted to stop completely. 
-                 // To fix bug: We need to ensure loop restarts when we come back.
                  return; 
             }
 
             rotation += 0.002;
+            ctx.clearRect(0,0, 1200, 1200); // Clear canvas every frame
+            
             dots.forEach(dot => {
                 const rotX = dot.x * Math.cos(rotation) - dot.z * Math.sin(rotation);
                 const rotZ = dot.z * Math.cos(rotation) + dot.x * Math.sin(rotation);
@@ -3078,22 +3111,10 @@
                     ctx.fill();
                 }
             });
-            animationId = requestAnimationFrame(animate);
-        }
-
-        // Explicit function to start animation (called on route change)
-        function startGlobeAnimation() {
-            if (!animationId) {
-                animate();
-            } else {
-                // If loop exists but maybe stopped logic-wise, ensure it continues
-                // The 'animate' function checks .active, so as long as this is called,
-                // recursive requestAnimationFrame loop will pick it up on next frame.
-            }
         }
 
         initDots();
-        animate();
+        animate(); // Start loop immediately
 
         window.addEventListener('scroll', () => {
             const header = document.getElementById('mainHeader');

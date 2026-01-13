@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DDNetwork One</title>
     
     <!-- Favicon: Linked to your Logo -->
@@ -60,7 +60,7 @@
         }
 
         /* --- RESET --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html { scroll-behavior: smooth; }
         
         body {
@@ -472,8 +472,9 @@
         #processing-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 5, 5, 0.95);
+            background: rgba(5, 5, 5, 0.98); /* Darker for better contrast */
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             z-index: 100000;
             display: none; /* Hidden by default */
             flex-direction: column;
@@ -1585,8 +1586,6 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        // IMPROVED: Removed preloader logic completely. Site loads instantly.
-
         // ==========================================
         // FRONTEND ROUTING (History Mode)
         // ==========================================
@@ -1697,7 +1696,7 @@
                         fetchAndSyncUserData(auth.currentUser.uid);
                     }
                     
-                    // Trigger reveal animations inside the new section
+                    // Trigger reveal animations inside new section
                     setTimeout(() => {
                         const newReveals = targetSection.querySelectorAll('.reveal');
                         newReveals.forEach((el, index) => {
@@ -2001,7 +2000,7 @@
                   snapshot.forEach((doc) => {
                       const data = doc.data();
                       
-                      // Construct the card HTML
+                      // Construct card HTML
                       const cardHTML = `
                           <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
                               <div style="height: 200px; overflow: hidden;">
@@ -2872,7 +2871,7 @@
         }
 
         // ==========================================
-        // UPDATED CHECKOUT FLOW (FIXED BLOCKING & POPUP)
+        // MOBILE FIX: UPDATED CHECKOUT FLOW
         // ==========================================
         
         function closeProcessingOverlay() {
@@ -2909,29 +2908,34 @@
 
             const targetUrl = selectedMethod.link;
 
-            // Show Processing Overlay
+            // Show Processing Overlay immediately
             const overlay = document.getElementById('processing-overlay');
-            const spinner = document.getElementById('process-spinner');
             const msgEl = document.getElementById('process-message');
             const closeBtnDiv = document.getElementById('process-close-btn');
             
             overlay.style.display = 'flex';
-            spinner.style.display = 'block';
             closeBtnDiv.style.display = 'none'; // Hide close button initially
             
             // Text 1: Connecting
             msgEl.innerText = "Securely connecting to payment gateway...";
             
-            // 1.5 Seconds delay then open link
-            setTimeout(() => {
-                window.open(targetUrl, '_blank');
-                
-                // Text 2: Instructions
-                msgEl.innerText = "We have opened the payment gateway in a new tab. Please complete the payment there, then return to this page and click 'Place Order'.";
-                
-                // Show the Close button so user can access the form again
-                closeBtnDiv.style.display = 'block';
-            }, 1500);
+            // CRITICAL FIX FOR MOBILE: Open the link immediately or with negligible delay
+            // Mobile browsers block popups inside setTimeout.
+            // We open it immediately after showing the overlay to maintain the "click event".
+            const newWindow = window.open(targetUrl, '_blank');
+            
+            // If popup is blocked (rare on mobile but possible on desktop), fallback
+            if (!newWindow) {
+                // Fallback: redirect main window
+                window.location.href = targetUrl;
+                return; // Stop execution since we left the page
+            }
+
+            // Update text AFTER opening link
+            msgEl.innerText = "We have opened the payment gateway in a new tab. Please complete your payment there, then return here and click 'Place Order'.";
+            
+            // Show Close button so user can access form again
+            closeBtnDiv.style.display = 'block';
         }
 
         function openTermsModal() {
@@ -3048,7 +3052,9 @@
                     // Construct WhatsApp Message
                     const waText = `Hi Admin Team,\nI have just placed a new order. Please find my details below:\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nVoucher: ${state.discountCode || 'None'}\nPayment Type: ${paymentLabel}\n\nKindly let me know if any additional information is required.\nThank you.`;
                     
-                    window.location.href = `https://wa.me/60122600969?text=${encodeURIComponent(waText)}`;
+                    // CRITICAL FIX FOR MOBILE: Use window.open(url, '_self')
+                    // This acts like location.href but is more robust across mobile browsers
+                    window.open(`https://wa.me/60122600969?text=${encodeURIComponent(waText)}`, '_self');
                 }, 4000); // 4 seconds to read message
             }, 2000); // 2 seconds showing "Order Successful"
         }

@@ -1349,7 +1349,7 @@
                             <label class="form-label" style="color: var(--accent-primary); font-weight: 700;">Payment Method</label>
                             
                             <select id="payment-method-select" class="form-select" onchange="updatePaymentSelection()">
-                                <option value="" disabled selected>Select Payment Method</option>
+                                <option value="" disabled selected>Loading Payment Methods...</option>
                                 <!-- Options populated dynamically by JS from Firebase -->
                             </select>
                             
@@ -1569,19 +1569,16 @@
 
         // Main Navigation Function
         function navigateTo(path) {
-            // 1. Find the section ID from the path
             const sectionId = routes[path];
             if (!sectionId) {
                 console.error(`No section found for path: ${path}`);
-                // Fallback to home if path not found
-                // window.location.replace('/'); // Optional: redirect real URL
                 return;
             }
 
-            // 2. Update the Browser URL without reloading (History API)
+            // 1. Update Browser URL without reloading (History API)
             window.history.pushState({ path: path }, "", path);
 
-            // 3. Execute UI transition
+            // 2. Execute UI transition
             performTransition(sectionId);
         }
 
@@ -1591,7 +1588,6 @@
                 const sectionId = routes[event.state.path];
                 if (sectionId) performTransition(sectionId);
             } else {
-                // If state is null (initial load or direct link), check current pathname
                 const path = window.location.pathname;
                 const sectionId = routes[path] || 'home';
                 performTransition(sectionId);
@@ -1604,10 +1600,8 @@
             const sectionId = routes[path];
             
             if (sectionId) {
-                // Show the correct section immediately
                 performTransition(sectionId, true);
             } else {
-                // If no match (e.g. 404 on server but falls back to index), show home
                 performTransition('home', true);
             }
         }
@@ -1642,16 +1636,14 @@
 
                 if (targetSection) {
                     targetSection.style.display = 'block'; 
-                    void targetSection.offsetWidth; // Trigger reflow
+                    void targetSection.offsetWidth; 
                     targetSection.classList.add('active');
                     
-                    // Page specific loads
                     if(targetSectionId === 'profile') loadProfilePageData();
                     if(targetSectionId === 'buynow' && auth && auth.currentUser) {
                         fetchAndSyncUserData(auth.currentUser.uid);
                     }
                     
-                    // Trigger reveal animations
                     const newReveals = targetSection.querySelectorAll('.reveal');
                     newReveals.forEach(el => el.classList.add('active'));
                 }
@@ -1659,7 +1651,6 @@
         }
 
         // Initialize Router on Load
-        // Call this after Firebase/Config init if needed, or immediately
         setTimeout(handleInitialRoute, 100);
 
         // ==========================================
@@ -1680,6 +1671,7 @@
         let allUsers = [];
         let currentUserPersonalVoucher = null;
         
+        // Fallback Defaults (used only if DB completely unreachable or empty)
         const DEFAULT_PAYMENT_METHODS = [
             { id: 'tng', name: 'TNG eWallet', link: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
             { id: 'fpx', name: 'Online Banking (FPX)', link: 'https://toyyibpay.com', active: true } 
@@ -1692,7 +1684,7 @@
             packageDetails: {},
             discountActive: false, 
             discountPercent: 0,
-            payment_methods: []
+            payment_methods: [] // Will be populated from dedicated collection
         };
         let currentUserRole = 'user'; 
         
@@ -1714,7 +1706,6 @@
             console.error("Firebase initialization error:", e);
         }
 
-        // --- TOAST NOTIFICATION SYSTEM ---
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1735,9 +1726,11 @@
             }, 3000);
         }
 
-        // --- AUTO INITIALIZE DATABASE IF NOT EXISTS ---
+        // --- AUTO INITIALIZE DATABASE ---
         async function initializeDatabase() {
             if(!db) return;
+            
+            // 1. Initialize Site Config
             const configRef = db.collection("config").doc("site_settings");
             const doc = await configRef.get();
             
@@ -1752,13 +1745,20 @@
                         ai: ["All Front-End Features", "AI Chatbot Integration", "Lead Auto-Response", "Smart Analytics"]
                     },
                     discountActive: false,
-                    discountPercent: 0.1,
-                    payment_methods: [
-                        { id: 'tng', name: 'TNG eWallet', link: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
-                        { id: 'fpx', name: 'Online Banking (FPX)', link: 'https://toyyibpay.com', active: true }
-                    ]
+                    discountPercent: 0.1
                 });
                 showToast("Database initialized!", "success");
+            }
+
+            // 2. Initialize Payment Methods Collection (NEW: Dedicated Collection)
+            const pmSnapshot = await db.collection("payment_methods").limit(1).get();
+            if (pmSnapshot.empty) {
+                console.log("Payment methods collection empty, adding defaults...");
+                const defaults = [
+                    { id: 'tng', name: 'TNG eWallet', link: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
+                    { id: 'fpx', name: 'Online Banking (FPX)', link: 'https://toyyibpay.com', active: true }
+                ];
+                defaults.forEach(pm => db.collection("payment_methods").add(pm));
             }
         }
 
@@ -1858,24 +1858,59 @@
             }
         }
 
+        // UPDATED: Listen to dedicated 'payment_methods' collection properly
+        function listenToPaymentMethods() {
+            if(!db) return;
+
+            db.collection("payment_methods").onSnapshot((snapshot) => {
+                const methods = [];
+                snapshot.forEach(doc => {
+                    methods.push(doc.data());
+                });
+                siteConfig.payment_methods = methods;
+                renderPaymentMethods();
+            }, (error) => {
+                console.error("Error listening to payment methods:", error);
+                renderPaymentMethods(); // Render defaults on error
+            });
+        }
+
+        // UPDATED: Render Function with duplicate prevention and selection restoration
         function renderPaymentMethods() {
             const select = document.getElementById('payment-method-select');
             if(!select) return;
 
+            // Save current selection to restore it if it still exists
+            const currentSelection = select.value;
+
+            // Clear existing options (Prevents duplicates on updates)
             select.innerHTML = '<option value="" disabled selected>Select Payment Method</option>';
 
+            // SYNC: Use dynamic DB list, fallback to defaults if empty
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
 
+            let hasActiveMethods = false;
+
             methods.forEach(pm => {
-                if(pm.active) {
+                // Ensure 'active' is treated as true if undefined (default behavior)
+                if(pm.active !== false) {
                     const option = document.createElement('option');
                     option.value = pm.id;
                     option.innerText = pm.name;
                     select.appendChild(option);
+                    hasActiveMethods = true;
                 }
             });
+
+            // Restore selection if valid
+            if(currentSelection) select.value = currentSelection;
+            
+            // Fallback if no active methods found
+            if (!hasActiveMethods) {
+                select.innerHTML = '<option value="" disabled selected>No Payment Methods Available</option>';
+            }
         }
 
         // Listeners for Site Config
@@ -1896,11 +1931,11 @@
                     
                     renderDynamicContent();
                     refreshCardPrices(); 
-                    renderPaymentMethods();
-                } else {
-                    renderPaymentMethods();
                 }
             });
+
+            // Start Payment Method Listener
+            listenToPaymentMethods();
         }
 
         let PROMO_CODES = {}; 
@@ -2730,6 +2765,7 @@
                 return;
             }
 
+            // SYNC: Use dynamic DB list
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;

@@ -519,7 +519,7 @@
         }
         
         .search-box {
-            display: flex;
+            display: flex,
             gap: 10px;
             margin-bottom: 2rem;
         }
@@ -1390,33 +1390,16 @@
             </div>
         </section>
 
-        <!-- === PAGE: CLIENTS === -->
+        <!-- === PAGE: CLIENTS (UPDATED FOR DYNAMIC DATA) === -->
         <section id="clients" class="page-section">
             <div class="text-center reveal" style="margin-bottom: 3rem;">
                 <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Portfolio</h2>
                 <p style="color: var(--text-secondary);">Trusted by forward-thinking businesses.</p>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
-                    <div style="height: 200px; overflow: hidden;">
-                        <img src="https://raw.githubusercontent.com/ddnetwork-ent/clinic-azam-dental/refs/heads/main/IMG_2260.JPG" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                    </div>
-                    <div style="padding: 1.5rem;">
-                        <h4 style="margin-bottom: 0.5rem;">Klinik Pergigian Azam</h4>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Dental clinic with appointment booking.</p>
-                        <a href="https://ddnetwork-ent.github.io/clinic-azam-dental/" target="_blank" class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</a>
-                    </div>
-                </div>
-                <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
-                    <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #e2e8f0;">
-                         <img src="https://raw.githubusercontent.com/ddnetwork-ent/mory-matcha/refs/heads/main/MORY%20ICON-green.png" style="height: 80%;">
-                    </div>
-                    <div style="padding: 1.5rem;">
-                        <h4 style="margin-bottom: 0.5rem;">Mory Matcha</h4>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Premium matcha drink brand landing page.</p>
-                        <a href="https://mory.ddnetwork.uk" target="_blank" class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</a>
-                    </div>
-                </div>
+            <!-- DYNAMIC CONTAINER: Content is populated by JavaScript -->
+            <div id="portfolio-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                <!-- Loading state or initial placeholder -->
+                <div class="text-center" style="grid-column: 1/-1; color: var(--text-tertiary);">Loading portfolio...</div>
             </div>
         </section>
 
@@ -1913,6 +1896,57 @@
             }
         }
 
+        // ==========================================
+        // NEW: DYNAMIC PORTFOLIO LOADER
+        // ==========================================
+        function loadPortfolio() {
+            if(!db) return;
+            
+            const container = document.getElementById('portfolio-grid');
+            
+            // Real-time listener for clients_portfolio where status is true
+            db.collection("clients_portfolio")
+              .where("status", "==", true)
+              .onSnapshot((snapshot) => {
+                  container.innerHTML = ''; // Clear current content
+
+                  if (snapshot.empty) {
+                      container.innerHTML = '<div class="text-center" style="grid-column: 1/-1; padding: 2rem; color: var(--text-tertiary);">No portfolio items available at the moment.</div>';
+                      return;
+                  }
+
+                  snapshot.forEach((doc) => {
+                      const data = doc.data();
+                      
+                      // Construct the card HTML
+                      const cardHTML = `
+                          <div class="checkout-card reveal" style="padding: 0; overflow: hidden; background: var(--bg-surface);">
+                              <div style="height: 200px; overflow: hidden;">
+                                  <img src="${data.img}" alt="${data.name}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                              </div>
+                              <div style="padding: 1.5rem;">
+                                  <h4 style="margin-bottom: 0.5rem;">${data.name}</h4>
+                                  <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Visit Website</p>
+                                  <a href="${data.link}" target="_blank" class="btn" style="width: 100%; font-size: 0.8rem;">Visit Live Site</a>
+                              </div>
+                          </div>
+                      `;
+                      container.innerHTML += cardHTML;
+                  });
+
+                  // Re-trigger reveal animations for new elements added dynamically
+                  const newCards = container.querySelectorAll('.reveal');
+                  newCards.forEach(el => {
+                      el.classList.add('active'); 
+                  });
+
+              }, (error) => {
+                  console.error("Error loading portfolio:", error);
+                  container.innerHTML = '<div class="text-center" style="grid-column: 1/-1; color: #ef4444;">Error loading portfolio.</div>';
+              });
+        }
+
+
         // Listeners for Site Config
         if(db) {
             db.collection("config").doc("site_settings").onSnapshot((doc) => {
@@ -1936,6 +1970,9 @@
 
             // Start Payment Method Listener
             listenToPaymentMethods();
+            
+            // Start Portfolio Listener
+            loadPortfolio();
         }
 
         let PROMO_CODES = {}; 

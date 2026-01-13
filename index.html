@@ -44,13 +44,15 @@
             --accent-primary: #3b82f6; /* Blue */
             --accent-glow: rgba(59, 130, 246, 0.5);
             --accent-warn: #f59e0b;
+            --accent-success: #10b981;
             
             --success: #10b981;
             --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
             
             --font-display: 'Inter', sans-serif; 
-            --ease-out: cubic-bezier(0.23, 1, 0.32, 1); 
-            --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+            /* IMPROVED: Smoother easing for premium feel */
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1); 
+            --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
             
             /* Spacing */
             --header-height: 80px;
@@ -124,19 +126,6 @@
             line-height: 1.1;
         }
 
-        /* --- PRELOADER --- */
-        #preloader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-deep); z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.6s ease;
-        }
-        .loader-content {
-            text-align: center;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
-
         /* --- GRAIN OVERLAY --- */
         .grain {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -158,15 +147,16 @@
             color: white;
         }
 
-        /* Scroll Reveal Animation - Enhanced */
+        /* IMPROVED: Scroll Reveal Animation */
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px) scale(0.98); /* Slight scale for pop effect */
             transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+            will-change: opacity, transform;
         }
         .reveal.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         /* --- BUTTONS --- */
@@ -367,9 +357,12 @@
             padding-top: 100px; 
             padding-bottom: 60px; 
             opacity: 0; 
-            transform: translateY(30px);
-            transition: opacity 0.5s var(--ease-in-out), transform 0.5s var(--ease-in-out); 
+            /* Slight slide up for entrance */
+            transform: translateY(15px);
+            /* IMPROVED: Smoother transition */
+            transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out); 
             will-change: opacity, transform;
+            backface-visibility: hidden; /* Prevents flickering */
         }
         
         .page-section.active { 
@@ -579,13 +572,13 @@
         }
         
         .search-box {
-            display: flex;
+            display: flex,
             gap: 10px;
             margin-bottom: 2rem;
         }
 
         .ticket-list {
-            display: flex;
+            display: flex,
             flex-direction: column,
             gap: 1rem;
         }
@@ -882,15 +875,6 @@
         </div>
     </div>
 
-    <!-- Preloader -->
-    <div id="preloader">
-        <div class="loader-content">
-            <!-- Logo Published Here -->
-            <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/ddn.logo.png" alt="Logo" style="height: 60px; margin-bottom: 1rem;">
-            <h2 style="font-size: 0.8rem; letter-spacing: 2px;">LOADING</h2>
-        </div>
-    </div>
-
     <!-- Grain Texture -->
     <div class="grain"></div>
 
@@ -946,11 +930,17 @@
         </ul>
     </div>
 
-    <!-- NEW: CHECKOUT PROCESSING OVERLAY -->
+    <!-- UPDATED: CHECKOUT PROCESSING OVERLAY -->
     <div id="processing-overlay">
         <div id="process-spinner" class="process-spinner"></div>
         <i id="process-check-icon" class="ri-checkbox-circle-line process-icon"></i>
+        
         <div id="process-message" class="process-text">Initializing...</div>
+        
+        <!-- NEW: Dismiss Button for better UX -->
+        <div id="process-close-btn" style="margin-top: 2rem; display: none;">
+            <button class="btn btn-secondary" onclick="closeProcessingOverlay()">Close / I Have Paid</button>
+        </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -1595,12 +1585,7 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        // Preloader Removal
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            preloader.style.opacity = '0';
-            setTimeout(() => { preloader.style.display = 'none'; }, 600);
-        });
+        // IMPROVED: Removed preloader logic completely. Site loads instantly.
 
         // ==========================================
         // FRONTEND ROUTING (History Mode)
@@ -1665,7 +1650,7 @@
             }
         }
 
-        // Actual UI Transition Logic
+        // Actual UI Transition Logic (IMPROVED SMOOTHNESS)
         function performTransition(targetSectionId, isInstant = false) {
             const currentSection = document.querySelector('.page-section.active');
             const targetSection = document.getElementById(targetSectionId);
@@ -1678,10 +1663,10 @@
             // Hide current
             if (currentSection) {
                 currentSection.classList.remove('active');
-                // Delay display none for smooth fade out
+                // IMPROVED: Keep opacity 0 but display none for a split second to prevent overlap
                 setTimeout(() => {
                    if(currentSection !== targetSection) currentSection.style.display = 'none';
-                }, 500); 
+                }, 400); // Matches CSS transition time
             }
 
             // Scroll to top
@@ -1701,26 +1686,38 @@
                 if (targetSection) {
                     targetSection.style.display = 'block'; 
                     void targetSection.offsetWidth; // Force reflow
-                    targetSection.classList.add('active');
+                    
+                    // Use requestAnimationFrame for smoother paint
+                    requestAnimationFrame(() => {
+                        targetSection.classList.add('active');
+                    });
                     
                     if(targetSectionId === 'profile') loadProfilePageData();
                     if(targetSectionId === 'buynow' && auth && auth.currentUser) {
                         fetchAndSyncUserData(auth.currentUser.uid);
                     }
                     
-                    const newReveals = targetSection.querySelectorAll('.reveal');
-                    newReveals.forEach(el => el.classList.add('active'));
+                    // Trigger reveal animations inside the new section
+                    setTimeout(() => {
+                        const newReveals = targetSection.querySelectorAll('.reveal');
+                        newReveals.forEach((el, index) => {
+                            // Stagger effect
+                            setTimeout(() => {
+                                el.classList.add('active');
+                            }, index * 50); 
+                        });
+                    }, 100);
                 }
 
                 // Re-enable pointer events
                 setTimeout(() => {
                     document.body.style.pointerEvents = 'all';
                 }, 500);
-            }, isInstant ? 0 : 400);
+            }, isInstant ? 0 : 300);
         }
 
         // Initialize Router on Load
-        setTimeout(handleInitialRoute, 100);
+        setTimeout(handleInitialRoute, 50);
 
         // ==========================================
         // FIREBASE & APP LOGIC
@@ -2875,9 +2872,14 @@
         }
 
         // ==========================================
-        // UPDATED CHECKOUT FLOW (FIXED POPUP BLOCKER)
+        // UPDATED CHECKOUT FLOW (FIXED BLOCKING & POPUP)
         // ==========================================
         
+        function closeProcessingOverlay() {
+            const overlay = document.getElementById('processing-overlay');
+            overlay.style.display = 'none';
+        }
+
         // STEP 1: PROCEED TO PAYMENT
         function triggerPaymentStep1() {
             if(!state.packageType) {
@@ -2907,41 +2909,29 @@
 
             const targetUrl = selectedMethod.link;
 
-            // FIX 1: OPEN IMMEDIATELY (Synchronous)
-            // Browsers allow popups triggered directly by user click events.
-            const newWindow = window.open(targetUrl, '_blank');
-
-            // Check if popup was blocked
-            const isBlocked = !newWindow || newWindow.closed || typeof newWindow.closed == 'undefined';
-
-            // Show Overlay for Instructions (5 seconds)
+            // Show Processing Overlay
             const overlay = document.getElementById('processing-overlay');
             const spinner = document.getElementById('process-spinner');
             const msgEl = document.getElementById('process-message');
-            const checkIcon = document.getElementById('process-check-icon');
+            const closeBtnDiv = document.getElementById('process-close-btn');
             
             overlay.style.display = 'flex';
-            spinner.style.display = 'none';
-            checkIcon.style.display = 'none';
-
-            if (isBlocked) {
-                // POPUP BLOCKED FALLBACK
-                msgEl.innerHTML = `
-                    <p style="margin-bottom:1rem">Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount. Kindly Screenshot the payment for proof.</p>
-                    <p style="color:var(--accent-warn); font-weight:700; margin-bottom:1rem;">Popup was blocked by your browser.</p>
-                    <a href="${targetUrl}" target="_blank" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Open Payment Link</a>
-                `;
-                // Keep overlay open so they can click the link
-            } else {
-                // SUCCESS STATE
-                msgEl.innerText = "Please ensure the payment amount is correct. You may enter either a deposit or the full payment amount. Kindly Screenshot the payment for proof.";
+            spinner.style.display = 'block';
+            closeBtnDiv.style.display = 'none'; // Hide close button initially
+            
+            // Text 1: Connecting
+            msgEl.innerText = "Securely connecting to payment gateway...";
+            
+            // 1.5 Seconds delay then open link
+            setTimeout(() => {
+                window.open(targetUrl, '_blank');
                 
-                // Hide overlay after 5 seconds
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    showToast("Payment gateway opened in a new tab. Please complete payment there.", "success");
-                }, 5000);
-            }
+                // Text 2: Instructions
+                msgEl.innerText = "We have opened the payment gateway in a new tab. Please complete the payment there, then return to this page and click 'Place Order'.";
+                
+                // Show the Close button so user can access the form again
+                closeBtnDiv.style.display = 'block';
+            }, 1500);
         }
 
         function openTermsModal() {
@@ -2992,10 +2982,14 @@
             const spinner = document.getElementById('process-spinner');
             const msgEl = document.getElementById('process-message');
             const checkIcon = document.getElementById('process-check-icon');
+            const closeBtnDiv = document.getElementById('process-close-btn');
             
             overlay.style.display = 'flex';
+            spinner.style.display = 'block';
+            checkIcon.style.display = 'none';
+            closeBtnDiv.style.display = 'none';
             
-            // Step 2: "Order Successful" Message (5 seconds)
+            // Step 2: "Order Successful" Message
             spinner.style.display = 'none';
             checkIcon.style.display = 'block';
             msgEl.innerText = "Order Successful";
@@ -3047,6 +3041,9 @@
             setTimeout(() => {
                 msgEl.innerText = "Thank you for choosing DDNetwork One. We have received your order and payment details. Our team will review your order and contact you via WhatsApp or email within 24 hours.";
                 
+                // Show close button so they can manually exit overlay if redirect doesn't happen
+                closeBtnDiv.style.display = 'block';
+
                 setTimeout(() => {
                     // Construct WhatsApp Message
                     const waText = `Hi Admin Team,\nI have just placed a new order. Please find my details below:\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nVoucher: ${state.discountCode || 'None'}\nPayment Type: ${paymentLabel}\n\nKindly let me know if any additional information is required.\nThank you.`;
@@ -3073,7 +3070,7 @@
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
         // ==========================================
-        // GLOBE ANIMATION FIX (ROBUST LOOP)
+        // GLOBE ANIMATION (OPTIMIZED LOOP)
         // ==========================================
         const canvas = document.getElementById('globe-canvas');
         const ctx = canvas.getContext('2d');

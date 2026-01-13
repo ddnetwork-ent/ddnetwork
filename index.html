@@ -526,7 +526,7 @@
 
         .ticket-list {
             display: flex;
-            flex-direction: column;
+            flex-direction: column,
             gap: 1rem;
         }
 
@@ -637,7 +637,7 @@
 
         .discounted-price-container {
             display: flex;
-            flex-direction: column;
+            flex-direction: column,
             align-items: center; 
         }
         
@@ -847,16 +847,16 @@
 
     <!-- Header -->
     <header id="mainHeader">
-        <a href="#" onclick="navigateTo('home')" class="logo-wrapper">
+        <a href="/" onclick="routeLink(event, '/')" class="logo-wrapper">
             <img src="https://raw.githubusercontent.com/ddnetwork-ent/ddnetwork/refs/heads/main/DDN%20Logo%20NoBG.png" alt="DDNetwork Logo" class="logo-img">
             <span class="company-name">DDNetworkOne</span>
         </a>
         
         <nav class="nav-desktop">
-            <a href="#" onclick="navigateTo('home')">Home</a>
-            <a href="#" onclick="navigateTo('services')">Pricing</a>
-            <a href="#" onclick="navigateTo('clients')">Clients</a>
-            <a href="#" onclick="navigateTo('founder')">Founder</a>
+            <a href="/" onclick="routeLink(event, '/')">Home</a>
+            <a href="/pricing" onclick="routeLink(event, '/pricing')">Pricing</a>
+            <a href="/clients" onclick="routeLink(event, '/clients')">Clients</a>
+            <a href="/founder" onclick="routeLink(event, '/founder')">Founder</a>
             <a href="#" onclick="openTermsModal()">Terms</a>
             
             <div class="auth-buttons" id="desktopAuthLinks">
@@ -872,10 +872,10 @@
     <!-- Mobile Drawer -->
     <div class="mobile-drawer" id="mobileDrawer">
         <ul>
-            <li><a href="#" onclick="navigateTo('home'); toggleDrawer()">Home</a></li>
-            <li><a href="#" onclick="navigateTo('services'); toggleDrawer()">Pricing</a></li>
-            <li><a href="#" onclick="navigateTo('clients'); toggleDrawer()">Clients</a></li>
-            <li><a href="#" onclick="navigateTo('founder'); toggleDrawer()">Founder</a></li>
+            <li><a href="/" onclick="routeLink(event, '/'); toggleDrawer()">Home</a></li>
+            <li><a href="/pricing" onclick="routeLink(event, '/pricing'); toggleDrawer()">Pricing</a></li>
+            <li><a href="/clients" onclick="routeLink(event, '/clients'); toggleDrawer()">Clients</a></li>
+            <li><a href="/founder" onclick="routeLink(event, '/founder'); toggleDrawer()">Founder</a></li>
             <li><a href="#" onclick="openTermsModal(); toggleDrawer()">Terms</a></li>
             
             <li id="mobileAuthLinks">
@@ -900,8 +900,8 @@
                     <h1>Local focus.<br>Global quality.</h1>
                     <p>We craft high-performance websites and AI integrations. From basic static sites to advanced digital platforms, we build tools that scale your brand.</p>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                        <button class="btn btn-primary" onclick="navigateTo('services')">View Pricing</button>
-                        <button class="btn" onclick="navigateTo('services')">Start Order</button>
+                        <button class="btn btn-primary" onclick="navigateTo('/pricing')">View Pricing</button>
+                        <button class="btn" onclick="navigateTo('/pricing')">Start Order</button>
                     </div>
 
                     <div class="trust-section">
@@ -990,14 +990,14 @@
                             <label class="form-label">Password</label>
                             <input type="password" id="login-password" class="form-input" placeholder="Required" required>
                             <div style="text-align: right; margin-top: 5px;">
-                                <span class="auth-link" style="font-size: 0.8rem;" onclick="navigateTo('forgot-password')">Forgot Password?</span>
+                                <span class="auth-link" style="font-size: 0.8rem;" onclick="navigateTo('/forgot-password')">Forgot Password?</span>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
                     </form>
                     
                     <div style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
-                        Don't have an account? <span class="auth-link" onclick="navigateTo('signup')">Sign Up</span>
+                        Don't have an account? <span class="auth-link" onclick="navigateTo('/signup')">Sign Up</span>
                     </div>
                 </div>
             </div>
@@ -1020,7 +1020,7 @@
                     </form>
                     
                     <div style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
-                        Remember your password? <span class="auth-link" onclick="navigateTo('login')">Back to Login</span>
+                        Remember your password? <span class="auth-link" onclick="navigateTo('/login')">Back to Login</span>
                     </div>
                 </div>
             </div>
@@ -1054,7 +1054,7 @@
                     </form>
                     
                     <div style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
-                        Already have an account? <span class="auth-link" onclick="navigateTo('login')">Login</span>
+                        Already have an account? <span class="auth-link" onclick="navigateTo('/login')">Login</span>
                     </div>
                 </div>
             </div>
@@ -1234,7 +1234,7 @@
                 <div class="checkout-card reveal">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
                         <h3 style="font-size: 1rem; color: white;">Order Summary</h3>
-                        <span class="change-package" onclick="navigateTo('services')">Change Package</span>
+                        <span class="change-package" onclick="navigateTo('/pricing')">Change Package</span>
                     </div>
 
                     <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 1.5rem;">
@@ -1383,8 +1383,8 @@
                     </p>
                     
                     <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                        <button class="btn btn-primary" onclick="navigateTo('home')">Return Home</button>
-                        <button class="btn btn-secondary" onclick="navigateTo('profile')">My Profile</button>
+                        <button class="btn btn-primary" onclick="navigateTo('/')">Return Home</button>
+                        <button class="btn btn-secondary" onclick="navigateTo('/profile')">My Profile</button>
                     </div>
                 </div>
             </div>
@@ -1475,7 +1475,7 @@
             <div class="footer-grid">
                 
                 <div class="footer-col footer-brand">
-                    <a href="#" onclick="navigateTo('home')" style="cursor: pointer;">
+                    <a href="/" onclick="routeLink(event, '/')" style="cursor: pointer;">
                         <span class="company-name">DDNetwork<span style="color:var(--text-tertiary)">One</span></span>
                     </a>
                     <p>
@@ -1486,7 +1486,7 @@
                 <div class="footer-col">
                     <h4>Support</h4>
                     <ul class="footer-links">
-                        <li><a href="#" onclick="navigateTo('helpdesk')">Contact Support</a></li>
+                        <li><a href="#" onclick="navigateTo('/helpdesk')">Contact Support</a></li>
                         <li><a href="#" onclick="openTermsModal()">Terms & Conditions</a></li>
                         <li><a href="#">Privacy Policy</a></li>
                     </ul>
@@ -1543,6 +1543,129 @@
             setTimeout(() => { preloader.style.display = 'none'; }, 600);
         });
 
+        // ==========================================
+        // FRONTEND ROUTING (History Mode)
+        // ==========================================
+        const routes = {
+            '/': 'home',
+            '/pricing': 'services',
+            '/order': 'buynow',
+            '/clients': 'clients',
+            '/founder': 'founder',
+            '/login': 'login',
+            '/signup': 'signup',
+            '/profile': 'profile',
+            '/helpdesk': 'helpdesk',
+            '/contact': 'contact',
+            '/forgot-password': 'forgot-password',
+            '/thank-you': 'thank-you'
+        };
+
+        // Helper to handle <a> tags preventing reload
+        function routeLink(event, path) {
+            event.preventDefault();
+            navigateTo(path);
+        }
+
+        // Main Navigation Function
+        function navigateTo(path) {
+            // 1. Find the section ID from the path
+            const sectionId = routes[path];
+            if (!sectionId) {
+                console.error(`No section found for path: ${path}`);
+                // Fallback to home if path not found
+                // window.location.replace('/'); // Optional: redirect real URL
+                return;
+            }
+
+            // 2. Update the Browser URL without reloading (History API)
+            window.history.pushState({ path: path }, "", path);
+
+            // 3. Execute UI transition
+            performTransition(sectionId);
+        }
+
+        // Handle Back/Forward Buttons
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.path) {
+                const sectionId = routes[event.state.path];
+                if (sectionId) performTransition(sectionId);
+            } else {
+                // If state is null (initial load or direct link), check current pathname
+                const path = window.location.pathname;
+                const sectionId = routes[path] || 'home';
+                performTransition(sectionId);
+            }
+        });
+
+        // Handle Initial Page Load (Deep Linking)
+        function handleInitialRoute() {
+            const path = window.location.pathname;
+            const sectionId = routes[path];
+            
+            if (sectionId) {
+                // Show the correct section immediately
+                performTransition(sectionId, true);
+            } else {
+                // If no match (e.g. 404 on server but falls back to index), show home
+                performTransition('home', true);
+            }
+        }
+
+        // Actual UI Transition Logic
+        function performTransition(targetSectionId, isInstant = false) {
+            const currentSection = document.querySelector('.page-section.active');
+            const targetSection = document.getElementById(targetSectionId);
+
+            if (currentSection === targetSection) return; 
+            if (currentSection && currentSection.classList.contains('leaving')) return; 
+
+            // Hide current
+            if (currentSection) {
+                currentSection.classList.remove('active');
+                currentSection.classList.add('leaving');
+            }
+
+            // Scroll to top (smooth)
+            if (!isInstant) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+            // Show target with slight delay for animation
+            setTimeout(() => {
+                document.querySelectorAll('.page-section').forEach(sec => {
+                    sec.classList.remove('active', 'leaving');
+                    sec.style.display = 'none';
+                });
+
+                if (targetSection) {
+                    targetSection.style.display = 'block'; 
+                    void targetSection.offsetWidth; // Trigger reflow
+                    targetSection.classList.add('active');
+                    
+                    // Page specific loads
+                    if(targetSectionId === 'profile') loadProfilePageData();
+                    if(targetSectionId === 'buynow' && auth && auth.currentUser) {
+                        fetchAndSyncUserData(auth.currentUser.uid);
+                    }
+                    
+                    // Trigger reveal animations
+                    const newReveals = targetSection.querySelectorAll('.reveal');
+                    newReveals.forEach(el => el.classList.add('active'));
+                }
+            }, isInstant ? 0 : 400);
+        }
+
+        // Initialize Router on Load
+        // Call this after Firebase/Config init if needed, or immediately
+        setTimeout(handleInitialRoute, 100);
+
+        // ==========================================
+        // FIREBASE & APP LOGIC
+        // ==========================================
+
         const firebaseConfig = {
             apiKey: "AIzaSyAwf31b-wpYQwPbd-3DxnqGVRw8g3xq938",
             authDomain: "ddnetwork-database.firebaseapp.com",
@@ -1552,34 +1675,11 @@
             appId: "1:699127560990:web:50cfd61ff620bc85fb670f"
         };
 
-        // --- TOAST NOTIFICATION SYSTEM ---
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            let icon = 'ri-information-line';
-            if (type === 'success') icon = 'ri-checkbox-circle-line';
-            if (type === 'error') icon = 'ri-error-warning-line';
-
-            toast.innerHTML = `<i class="${icon}"></i> <span>${message}</span>`;
-            
-            container.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
-        }
-
-        // --- FIREBASE & APP LOGIC ---
         let db, auth;
         let ADMIN_EMAIL = "ddnetwork.one@outlook.com";
         let allUsers = [];
         let currentUserPersonalVoucher = null;
         
-        // Default Payment Methods (Fallback)
         const DEFAULT_PAYMENT_METHODS = [
             { id: 'tng', name: 'TNG eWallet', link: 'https://payment.tngdigital.com.my/sc/bDLob7YcpG', active: true },
             { id: 'fpx', name: 'Online Banking (FPX)', link: 'https://toyyibpay.com', active: true } 
@@ -1614,8 +1714,30 @@
             console.error("Firebase initialization error:", e);
         }
 
+        // --- TOAST NOTIFICATION SYSTEM ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = 'ri-information-line';
+            if (type === 'success') icon = 'ri-checkbox-circle-line';
+            if (type === 'error') icon = 'ri-error-warning-line';
+
+            toast.innerHTML = `<i class="${icon}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
         // --- AUTO INITIALIZE DATABASE IF NOT EXISTS ---
         async function initializeDatabase() {
+            if(!db) return;
             const configRef = db.collection("config").doc("site_settings");
             const doc = await configRef.get();
             
@@ -1647,7 +1769,6 @@
                 return items.map(item => `<li>• ${item}</li>`).join('');
             }
 
-            // SYNC: Use Firebase data, fallback to hardcoded defaults
             const frontendDetails = siteConfig.packageDetails?.frontend || DEFAULT_DETAILS.frontend;
             const aiDetails = siteConfig.packageDetails?.ai || DEFAULT_DETAILS.ai;
 
@@ -1669,9 +1790,7 @@
             }
         }
 
-        // UPDATED: Handles Global Discount Logic & Better Banner Display
         function refreshCardPrices() {
-            // SYNC: Use Firebase data, fallback to defaults
             const baseHtml = siteConfig.prices?.html || 199;
             const baseFrontend = siteConfig.prices?.frontend || 599;
             
@@ -1739,14 +1858,12 @@
             }
         }
 
-        // Render Payment Dropdown Options
         function renderPaymentMethods() {
             const select = document.getElementById('payment-method-select');
             if(!select) return;
 
             select.innerHTML = '<option value="" disabled selected>Select Payment Method</option>';
 
-            // SYNC: If DB has config, use it. Else use defaults.
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
@@ -1762,40 +1879,39 @@
         }
 
         // Listeners for Site Config
-        // SYNC: Listens to "config/site_settings" document and updates UI in real-time.
-        db.collection("config").doc("site_settings").onSnapshot((doc) => {
-            if(doc.exists) {
-                // SYNC: Update global state object
-                siteConfig = { ...siteConfig, ...doc.data() };
-                
-                // Maintenance Mode Sync
-                if(siteConfig.maintenance_active) {
-                    document.getElementById('maintenance-overlay').classList.add('active');
-                    // Sync message text
-                    const maintTitle = document.getElementById('maint-title');
-                    const maintDesc = document.getElementById('maint-desc');
-                    if(maintTitle) maintTitle.innerText = siteConfig.maintenance_message;
-                    if(maintDesc) maintDesc.innerText = siteConfig.maintenance_message;
+        if(db) {
+            db.collection("config").doc("site_settings").onSnapshot((doc) => {
+                if(doc.exists) {
+                    siteConfig = { ...siteConfig, ...doc.data() };
+                    
+                    if(siteConfig.maintenance_active) {
+                        document.getElementById('maintenance-overlay').classList.add('active');
+                        const maintTitle = document.getElementById('maint-title');
+                        const maintDesc = document.getElementById('maint-desc');
+                        if(maintTitle) maintTitle.innerText = siteConfig.maintenance_message;
+                        if(maintDesc) maintDesc.innerText = siteConfig.maintenance_message;
+                    } else {
+                        document.getElementById('maintenance-overlay').classList.remove('active');
+                    }
+                    
+                    renderDynamicContent();
+                    refreshCardPrices(); 
+                    renderPaymentMethods();
                 } else {
-                    document.getElementById('maintenance-overlay').classList.remove('active');
+                    renderPaymentMethods();
                 }
-                
-                // Sync content features and prices
-                renderDynamicContent();
-                refreshCardPrices(); 
-                renderPaymentMethods();
-            } else {
-                renderPaymentMethods();
-            }
-        });
+            });
+        }
 
         let PROMO_CODES = {}; 
-        db.collection("promo_codes").onSnapshot((snapshot) => {
-            PROMO_CODES = {};
-            snapshot.forEach(doc => {
-                PROMO_CODES[doc.id] = doc.data().discount;
+        if(db) {
+            db.collection("promo_codes").onSnapshot((snapshot) => {
+                PROMO_CODES = {};
+                snapshot.forEach(doc => {
+                    PROMO_CODES[doc.id] = doc.data().discount;
+                });
             });
-        });
+        }
 
         const PHONE_NO = "60122600969"; 
         const ADMIN_PHONE_NO = "60122600969"; 
@@ -1870,7 +1986,7 @@
         function loadProfilePageData() {
             if(!auth || !auth.currentUser) {
                 showToast("Please login to view profile.", "error");
-                navigateTo('login');
+                navigateTo('/login');
                 return;
             }
             document.getElementById('prof-name').value = "Loading...";
@@ -1943,9 +2059,7 @@
             });
         }
 
-        // UPDATED: Handles both Profile and Checkout Voucher Display with Expiry & Redeemed status
         function showVoucherCard(voucher) {
-            // Profile Page Voucher Card
             const section = document.getElementById('profile-voucher-section');
             const text = document.getElementById('profile-voucher-text');
             const title = document.getElementById('profile-voucher-title');
@@ -1954,7 +2068,6 @@
             section.style.display = 'block';
             const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
             
-            // UPDATE 1: Show Expiry Date
             let expiryText = "";
             if(voucher.expiryDate) {
                 const date = voucher.expiryDate.toDate();
@@ -1971,7 +2084,6 @@
                 title.style.color = 'var(--text-tertiary)';
                 text.style.color = 'var(--text-tertiary)';
                 text.style.textDecoration = 'line-through';
-                // Hide delete button, replace with status badge
                 actionBtn.innerHTML = '<span style="color:var(--success); font-weight:700; border:1px solid var(--success); padding:4px 12px; border-radius:20px; font-size:0.8rem;">USED</span>';
             } else {
                 title.innerText = "You have a Gift Voucher!";
@@ -1982,7 +2094,6 @@
             }
         }
 
-        // UPDATED: Handles Checkout Voucher display with Redeemed status & Expiry
         function showCheckoutVoucher(voucher) {
             const section = document.getElementById('checkout-voucher-section');
             const text = document.getElementById('checkout-voucher-text');
@@ -1991,7 +2102,6 @@
 
             const displayVal = voucher.type === 'fixed' ? `RM ${voucher.value}` : `${voucher.value * 100}%`;
             
-            // UPDATE 1: Show Expiry Date
             let expiryText = "";
             if(voucher.expiryDate) {
                 const date = voucher.expiryDate.toDate();
@@ -2004,7 +2114,6 @@
             text.innerText = `${voucher.code} (-${displayVal})${expiryText}`;
             section.style.display = 'block';
 
-            // Check if already applied (to set correct button state on page load/re-render)
             const isApplied = (state.discountCode === voucher.code);
 
             if (voucher.status === 'redeemed') {
@@ -2021,7 +2130,6 @@
                 text.style.color = 'var(--accent-primary)';
                 text.style.textDecoration = 'none';
                 
-                // UPDATE 3: Button State Logic
                 if(isApplied) {
                     applyBtn.disabled = true;
                     applyBtn.innerText = "Applied";
@@ -2049,7 +2157,7 @@
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     showToast("Login Successful!", "success");
-                    navigateTo('home');
+                    navigateTo('/');
                 })
                 .catch((error) => showToast(error.message, "error"));
         }
@@ -2076,7 +2184,7 @@
                 })
                 .then(() => {
                     showToast("Account Created!", "success");
-                    navigateTo('home');
+                    navigateTo('/');
                 })
                 .catch((error) => showToast(error.message, "error"));
         }
@@ -2116,7 +2224,7 @@
                 currentUserPersonalVoucher = null;
                 auth.signOut().then(() => {
                     showToast("Logged out", "success");
-                    navigateTo('home');
+                    navigateTo('/');
                 });
             }
         }
@@ -2126,7 +2234,7 @@
         // ==========================================
         
         function handleFabClick() {
-            navigateTo('helpdesk');
+            navigateTo('/helpdesk');
         }
 
         function updateHeaderForUser(user) {
@@ -2134,7 +2242,7 @@
             const deskAuth = document.getElementById('desktopAuthLinks');
             if(deskAuth) {
                 let userControls = `
-                    <a href="#" onclick="navigateTo('profile')" class="btn-profile-nav">
+                    <a href="/profile" onclick="routeLink(event, '/profile')" class="btn-profile-nav">
                         <i class="ri-user-smile-line"></i> Profile
                     </a>
                     <span class="logout-btn" onclick="handleLogout()">Logout</span>
@@ -2159,7 +2267,7 @@
                             <i class="ri-shield-user-line"></i> Admin Portal
                         </a>
                     ` : ''}
-                    <a href="#" onclick="navigateTo('profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom:1rem;"><i class="ri-user-line"></i> Profile</a>
+                    <a href="/profile" onclick="routeLink(event, '/profile'); toggleDrawer()" style="font-size: 2rem; color: var(--text-main); display: inline-block; margin-bottom:1rem;"><i class="ri-user-line"></i> Profile</a>
                     <a href="#" onclick="handleLogout(); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Logout</a>
                 `;
             }
@@ -2169,7 +2277,7 @@
             const deskAuth = document.getElementById('desktopAuthLinks');
             if(deskAuth) {
                 deskAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('login')" class="btn-profile-nav">
+                    <a href="/login" onclick="routeLink(event, '/login')" class="btn-profile-nav">
                         <i class="ri-login-circle-line"></i> Login
                     </a>
                 `;
@@ -2177,8 +2285,8 @@
             const mobAuth = document.getElementById('mobileAuthLinks');
             if(mobAuth) {
                 mobAuth.innerHTML = `
-                    <a href="#" onclick="navigateTo('login'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Login</a>
-                    <a href="#" onclick="navigateTo('signup'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Sign Up</a>
+                    <a href="/login" onclick="routeLink(event, '/login'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Login</a>
+                    <a href="/signup" onclick="routeLink(event, '/signup'); toggleDrawer()" style="font-size: 1.5rem; color: var(--text-secondary);">Sign Up</a>
                 `;
             }
         }
@@ -2187,7 +2295,7 @@
             if(!auth || !auth.currentUser) return;
             const email = auth.currentUser.email;
             document.getElementById('reset-email').value = email;
-            navigateTo('forgot-password');
+            navigateTo('/forgot-password');
             showToast("Email pre-filled. Please check spam folder.", "success");
         }
 
@@ -2198,17 +2306,16 @@
             auth.sendPasswordResetEmail(email)
                 .then(() => {
                     showToast("Reset email sent. Please check your spam folder.", "success");
-                    setTimeout(() => navigateTo('login'), 3000);
+                    setTimeout(() => navigateTo('/login'), 3000);
                 })
                 .catch((error) => showToast(error.message, "error"));
         }
 
         // --- TICKET SUBMISSION & HISTORY ---
         
-        // UPDATE: Function to generate Smart ID
         async function generateSmartTicketId() {
             try {
-                // 1. Query the most recent ticket that has a ticketId field
+                if(!db) return `#Ticket-${Math.floor(1000 + Math.random() * 9000)}`;
                 const snapshot = await db.collection("tickets")
                     .where("ticketId", "!=", null)
                     .orderBy("ticketId", "desc")
@@ -2219,7 +2326,6 @@
 
                 if (!snapshot.empty) {
                     const lastTicket = snapshot.docs[0].data();
-                    // Parse format #Ticket-0001
                     const parts = lastTicket.ticketId.split('-');
                     const lastNum = parseInt(parts[1]);
                     if (!isNaN(lastNum)) {
@@ -2227,19 +2333,18 @@
                     }
                 }
                 
-                // Format with zero padding
                 const idString = String(nextNumber).padStart(4, '0');
                 return `#Ticket-${idString}`;
             } catch (error) {
                 console.error("Error generating ID:", error);
-                // Fallback to random if error (unlikely but safe)
                 return `#Ticket-${Math.floor(1000 + Math.random() * 9000)}`;
             }
         }
 
-        // UPDATE: Modified Handle Submit to use Smart ID
         async function handleTicketSubmit(e) {
             e.preventDefault();
+            if(!db) return showToast("Database offline", "error");
+
             const btn = document.getElementById('btn-submit-ticket');
             
             const name = document.getElementById('ticket-name').value;
@@ -2252,19 +2357,17 @@
                 return;
             }
 
-            // Disable button and show loading
             btn.disabled = true;
             const originalText = btn.innerText;
             btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Generating ID...';
 
             try {
-                // 1. Generate Smart ID
                 const smartId = await generateSmartTicketId();
 
                 showToast("ID Generated. Saving...", "success");
 
                 const ticketData = {
-                    ticketId: smartId, // Store the Smart ID
+                    ticketId: smartId, 
                     name: name,
                     email: email,
                     type: type,
@@ -2274,10 +2377,8 @@
                     userId: auth.currentUser ? auth.currentUser.uid : null
                 };
 
-                // 2. Save to DB
                 await db.collection("tickets").add(ticketData);
 
-                // 3. Update UI
                 const caseIdDisplay = document.getElementById('case-id-display');
                 const caseIdSpan = document.getElementById('display-case-id');
                 caseIdSpan.innerText = smartId;
@@ -2295,13 +2396,11 @@
                 console.error(error);
                 showToast("Failed to submit ticket. Try again.", "error");
             } finally {
-                // Reset button
                 btn.disabled = false;
                 btn.innerText = originalText;
             }
         }
 
-        // UPDATE: Copy to clipboard function
         function copyTicketId() {
             const idText = document.getElementById('display-case-id').innerText;
             navigator.clipboard.writeText(idText).then(() => {
@@ -2312,14 +2411,10 @@
         }
 
         function fetchTicketHistory() {
+            if(!db) return;
             const caseId = document.getElementById('history-search-id').value.trim();
             if(!caseId) {
                 showToast("Please enter a Case ID.", "error");
-                return;
-            }
-
-            if(!db) {
-                showToast("Database not connected.", "error");
                 return;
             }
 
@@ -2360,46 +2455,6 @@
                 });
         }
 
-
-        // --- SMOOTH PAGE TRANSITION LOGIC ---
-        function navigateTo(pageId) {
-            const currentSection = document.querySelector('.page-section.active');
-            const targetSection = document.getElementById(pageId);
-
-            if (currentSection === targetSection) return; 
-            if (currentSection && currentSection.classList.contains('leaving')) return; 
-
-            if (currentSection) {
-                currentSection.classList.remove('active');
-                currentSection.classList.add('leaving');
-            }
-
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            setTimeout(() => {
-                document.querySelectorAll('.page-section').forEach(sec => {
-                    sec.classList.remove('active', 'leaving');
-                    sec.style.display = 'none';
-                });
-
-                if (targetSection) {
-                    targetSection.style.display = 'block'; 
-                    void targetSection.offsetWidth; 
-                    targetSection.classList.add('active');
-                    
-                    if(pageId === 'profile') loadProfilePageData();
-                    if(pageId === 'buynow' && auth && auth.currentUser) {
-                        fetchAndSyncUserData(auth.currentUser.uid);
-                    }
-                    
-                    // Trigger reveal animations for new elements
-                    const newReveals = targetSection.querySelectorAll('.reveal');
-                    newReveals.forEach(el => el.classList.add('active'));
-                }
-            }, 400);
-        }
-
         function toggleDrawer() {
             const drawer = document.getElementById('mobileDrawer');
             const overlay = document.getElementById('mobileDrawerOverlay');
@@ -2428,7 +2483,7 @@
                 selectPackage(name, type);
             } else {
                 showToast("Please login or sign up to make a purchase.", "error");
-                setTimeout(() => { navigateTo('login'); }, 1500);
+                setTimeout(() => { navigateTo('/login'); }, 1500);
             }
         }
 
@@ -2439,12 +2494,10 @@
             const priceArea = document.getElementById('dynamic-price-area');
             priceArea.innerHTML = ''; 
 
-            // SYNC: Get prices from Firebase config
             let basePrice = 0;
             if(type === 'html') basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.html) ? siteConfig.prices.html : 199;
             if(type === 'frontend') basePrice = (siteConfig && siteConfig.prices && siteConfig.prices.frontend) ? siteConfig.prices.frontend : 599;
 
-            // SYNC: Apply discount if active
             if (siteConfig.discountActive && siteConfig.discountPercent > 0 && type !== 'ai') {
                 basePrice = Math.round(basePrice * (1 - siteConfig.discountPercent));
             }
@@ -2485,7 +2538,7 @@
 
             updateSummaryText();
             updateUI();
-            navigateTo('buynow');
+            navigateTo('/order');
         }
 
         function updateDomain(type, element) {
@@ -2545,23 +2598,19 @@
             }
         }
 
-        // UPDATED: Check voucher status & expiry before applying
         function applyPersonalVoucher() {
             if(!currentUserPersonalVoucher) return; 
             
-            // UPDATE 2: Prevent Redeemed Usage
             if(currentUserPersonalVoucher.status === 'redeemed') {
                 showToast("This voucher has already been used.", "error");
                 return;
             }
 
-            // UPDATE 3: Prevent Re-applying Active Voucher
             if(state.discountCode === currentUserPersonalVoucher.code) {
                 showToast("Voucher already applied.", "info");
                 return;
             }
 
-            // Check Expiry
             if(currentUserPersonalVoucher.expiryDate) {
                 const now = new Date();
                 const expiry = currentUserPersonalVoucher.expiryDate.toDate();
@@ -2590,7 +2639,6 @@
             const displayVal = state.discountType === 'fixed' ? `RM ${state.discountFixed}` : `${state.discountRate * 100}%`;
             document.getElementById('summary-discount-val').innerText = `-${displayVal}`;
             
-            // Update UI to show "Applied" button
             showCheckoutVoucher(currentUserPersonalVoucher);
             
             updateTotal();
@@ -2610,7 +2658,6 @@
             }
         }
 
-        // UPDATED: Re-render voucher card to reset button state when removed
         function removeVoucher() {
             state.discountCode = '';
             state.discountRate = 0;
@@ -2619,7 +2666,6 @@
             showToast("Voucher removed", "success");
             updateTotal();
 
-            // Re-render voucher card to reset "Applied" button back to "Apply"
             if(currentUserPersonalVoucher) {
                 showCheckoutVoucher(currentUserPersonalVoucher);
             }
@@ -2665,13 +2711,11 @@
             updateTotal();
         }
 
-        // Update payment selection from dropdown
         function updatePaymentSelection() {
             const select = document.getElementById('payment-method-select');
             state.paymentMethodId = select.value;
         }
 
-        // UPDATED: Reads 'link' field strictly from DB settings
         function triggerPayment() {
             if(!state.packageType) {
                 showToast("Please select a package first.", "error");
@@ -2686,7 +2730,6 @@
                 return;
             }
 
-            // SYNC: Use dynamic DB list
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
@@ -2698,7 +2741,6 @@
                 return;
             }
 
-            // STRICT CHANGE: Read 'link' field directly, no hardcoded overrides
             let targetUrl = selectedMethod.link;
 
             if(!targetUrl) {
@@ -2726,7 +2768,6 @@
             }
         }
 
-        // UPDATED: Submit Order with Thank You Page & Voucher Redeeming
         function submitOrder() {
             const termsCheck = document.getElementById('terms-check');
             if(!termsCheck.checked) {
@@ -2754,7 +2795,6 @@
 
             showToast("Processing Order...", "success");
 
-            // SYNC: Fetch method name from DB
             const methods = siteConfig.payment_methods && siteConfig.payment_methods.length > 0 
                             ? siteConfig.payment_methods 
                             : DEFAULT_PAYMENT_METHODS;
@@ -2783,10 +2823,8 @@
             };
 
             if(db) {
-                // Promise array: Save order AND (if applicable) Redeem Voucher
                 const promises = [db.collection("orders").add(orderData)];
 
-                // UPDATE 1: If a personal voucher was used (not just a promo code), update its status
                 if (state.discountCode && currentUserPersonalVoucher && state.discountCode === currentUserPersonalVoucher.code && currentUserPersonalVoucher.status !== 'redeemed') {
                     const redeemPromise = db.collection("users").doc(auth.currentUser.uid).update({
                         "personalVoucher.status": "redeemed"
@@ -2798,16 +2836,13 @@
                 .then(() => {
                     showToast("Order Placed Successfully!", "success");
                     
-                    // UPDATE 2: Sync local memory to reflect redemption status
                     if (state.discountCode && currentUserPersonalVoucher && state.discountCode === currentUserPersonalVoucher.code) {
                         currentUserPersonalVoucher.status = "redeemed";
                     }
 
                     setTimeout(() => {
-                        // Navigate to Thank You Page
-                        navigateTo('thank-you');
+                        navigateTo('/thank-you');
                         
-                        // Optional: Notify Admin
                         let companyText = company ? `\n*Company:* ${company}` : '';
                         let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}\n*Package:* ${pkgName}\n*Total:* ${total}\n*Payment:* ${paymentLabel}`;
                         window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
@@ -2823,32 +2858,12 @@
             } else {
                 showToast("Order Placed Successfully!", "success");
                 setTimeout(() => {
-                    navigateTo('thank-you');
+                    navigateTo('/thank-you');
                     let companyText = company ? `\n*Company:* ${company}` : '';
                     let notifyMsg = `Hi Admin,\n*New Order Received.*\n\n*Name:* ${name}${companyText}`;
                     window.open(`https://wa.me/${ADMIN_PHONE_NO}?text=${encodeURIComponent(notifyMsg)}`, '_blank');
                 }, 1500);
             }
-        }
-
-        function showToast(msg, type) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            let icon = 'ri-information-line';
-            if (type === 'success') icon = 'ri-checkbox-circle-line';
-            if (type === 'error') icon = 'ri-error-warning-line';
-
-            toast.innerHTML = `<i class="${icon}"></i> <span>${msg}</span>`;
-            
-            container.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
         }
 
         const observerOptions = {
@@ -2912,16 +2927,6 @@
             animationId = requestAnimationFrame(animate);
         }
 
-        const originalNavigateTo = navigateTo;
-        navigateTo = function(pageId) {
-            originalNavigateTo(pageId);
-            if (pageId === 'home') {
-                animate();
-            } else {
-                cancelAnimationFrame(animationId);
-            }
-        };
-
         initDots();
         animate();
 
@@ -2938,7 +2943,6 @@
             }
         });
 
-        // RUN DB INIT
         initializeDatabase();
 
     </script>
